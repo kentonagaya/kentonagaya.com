@@ -232,6 +232,28 @@ a:focus-visible{outline:2px solid var(--ink);outline-offset:3px;}
 <body>
 <div class="wrap">
 
+  <!-- ================= ナビゲーション ================= -->
+  <nav class="nav">
+    <a class="nav-home" href="/">
+      <svg class="nav-mark" viewBox="0 0 100 92" role="img" aria-label="ホームへ">
+        <defs>
+          <linearGradient id="navg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#F3A2CC"/><stop offset="30%" stop-color="#E6559E"/>
+            <stop offset="58%" stop-color="#C063BE"/><stop offset="82%" stop-color="#EE7B72"/>
+            <stop offset="100%" stop-color="#F26A5C"/>
+          </linearGradient>
+        </defs>
+        <path fill="url(#navg)" d="M50 88C20 66 4 46 4 30 4 14 16 4 29 4c10 0 17 6 21 13 4-7 11-13 21-13 13 0 25 10 25 26 0 16-16 36-46 58Z"/>
+      </svg>
+      <span class="nav-name">長屋 健斗</span>
+    </a>
+    <div class="nav-links">
+      <a href="/works.html">WORKS</a>
+      <a href="/about.html">ABOUT</a>
+      <a href="#contact">CONTACT</a>
+    </div>
+  </nav>
+
   <header class="masthead rise d1">
     <h1 class="names">
       <span class="name-ja">長屋 健斗</span>

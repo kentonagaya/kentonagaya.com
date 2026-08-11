@@ -1,0 +1,306 @@
+/* ============================================================
+   Kento Nagaya - shared stylesheet
+   名刺のデザイン言語（白 / 墨 / 角ゴシック / 和英2列 / 黒ブロック /
+   ハートのグラデーション）をWebへ展開したもの
+   ============================================================ */
+
+:root{
+  --ink:#2B2B2B;
+  --ink-70:#5C5C5C;
+  --ink-40:#9A9A9A;
+  --rule:#E4E4E4;
+  --tint:#F7F7F7;
+  --white:#FFFFFF;
+  --grad:linear-gradient(128deg,#F3A2CC 0%,#E6559E 30%,#C063BE 58%,#EE7B72 82%,#F26A5C 100%);
+  --font:"Zen Kaku Gothic New",sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+
+body{
+  margin:0;
+  background:var(--white);
+  color:var(--ink);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.9;
+  font-feature-settings:"palt" 1;
+  -webkit-font-smoothing:antialiased;
+}
+
+img{max-width:100%;height:auto;display:block;}
+
+a:focus-visible{outline:2px solid var(--ink);outline-offset:3px;}
+
+.wrap{
+  max-width:56rem;
+  margin:0 auto;
+  padding:0 clamp(1.5rem,6vw,4rem);
+}
+
+/* ---------- グラデーション文字 ---------- */
+.accent{
+  background:var(--grad);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+/* ---------- ナビゲーション ---------- */
+.nav{
+  padding:clamp(1.4rem,4vw,2rem) 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem 2rem;
+  flex-wrap:wrap;
+}
+.nav-home{
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  text-decoration:none;
+  color:var(--ink);
+}
+.nav-mark{width:1.6rem;flex:none;}
+.nav-name{font-size:.95rem;font-weight:500;letter-spacing:.12em;}
+.nav-links{display:flex;gap:clamp(1.2rem,4vw,2.2rem);}
+.nav-links a{
+  color:var(--ink-70);
+  text-decoration:none;
+  font-size:.82rem;
+  letter-spacing:.14em;
+  padding-bottom:.2rem;
+  border-bottom:1px solid transparent;
+  transition:color .2s ease,border-color .2s ease;
+}
+.nav-links a:hover,.nav-links a:focus-visible{color:var(--ink);border-color:var(--ink-40);}
+.nav-links a[aria-current="page"]{color:var(--ink);border-color:var(--ink);}
+
+/* ---------- ページ見出し ---------- */
+.page-head{padding:clamp(2.5rem,8vw,5rem) 0 clamp(2rem,5vw,3rem);}
+.page-title{
+  margin:0;
+  font-size:clamp(1.7rem,5.4vw,2.6rem);
+  font-weight:700;
+  letter-spacing:.06em;
+  line-height:1.5;
+}
+.page-title .en{
+  display:block;
+  font-size:.7rem;
+  font-weight:700;
+  letter-spacing:.22em;
+  color:var(--ink-40);
+  margin-bottom:.6rem;
+}
+.page-lede{
+  margin:1.4rem 0 0;
+  max-width:33rem;
+  color:var(--ink-70);
+  font-size:clamp(.92rem,2.4vw,1rem);
+}
+
+/* ---------- 実績カード ---------- */
+.case{
+  padding:clamp(2.5rem,7vw,4rem) 0;
+  border-top:1px solid var(--rule);
+}
+.case-head{
+  display:flex;
+  align-items:baseline;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:1.2rem;
+}
+.case-no{
+  font-size:.78rem;
+  font-weight:700;
+  letter-spacing:.16em;
+  background:var(--grad);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.case-cat{
+  font-size:.74rem;
+  letter-spacing:.16em;
+  color:var(--ink-40);
+}
+.case-title{
+  margin:0 0 1.4rem;
+  font-size:clamp(1.25rem,4vw,1.75rem);
+  font-weight:700;
+  letter-spacing:.05em;
+  line-height:1.5;
+}
+
+/* 和英2列（名刺の構造） */
+.spec{margin:0 0 1.8rem;}
+.spec div{
+  display:grid;
+  grid-template-columns:7.5rem 1fr;
+  gap:.4rem 1.4rem;
+  padding:.55rem 0;
+  border-bottom:1px solid var(--rule);
+}
+.spec dt{
+  font-size:.76rem;
+  font-weight:700;
+  letter-spacing:.14em;
+  color:var(--ink-40);
+  padding-top:.15rem;
+}
+.spec dd{margin:0;font-size:.94rem;}
+.spec a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink-40);}
+.spec a:hover{border-color:var(--ink);}
+
+.case-body{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));
+  gap:clamp(1.5rem,4vw,2.5rem);
+  margin-bottom:1.8rem;
+}
+.case-body h3{
+  margin:0 0 .5rem;
+  font-size:.76rem;
+  font-weight:700;
+  letter-spacing:.16em;
+  color:var(--ink-40);
+}
+.case-body p{margin:0;font-size:.94rem;color:var(--ink-70);}
+
+/* 執筆前のプレースホルダ */
+.todo{
+  border-left:2px solid var(--rule);
+  padding-left:1rem;
+  color:var(--ink-40);
+  font-size:.88rem;
+}
+
+/* 画像 */
+.shots{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:1rem;
+  align-items:start;
+  margin-bottom:1.8rem;
+}
+.shots.single{grid-template-columns:1fr;}
+.shots.pair{grid-template-columns:1fr 1fr;}
+.shots figure{margin:0;}
+.shots img{
+  border:1px solid var(--rule);
+  background:var(--tint);
+}
+.shots figcaption{
+  margin-top:.5rem;
+  font-size:.72rem;
+  letter-spacing:.1em;
+  color:var(--ink-40);
+}
+
+/* クライアントの言葉 */
+.voice{
+  margin:0;
+  background:var(--tint);
+  padding:clamp(1.2rem,3.5vw,1.8rem);
+}
+.voice p{
+  margin:0;
+  font-size:clamp(1rem,2.8vw,1.15rem);
+  font-weight:500;
+  line-height:1.8;
+  letter-spacing:.03em;
+}
+.voice footer{
+  margin-top:.7rem;
+  font-size:.76rem;
+  letter-spacing:.1em;
+  color:var(--ink-40);
+}
+
+/* ---------- Aboutの年表 ---------- */
+.timeline{margin:0;padding:0;list-style:none;}
+.timeline li{
+  display:grid;
+  grid-template-columns:7rem 1fr;
+  gap:.4rem 1.5rem;
+  padding:1rem 0;
+  border-bottom:1px solid var(--rule);
+}
+.timeline .year{
+  font-size:.82rem;
+  font-weight:700;
+  letter-spacing:.1em;
+  color:var(--ink-40);
+  padding-top:.2rem;
+}
+.timeline h3{margin:0 0 .3rem;font-size:1rem;font-weight:700;letter-spacing:.04em;}
+.timeline p{margin:0;font-size:.92rem;color:var(--ink-70);}
+
+.prose{max-width:33rem;}
+.prose h2{
+  margin:2.5rem 0 .8rem;
+  font-size:1.05rem;
+  font-weight:700;
+  letter-spacing:.06em;
+}
+.prose p{margin:0 0 1rem;font-size:.94rem;color:var(--ink-70);}
+.prose a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink-40);}
+.prose a:hover{border-color:var(--ink);}
+
+/* ---------- 黒ブロック（名刺裏面） ---------- */
+.block{
+  background:var(--ink);
+  color:var(--white);
+  margin-top:clamp(3rem,8vw,5rem);
+  padding:clamp(1.6rem,4.5vw,2.4rem);
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:1.4rem 2rem;
+}
+.block .eyebrow{
+  margin:0 0 .7rem;
+  font-size:.7rem;
+  font-weight:700;
+  letter-spacing:.22em;
+  color:rgba(255,255,255,.55);
+}
+.block a{color:var(--white);text-decoration:none;}
+.mailto{
+  font-size:clamp(1rem,3.2vw,1.35rem);
+  font-weight:500;
+  letter-spacing:.03em;
+  border-bottom:1px solid rgba(255,255,255,.4);
+  padding-bottom:.15rem;
+  transition:border-color .2s ease;
+}
+.mailto:hover,.mailto:focus-visible{border-color:var(--white);}
+.block-links{display:flex;gap:1.6rem;font-size:.88rem;letter-spacing:.06em;}
+.block-links a{border-bottom:1px solid transparent;padding-bottom:.1rem;transition:border-color .2s ease;}
+.block-links a:hover,.block-links a:focus-visible{border-color:rgba(255,255,255,.6);}
+
+.site-foot{
+  padding:1.4rem 0 2.5rem;
+  font-size:.74rem;
+  letter-spacing:.08em;
+  color:var(--ink-40);
+}
+
+/* ---------- スマートフォン ---------- */
+@media (max-width:34rem){
+  .shots,.shots.pair{grid-template-columns:1fr;}
+  .spec div{grid-template-columns:1fr;gap:.1rem;}
+  .timeline li{grid-template-columns:1fr;gap:.2rem;}
+}
+
+/* ---------- モーション ---------- */
+@media (prefers-reduced-motion:no-preference){
+  .rise{opacity:0;transform:translateY(10px);animation:rise .8s cubic-bezier(.2,.7,.3,1) forwards;}
+  .d1{animation-delay:.05s;} .d2{animation-delay:.2s;} .d3{animation-delay:.35s;}
+  @keyframes rise{to{opacity:1;transform:none;}}
+}
