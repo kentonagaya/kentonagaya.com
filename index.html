@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>長屋 健斗 - Kento Nagaya｜Web制作・マーケティング・多言語対応</title>
+<meta name="description" content="言葉になっていないものを、形にする。大阪を拠点に、Web制作・マーケティング・多言語対応を行うフリーランスの長屋健斗です。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="長屋 健斗 - Kento Nagaya">
+<meta property="og:description" content="言葉になっていないものを、形にする。大阪を拠点に、Web制作・マーケティング・多言語対応を行っています。">
+<meta property="og:url" content="https://kentonagaya.com/">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://kentonagaya.com/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#2B2B2B;
+  --ink-70:#5C5C5C;
+  --ink-40:#9A9A9A;
+  --rule:#E4E4E4;
+  --white:#FFFFFF;
+  --grad:linear-gradient(128deg,#F3A2CC 0%,#E6559E 30%,#C063BE 58%,#EE7B72 82%,#F26A5C 100%);
+  --font:"Zen Kaku Gothic New",sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;
+  background:var(--white);
+  color:var(--ink);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.9;
+  font-feature-settings:"palt" 1;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{
+  max-width:56rem;
+  margin:0 auto;
+  padding:clamp(2rem,6vw,4.5rem) clamp(1.5rem,6vw,4rem) clamp(2rem,5vw,3.5rem);
+  min-height:100vh;
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ---------- masthead ---------- */
+.masthead{
+  display:flex;
+  align-items:center;
+  gap:clamp(.9rem,2.5vw,1.4rem);
+}
+.mark{
+  width:clamp(2.4rem,6vw,3.2rem);
+  height:auto;
+  flex:none;
+}
+.names{margin:0;}
+.name-ja{
+  display:block;
+  font-size:clamp(1.5rem,4.6vw,2.1rem);
+  font-weight:500;
+  letter-spacing:.12em;
+  line-height:1.3;
+}
+.name-en{
+  display:block;
+  font-size:clamp(.82rem,2.2vw,.95rem);
+  font-weight:400;
+  letter-spacing:.06em;
+  color:var(--ink-70);
+  line-height:1.5;
+}
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(3rem,10vw,6rem) 0 clamp(2.5rem,6vw,4rem);}
+.essence{
+  margin:0;
+  font-size:clamp(1.6rem,5.4vw,2.9rem);
+  font-weight:700;
+  line-height:1.6;
+  letter-spacing:.04em;
+}
+.essence .accent{
+  background:var(--grad);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.lede{
+  margin:clamp(1.6rem,4vw,2.4rem) 0 0;
+  max-width:33rem;
+  font-size:clamp(.92rem,2.4vw,1rem);
+  color:var(--ink-70);
+}
+
+/* ---------- bilingual rows (from the card) ---------- */
+.section{
+  padding:clamp(2.2rem,5vw,3rem) 0;
+  border-top:1px solid var(--rule);
+}
+.eyebrow{
+  margin:0 0 1.4rem;
+  font-size:.7rem;
+  font-weight:700;
+  letter-spacing:.22em;
+  color:var(--ink-40);
+}
+.bilingual{margin:0;padding:0;list-style:none;}
+.bilingual li{
+  display:grid;
+  grid-template-columns:minmax(9rem,14rem) 1fr;
+  gap:.5rem 1.5rem;
+  padding:.65rem 0;
+  border-bottom:1px solid var(--rule);
+}
+.bilingual li:last-child{border-bottom:0;}
+.ja{font-size:1rem;font-weight:500;letter-spacing:.06em;}
+.en{font-size:1rem;font-weight:400;color:var(--ink-70);letter-spacing:.02em;}
+
+.facts{
+  display:flex;
+  flex-wrap:wrap;
+  gap:1rem 3.5rem;
+}
+.fact{margin:0;}
+.fact dt{
+  font-size:.7rem;
+  font-weight:700;
+  letter-spacing:.18em;
+  color:var(--ink-40);
+  margin-bottom:.2rem;
+}
+.fact dd{
+  margin:0;
+  font-size:1rem;
+  letter-spacing:.04em;
+}
+.fact .num{
+  font-size:1.6rem;
+  font-weight:700;
+  letter-spacing:.02em;
+  margin-right:.15em;
+}
+
+/* ---------- black block (from the card back) ---------- */
+.block{
+  background:var(--ink);
+  color:var(--white);
+  margin-top:auto;
+  padding:clamp(1.6rem,4.5vw,2.4rem);
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:1.4rem 2rem;
+}
+.block .eyebrow{color:rgba(255,255,255,.55);margin-bottom:.7rem;}
+.block a{color:var(--white);text-decoration:none;}
+.mailto{
+  font-size:clamp(1rem,3.2vw,1.35rem);
+  font-weight:500;
+  letter-spacing:.03em;
+  border-bottom:1px solid rgba(255,255,255,.4);
+  padding-bottom:.15rem;
+  transition:border-color .2s ease;
+  word-break:break-all;
+}
+.mailto:hover,.mailto:focus-visible{border-color:var(--white);}
+.block-links{display:flex;gap:1.6rem;font-size:.88rem;letter-spacing:.06em;}
+.block-links a{
+  border-bottom:1px solid transparent;
+  transition:border-color .2s ease;
+  padding-bottom:.1rem;
+}
+.block-links a:hover,.block-links a:focus-visible{border-color:rgba(255,255,255,.6);}
+
+/* ---------- tagline ---------- */
+.tagline{
+  padding:clamp(1.6rem,4vw,2.2rem) 0 0;
+  display:flex;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:.4rem 1rem;
+}
+.tagline .jp{
+  font-size:clamp(1rem,3vw,1.15rem);
+  font-weight:700;
+  letter-spacing:.14em;
+  background:var(--grad);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.tagline .fr{
+  font-size:.76rem;
+  letter-spacing:.16em;
+  color:var(--ink-40);
+}
+
+.notice{
+  margin:1.4rem 0 0;
+  font-size:.74rem;
+  color:var(--ink-40);
+  letter-spacing:.04em;
+}
+
+a:focus-visible{outline:2px solid var(--ink);outline-offset:3px;}
+.block a:focus-visible{outline-color:var(--white);}
+
+@media (max-width:30rem){
+  .bilingual li{grid-template-columns:1fr;gap:.1rem;}
+  .en{font-size:.86rem;}
+}
+
+/* ---------- motion ---------- */
+@media (prefers-reduced-motion:no-preference){
+  .rise{opacity:0;transform:translateY(10px);animation:rise .8s cubic-bezier(.2,.7,.3,1) forwards;}
+  .d1{animation-delay:.1s;} .d2{animation-delay:.28s;}
+  .d3{animation-delay:.46s;} .d4{animation-delay:.62s;} .d5{animation-delay:.78s;}
+  @keyframes rise{to{opacity:1;transform:none;}}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead rise d1">
+    <h1 class="names">
+      <span class="name-ja">長屋 健斗</span>
+      <span class="name-en">Kento Nagaya</span>
+    </h1>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="essence rise d2">言葉になっていないものを、<br><span class="accent">形にする。</span></p>
+      <p class="lede rise d3">
+        サーバーエンジニアを経て、フリーランスでWebサイトの制作とマーケティングのお手伝いをしています。<br>
+        お話を聞いて、デザインしたり、販売方法を考えたり。<br>
+        東京生まれ。フィリピン・ジョージア・フランスでの生活を経て、いまは大阪を拠点にしています。
+      </p>
+    </section>
+
+    <section class="section rise d4">
+      <p class="eyebrow">SERVICES</p>
+      <ul class="bilingual">
+        <li><span class="ja">Web制作</span><span class="en">Web Design &amp; Development</span></li>
+        <li><span class="ja">マーケティング</span><span class="en">Web Marketing</span></li>
+        <li><span class="ja">多言語対応</span><span class="en">Localization</span></li>
+      </ul>
+    </section>
+
+    <section class="section rise d4">
+      <p class="eyebrow">BACKGROUND</p>
+      <div class="facts">
+        <dl class="fact">
+          <dt>制作実績</dt>
+          <dd><span class="num">32</span>件</dd>
+        </dl>
+        <dl class="fact">
+          <dt>拠点</dt>
+          <dd>大阪・東京</dd>
+          <dd>Osaka, Tokyo</dd>
+        </dl>
+        <dl class="fact">
+          <dt>言語</dt>
+          <dd>日本語・英語・フランス語</dd>
+          <dd>Japanese, English, French</dd>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <section class="block rise d5">
+    <div>
+      <p class="eyebrow">CONTACT</p>
+      <a class="mailto" href="mailto:knip.89@gmail.com">Email</a>
+    </div>
+    <nav class="block-links">
+      <a href="https://www.instagram.com/kentonagaya" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://note.com/kentonagaya" target="_blank" rel="noopener">Note</a>
+    </nav>
+  </section>
+
+  <p class="notice rise d5">Kento Nagaya</p>
+
+</div>
+</body>
+</html>
