@@ -27,6 +27,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="icon" href="/font-selector/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/font-selector/apple-touch-icon.png">
 <meta name="author" content="Kento Nagaya">
+<!-- Icons: Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc. -->
 <title>フォントセレクター | Webサイトのフォントを選んで試し、CSSとAIへの指示文で書き出せるツール</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -221,14 +222,6 @@ button { cursor: pointer; }
 .site .cta { display: inline-flex; align-items: center; min-height: 46px; padding: 0 26px; border-radius: 999px; background: #26241F; color: #FFFFFF; text-decoration: none; }
 .site blockquote { padding-left: 18px; border-left: 2px solid currentColor; }
 .site small { color: #6B5E4B; }
-/* h2 の飾り（見本サイトだけの装飾。出力には含めない） */
-.site .h2-deco { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; color: var(--h2c, #26241F); }
-.site .h2-ic { flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--h2c, #26241F); color: var(--site-bg, #FFFFFF); box-shadow: 0 0 0 4px var(--site-bg, #FFFFFF), 0 0 0 5px color-mix(in srgb, var(--h2c, #26241F) 28%, transparent); }
-.site .h2-ic svg { width: 15px; height: 15px; }
-.site .h2-kicker { font-family: var(--f-accent); font-weight: var(--w-accent); font-size: 13px; letter-spacing: .22em; text-transform: uppercase; opacity: .8; white-space: nowrap; }
-.site .h2-line { flex: 1; min-width: 16px; height: 1px; background: currentColor; opacity: .22; }
-.site .h2-no { font-family: var(--f-accent); font-weight: var(--w-accent); font-size: 13px; letter-spacing: .12em; opacity: .6; white-space: nowrap; }
-.site .h2-blk { padding-bottom: 16px; background: linear-gradient(var(--h2c, #26241F), var(--h2c, #26241F)) left bottom / 44px 3px no-repeat; }
 .site .rule { height: 1px; background: currentColor; opacity: .14; margin: 8px 0 28px; }
 .site [data-t] { cursor: pointer; }
 .site [data-t]:hover { outline: 1px dashed #9DB0FF; outline-offset: 4px; }
@@ -598,6 +591,59 @@ body { font-feature-settings: "palt"; letter-spacing: .01em; }
 @media (max-width: 1023px) { .topbar { padding: 0 12px; gap: 8px; } .logo { transform: scale(.84); transform-origin: left center; } .topbar-actions { gap: 6px; } #reset { width: 36px; padding: 0; justify-content: center; } }
 @media (max-width: 1023px) { .num .box, .picker, .c-reset { height: 42px; } .detail .sw, .bg-pop .sw { height: 30px; } .help { width: 22px; height: 22px; } }
 
+/* ===== アイコン（Font Awesome Free） ===== */
+.fa { display: inline-block; flex-shrink: 0; height: 1em; width: auto; overflow: visible; vertical-align: -.125em; }
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.tour-btn .fa { font-size: 15px; }
+#reset.tour-btn:hover { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.btn .fa { font-size: 14px; }
+.steps .num .fa { font-size: 10px; }
+.steps .num { width: 24px; height: 24px; }
+.panel-head .icon-btn .fa, .opt-btn .fa, .search .fa { font-size: 14px; }
+.search .fa { color: var(--ink-3); }
+.filters label .fa, .field > span .fa { font-size: 11px; color: var(--ink-3); margin-right: 1px; }
+.field > span { display: inline-flex; align-items: center; gap: 5px; }
+.target .t-lab { display: inline-grid; place-items: center; width: 22px; height: 22px; font-size: 13px; }
+.target .t-clear .fa { font-size: 13px; }
+.badge.ic { color: #C98A00; border-color: color-mix(in srgb, #C98A00 35%, transparent); padding: 2px 5px; }
+.badge.ic .fa { font-size: 9px; vertical-align: -1px; }
+.wsel .fa { font-size: 11px; color: var(--ink-3); }
+.more-btn .fa { font-size: 12px; }
+.role-row .lbl { display: inline-grid; place-items: center; width: 22px; font-size: 12px; color: var(--ink-3); }
+.preview-bar .seg button .fa { font-size: 13px; }
+.preview-bar .seg button { gap: 5px; }
+.wbox > .fa { font-size: 13px; color: var(--ink-3); }
+.zoom-ctl button .fa { font-size: 13px; }
+.bg-btn > .fa { font-size: 13px; color: var(--ink-2); }
+.icon-toggle { position: relative; width: 34px; height: 34px; display: inline-grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface); color: var(--ink-3); cursor: pointer; }
+.icon-toggle input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.icon-toggle .fa { font-size: 14px; pointer-events: none; }
+.icon-toggle:hover { border-color: var(--accent); color: var(--accent-ink); }
+.icon-toggle:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-ink); }
+.icon-toggle:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.multi.icon-toggle { width: 30px; height: 30px; border-radius: 8px; }
+.role button { text-decoration: none; padding: 6px; border-radius: 6px; display: grid; place-items: center; font-size: 13px; }
+.role button:hover { background: var(--accent-soft); }
+.sd-title { display: inline-flex; align-items: center; gap: 7px; }
+.sd-title .fa { font-size: 12px; color: var(--ink-3); width: 14px; }
+.mini-lab .fa { font-size: 11px; color: var(--ink-3); }
+.mini-icon .fa { font-size: 11px; }
+.detail-head .mini-icon { margin-left: auto; width: 26px; height: 26px; text-decoration: none; display: grid; place-items: center; padding: 0; border-radius: 6px; border: 1px solid var(--line-strong); color: var(--ink-2); background: var(--surface); }
+.detail-head .mini-icon:hover:not(:disabled) { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.c-reset { width: 36px; padding: 0; display: grid; place-items: center; }
+.c-reset .fa { font-size: 13px; }
+.bgp-title { display: inline-flex; align-items: center; gap: 6px; }
+.bgp-title .fa { color: var(--ink-3); }
+.tabbar .fa { font-size: 20px; }
+/* 見出し（h2）：アイコンのタイル＋英字の小見出し＋見出し */
+h2.hx { display: flex; align-items: center; gap: 10px; }
+.hx-ic { position: relative; flex-shrink: 0; width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; font-size: 14px;
+  color: #FFFFFF; background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #9B6BFF)); box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 32%, transparent), inset 0 1px 0 rgba(255,255,255,.28); }
+.hx-ic::after { content: ""; position: absolute; right: -3px; bottom: -3px; width: 8px; height: 8px; border-radius: 3px; background: var(--coral); box-shadow: 0 0 0 2px var(--surface); }
+.hx-t { display: flex; flex-direction: column; line-height: 1.25; }
+.hx-t .eb { margin-bottom: 3px; }
+.sec-head h2.hx { align-items: center; }
+.big-head h2.hx, .out-head h2.hx { font-size: 16px; }
 /* ===== 使い方ツアー ===== */
 .tour-btn { width: 36px; height: 36px; border-radius: 8px; font: 600 15px var(--ui); color: var(--ink-2); }
 .tour-btn:hover { background: var(--ink); border-color: var(--ink); color: var(--surface); }
@@ -641,7 +687,7 @@ body.resizing iframe, body.resizing .panel-preview { pointer-events: none; }
 @keyframes pop { from { transform: scale(.985); opacity: 0; } to { transform: none; opacity: 1; } }
 .big::backdrop { background: rgba(13,14,17,.5); backdrop-filter: blur(2px); }
 .big-head { display: flex; align-items: center; gap: 20px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
-.big-head h2 { margin: 0; font-size: 16px; font-weight: 600; }
+.big-head h2 { margin: 0; font-size: 16px; font-weight: 600; flex-shrink: 0; }
 .big-spec { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-radius: 8px; background: var(--site-bg, #FFFFFF); color: #26241F; border: 1px solid var(--line); }
 .big-spec .cap { flex-shrink: 0; font: 500 10px/1.3 var(--mono); color: var(--site-sub, #6B6B73); }
 .big-spec .txt { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 24px; line-height: 1.4; }
@@ -696,18 +742,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <span data-i="0" style="font-family:'Dela Gothic One';font-size:24px">フ</span><span data-i="1" class="c-blue" style="font-family:'Hachi Maru Pop';font-size:18.7px">ォ</span><span data-i="2" style="font-family:'Shippori Mincho B1';font-weight:800;font-size:25.4px">ン</span><span data-i="3" class="c-coral" style="font-family:'DotGothic16';font-size:23.5px">ト</span><span data-i="4" style="font-family:'Yuji Syuku';font-size:24.5px">セ</span><span data-i="5" class="c-blue" style="font-family:'Rampart One';font-size:24.5px">レ</span><span data-i="6" style="font-family:'Zen Maru Gothic';font-weight:900;font-size:24px">ク</span><span data-i="7" class="tilt" style="font-family:'Reggae One';font-size:23.5px">タ</span><span data-i="8" class="c-coral" style="font-family:'Mochiy Pop One';font-size:22.1px">ー</span>
     </button>
     <ol class="steps" aria-label="作業の流れ">
-      <li class="now" data-step="1" aria-current="step"><span class="num">1</span><span class="txt">フォントを選ぶ</span></li>
+      <li class="now" data-step="1" aria-current="step"><span class="num" aria-hidden="true"><svg class="fa fa-font" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M285.1 50.7C279.9 39.3 268.5 32 256 32s-23.9 7.3-29.1 18.7L59.5 416 48 416c-17.7 0-32 14.3-32 32s14.3 32 32 32l88 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-6.1 0 22-48 208.3 0 22 48-6.1 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l88 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-11.5 0-167.4-365.3zM330.8 304L181.2 304 256 140.8 330.8 304z"/></svg></span><span class="visually-hidden">手順1：</span><span class="txt">フォントを選ぶ</span></li>
       <li class="sep" aria-hidden="true"></li>
-      <li data-step="2"><span class="num">2</span><span class="txt">タグを調整</span></li>
+      <li data-step="2"><span class="num" aria-hidden="true"><svg class="fa fa-sliders" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 224zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384z"/></svg></span><span class="visually-hidden">手順2：</span><span class="txt">タグを調整</span></li>
       <li class="sep" aria-hidden="true"></li>
-      <li data-step="3"><span class="num">3</span><span class="txt">画面幅で確認</span></li>
+      <li data-step="3"><span class="num" aria-hidden="true"><svg class="fa fa-display" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M448 96l0 256-384 0 0-256 384 0zM64 32C28.7 32 0 60.7 0 96L0 352c0 35.3 28.7 64 64 64l144 0-16 48-72 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l272 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-72 0-16-48 144 0c35.3 0 64-28.7 64-64l0-256c0-35.3-28.7-64-64-64L64 32z"/></svg></span><span class="visually-hidden">手順3：</span><span class="txt">画面幅で確認</span></li>
       <li class="sep" aria-hidden="true"></li>
-      <li data-step="4"><span class="num">4</span><span class="txt">プロンプト出力</span></li>
+      <li data-step="4"><span class="num" aria-hidden="true"><svg class="fa fa-file-export" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M96.5 0c-35.3 0-64 28.7-64 64l0 384c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-96 78.1 0-31 31c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l72-72c9.4-9.4 9.4-24.6 0-33.9l-72-72c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l31 31-78.1 0 0-133.5c0-17-6.7-33.3-18.7-45.3L291.2 18.7C279.2 6.7 263 0 246 0L96.5 0zM358 176l-93.5 0c-13.3 0-24-10.7-24-24L240.5 58.5 358 176zM224.5 328c0-13.3 10.7-24 24-24l104 0 0 48-104 0c-13.3 0-24-10.7-24-24z"/></svg></span><span class="visually-hidden">手順4：</span><span class="txt">プロンプト出力</span></li>
     </ol>
     <div class="topbar-actions">
-      <button type="button" class="icon-btn tour-btn" id="tourBtn" title="使い方を見る" aria-label="使い方を見る">?</button>
-      <button type="button" class="btn" id="reset" aria-label="フォントとタグの設定をすべて初期状態に戻す" title="すべて初期状態に戻す"><svg class="short" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span class="long">リセット</span></button>
-      <button type="button" class="btn primary" id="openOutput"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="long">プロンプト・CSSを出力</span><span class="short">出力</span></button>
+      <button type="button" class="icon-btn tour-btn" id="tourBtn" title="使い方を見る" aria-label="使い方を見る"><svg class="fa fa-circle-question" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M464 256a208 208 0 1 0 -416 0 208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0 256 256 0 1 1 -512 0zm256-80c-17.7 0-32 14.3-32 32 0 13.3-10.7 24-24 24s-24-10.7-24-24c0-44.2 35.8-80 80-80s80 35.8 80 80c0 47.2-36 67.2-56 74.5l0 3.8c0 13.3-10.7 24-24 24s-24-10.7-24-24l0-8.1c0-20.5 14.8-35.2 30.1-40.2 6.4-2.1 13.2-5.5 18.2-10.3 4.3-4.2 7.7-10 7.7-19.6 0-17.7-14.3-32-32-32zM224 368a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/></svg></button>
+      <button type="button" class="icon-btn tour-btn" id="reset" aria-label="フォントとタグの設定をすべて初期状態に戻す" title="すべて初期状態に戻す"><svg class="fa fa-rotate-left" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 192l144 0c9.7 0 18.5-5.8 22.2-14.8s1.7-19.3-5.2-26.2l-46.7-46.7c75.3-58.6 184.3-53.3 253.5 15.9 75 75 75 196.5 0 271.5s-196.5 75-271.5 0c-10.2-10.2-19-21.3-26.4-33-9.5-14.9-29.3-19.3-44.2-9.8s-19.3 29.3-9.8 44.2C49.7 408.7 61.4 423.5 75 437 175 537 337 537 437 437S537 175 437 75C342.8-19.3 193.3-24.7 92.7 58.8L41 7C34.1 .2 23.8-1.9 14.8 1.8S0 14.3 0 24L0 168c0 13.3 10.7 24 24 24z"/></svg></button>
+      <button type="button" class="btn primary" id="openOutput"><svg class="fa fa-file-export" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M96.5 0c-35.3 0-64 28.7-64 64l0 384c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-96 78.1 0-31 31c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l72-72c9.4-9.4 9.4-24.6 0-33.9l-72-72c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l31 31-78.1 0 0-133.5c0-17-6.7-33.3-18.7-45.3L291.2 18.7C279.2 6.7 263 0 246 0L96.5 0zM358 176l-93.5 0c-13.3 0-24-10.7-24-24L240.5 58.5 358 176zM224.5 328c0-13.3 10.7-24 24-24l104 0 0 48-104 0c-13.3 0-24-10.7-24-24z"/></svg><span class="long">プロンプト・CSS</span><span class="short">出力</span></button>
     </div>
   </header>
 
@@ -716,26 +762,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <section class="panel-fonts" aria-label="フォント一覧">
       <div class="controls">
         <div class="panel-head">
-          <h2><span class="eb">Fonts</span>フォントを選ぶ</h2>
+          <h2 class="hx"><span class="hx-ic" aria-hidden="true"><svg class="fa fa-font" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M285.1 50.7C279.9 39.3 268.5 32 256 32s-23.9 7.3-29.1 18.7L59.5 416 48 416c-17.7 0-32 14.3-32 32s14.3 32 32 32l88 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-6.1 0 22-48 208.3 0 22 48-6.1 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l88 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-11.5 0-167.4-365.3zM330.8 304L181.2 304 256 140.8 330.8 304z"/></svg></span><span class="hx-t"><span class="eb">Fonts</span>フォントを選ぶ</span></h2>
           <div class="ph-right">
             <span class="count mono" id="count" aria-live="polite"></span>
-            <button type="button" class="icon-btn sm" id="bigOpen" title="大きな画面で選ぶ" aria-label="大きな画面で選ぶ"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
+            <button type="button" class="icon-btn sm" id="bigOpen" title="大きな画面で選ぶ" aria-label="大きな画面で選ぶ"><svg class="fa fa-expand" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M32 32C14.3 32 0 46.3 0 64l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 32zM64 352c0-17.7-14.3-32-32-32S0 334.3 0 352l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96z"/></svg></button>
           </div>
         </div>
         <div class="target" id="target" aria-live="polite"></div>
         <div class="seg" id="tabs" role="group" aria-label="フォントの種類"></div>
         <div class="search-row">
           <label class="search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <svg class="fa fa-magnifying-glass" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376C296.3 401.1 253.9 416 208 416 93.1 416 0 322.9 0 208S93.1 0 208 0 416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
             <input type="search" id="q" placeholder="フォント名で検索" aria-label="フォント名で検索" autocomplete="off">
           </label>
-          <button type="button" class="opt-btn" id="optBtn" aria-expanded="false" aria-controls="opts" title="絞り込み・並び順・試し書き" aria-label="絞り込み・並び順・試し書き"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg><span class="opt-dot" id="optDot" hidden></span></button>
+          <button type="button" class="opt-btn" id="optBtn" aria-expanded="false" aria-controls="opts" title="絞り込み・並び順・試し書き" aria-label="絞り込み・並び順・試し書き"><svg class="fa fa-sliders" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 224zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384z"/></svg><span class="opt-dot" id="optDot" hidden></span></button>
         </div>
         <div class="chips" id="chips" role="group" aria-label="分類"></div>
         <div class="opts" id="opts" hidden>
         <div class="filters">
-          <label><input type="checkbox" id="pickOnly">定番のみ</label>
-          <label id="varWrap"><input type="checkbox" id="varOnly">可変フォント</label>
+          <label title="定番のフォントだけ表示"><input type="checkbox" id="pickOnly"><svg class="fa fa-star" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M309.5-18.9c-4.1-8-12.4-13.1-21.4-13.1s-17.3 5.1-21.4 13.1L193.1 125.3 33.2 150.7c-8.9 1.4-16.3 7.7-19.1 16.3s-.5 18 5.8 24.4l114.4 114.5-25.2 159.9c-1.4 8.9 2.3 17.9 9.6 23.2s16.9 6.1 25 2L288.1 417.6 432.4 491c8 4.1 17.7 3.3 25-2s11-14.2 9.6-23.2L441.7 305.9 556.1 191.4c6.4-6.4 8.6-15.8 5.8-24.4s-10.1-14.9-19.1-16.3L383 125.3 309.5-18.9z"/></svg>定番のみ</label>
+          <label id="varWrap" title="太さを自由に変えられるフォントだけ表示"><input type="checkbox" id="varOnly"><svg class="fa fa-sliders" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 224zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384z"/></svg>可変</label>
           <select id="sort" aria-label="並び順">
             <option value="pop">人気順</option>
             <option value="name">名前順</option>
@@ -743,10 +789,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </select>
         </div>
         <div class="sample-row">
-          <label class="field" for="sample"><span>試し書き</span>
+          <label class="field" for="sample"><span><svg class="fa fa-pen" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M352.9 21.2L308 66.1 445.9 204 490.8 159.1C504.4 145.6 512 127.2 512 108s-7.6-37.6-21.2-51.1L455.1 21.2C441.6 7.6 423.2 0 404 0s-37.6 7.6-51.1 21.2zM274.1 100L58.9 315.1c-10.7 10.7-18.5 24.1-22.6 38.7L.9 481.6c-2.3 8.3 0 17.3 6.2 23.4s15.1 8.5 23.4 6.2l127.8-35.5c14.6-4.1 27.9-11.8 38.7-22.6L412 237.9 274.1 100z"/></svg>試し書き</span>
             <input type="text" id="sample" maxlength="60" autocomplete="off">
           </label>
-          <label class="field" for="size"><span>大きさ <span class="mono" id="sizeOut">24px</span></span>
+          <label class="field" for="size"><span><svg class="fa fa-text-height" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M40 32C17.9 32 0 49.9 0 72l0 56c0 17.7 14.3 32 32 32s32-14.3 32-32l0-32 64 0 0 320-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l128 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0 0-320 64 0 0 32c0 17.7 14.3 32 32 32s32-14.3 32-32l0-56c0-22.1-17.9-40-40-40L40 32zM438.6 361.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l64 64c12.5 12.5 32.8 12.5 45.3 0l64-64c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-9.4 9.4 0-229.5 9.4 9.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-64-64c-6-6-14.1-9.4-22.6-9.4s-16.6 3.4-22.6 9.4l-64 64c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l9.4-9.4 0 229.5-9.4-9.4z"/></svg><span class="mono" id="sizeOut">24px</span></span>
             <input type="range" id="size" min="14" max="56" step="2" value="24">
           </label>
         </div>
@@ -759,20 +805,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <section class="panel-preview" aria-label="プレビュー">
       <div class="preview-bar">
         <div class="seg" id="devices" role="group" aria-label="画面幅のプリセット">
-          <button type="button" data-device="sp" aria-pressed="false">SP <span class="n">375</span></button>
-          <button type="button" data-device="tab" aria-pressed="false">Tab <span class="n">768</span></button>
-          <button type="button" data-device="pc" aria-pressed="true">PC <span class="n">1280</span></button>
-          <button type="button" data-device="fit" aria-pressed="false">枠に合わせる</button>
+          <button type="button" data-device="sp" aria-pressed="false" title="スマホ（375px）" aria-label="スマホ 375px"><svg class="fa fa-mobile-screen-button" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M16 64C16 28.7 44.7 0 80 0L304 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L80 512c-35.3 0-64-28.7-64-64L16 64zm64 0l0 304 224 0 0-304-224 0zM192 472c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32z"/></svg><span class="n">375</span></button>
+          <button type="button" data-device="tab" aria-pressed="false" title="タブレット（768px）" aria-label="タブレット 768px"><svg class="fa fa-tablet-screen-button" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M0 64C0 28.7 28.7 0 64 0L384 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zM256 432a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM384 64l-320 0 0 288 320 0 0-288z"/></svg><span class="n">768</span></button>
+          <button type="button" data-device="pc" aria-pressed="true" title="パソコン（1280px）" aria-label="パソコン 1280px"><svg class="fa fa-desktop" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M64 32C28.7 32 0 60.7 0 96L0 352c0 35.3 28.7 64 64 64l144 0-16 48-72 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l272 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-72 0-16-48 144 0c35.3 0 64-28.7 64-64l0-256c0-35.3-28.7-64-64-64L64 32zM96 96l320 0c17.7 0 32 14.3 32 32l0 160c0 17.7-14.3 32-32 32L96 320c-17.7 0-32-14.3-32-32l0-160c0-17.7 14.3-32 32-32z"/></svg><span class="n">1280</span></button>
+          <button type="button" data-device="fit" aria-pressed="false" title="枠に合わせる" aria-label="枠に合わせる"><svg class="fa fa-arrows-left-right-to-line" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M32 96C14.3 96 0 110.3 0 128L0 384c0 17.7 14.3 32 32 32s32-14.3 32-32l0-256c0-17.7-14.3-32-32-32zM390.6 342.6l64-64c12.5-12.5 12.5-32.8 0-45.3l-64-64c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l9.4 9.4-133.5 0 9.4-9.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-64 64c-6 6-9.4 14.1-9.4 22.6s3.4 16.6 9.4 22.6l64 64c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-9.4-9.4 133.5 0-9.4 9.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0zM576 128c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32s32-14.3 32-32l0-256z"/></svg></button>
         </div>
-        <label class="wbox" for="vpWidth">幅<span class="wbox-in"><input type="number" id="vpWidth" min="320" max="2560" step="1" inputmode="numeric"><span class="u">px</span></span></label>
+        <label class="wbox" for="vpWidth" title="画面幅"><svg class="fa fa-arrows-left-right" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M470.6 374.6l96-96c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l41.4 41.4-357.5 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-6 6-9.4 14.1-9.4 22.6s3.4 16.6 9.4 22.6l96 96c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-41.4-41.4 357.5 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0z"/></svg><span class="wbox-in"><input type="number" id="vpWidth" min="320" max="2560" step="1" inputmode="numeric"><span class="u">px</span></span></label>
         <div class="zoom-ctl" role="group" aria-label="表示倍率">
-          <button type="button" id="zoomOut" aria-label="縮小">−</button>
+          <button type="button" id="zoomOut" aria-label="縮小" title="縮小（Ctrl＋スクロールでも）"><svg class="fa fa-magnifying-glass-minus" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376C296.3 401.1 253.9 416 208 416 93.1 416 0 322.9 0 208S93.1 0 208 0 416 93.1 416 208zM136 184c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z"/></svg></button>
           <select id="zoom" aria-label="表示倍率"></select>
-          <button type="button" id="zoomIn" aria-label="拡大">＋</button>
+          <button type="button" id="zoomIn" aria-label="拡大" title="拡大（Ctrl＋スクロールでも）"><svg class="fa fa-magnifying-glass-plus" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376C296.3 401.1 253.9 416 208 416 93.1 416 0 322.9 0 208S93.1 0 208 0 416 93.1 416 208zM208 112c-13.3 0-24 10.7-24 24l0 48-48 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l48 0 0 48c0 13.3 10.7 24 24 24s24-10.7 24-24l0-48 48 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-48 0 0-48c0-13.3-10.7-24-24-24z"/></svg></button>
         </div>
-        <button type="button" class="bg-btn" id="bgBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="bgPop" title="サイトの背景色"><span class="bg-sw" id="bgBtnSw"></span>背景<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <button type="button" class="bg-btn" id="bgBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="bgPop" title="サイトの背景色"><svg class="fa fa-fill-drip" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M309.7 71.6l-64.4 64.4 33.4 33.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-33.4-33.4-96.4 96.4c-2.9 2.9-5.1 6.5-6.3 10.3l321.5 0 53.7-53.7c4.9-4.9 7.6-11.5 7.6-18.3s-2.7-13.5-7.6-18.3L346.3 71.6C341.5 66.7 334.9 64 328 64s-13.5 2.7-18.3 7.6zM58.3 232.4l96.4-96.4-49.4-49.4c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L200 90.7 264.4 26.3C281.3 9.5 304.1 0 328 0s46.7 9.5 63.6 26.3L517.7 152.4C534.5 169.3 544 192.1 544 216s-9.5 46.7-26.3 63.6L311.6 485.7C294.7 502.5 271.9 512 248 512s-46.7-9.5-63.6-26.3L58.3 359.6C41.5 342.7 32 319.9 32 296s9.5-46.7 26.3-63.6zM512 544c-35.3 0-64-28.7-64-64 0-25.2 32.6-79.6 51.2-108.7 6-9.4 19.5-9.4 25.5 0 18.7 29.1 51.2 83.5 51.2 108.7 0 35.3-28.7 64-64 64z"/></svg><span class="bg-sw" id="bgBtnSw"></span><span class="visually-hidden">背景色</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="bg-pop" id="bgPop" role="dialog" aria-label="サイトの背景色" hidden></div>
-        <label class="tag-toggle"><input type="checkbox" id="showTags" checked>タグ名を表示</label>
+        <label class="tag-toggle icon-toggle" title="タグ名を表示"><input type="checkbox" id="showTags" checked aria-label="タグ名を表示"><svg class="fa fa-tag" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M32.5 96l0 149.5c0 17 6.7 33.3 18.7 45.3l192 192c25 25 65.5 25 90.5 0L483.2 333.3c25-25 25-65.5 0-90.5l-192-192C279.2 38.7 263 32 246 32L96.5 32c-35.3 0-64 28.7-64 64zm112 16a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg></label>
       </div>
       <div class="stage" id="stage">
         <div class="ruler" id="ruler">1280px</div>
@@ -789,8 +835,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="gap-m"></div>
             <div class="blk"><span class="tag" data-for="button">button</span><a class="cta" data-t="button" data-s="btn" href="#site"></a></div>
             <div class="gap-l"></div>
-            <div class="h2-deco" aria-hidden="true"><span class="h2-ic"><svg viewBox="0 0 512 512" aria-hidden="true" focusable="false"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc. --><path fill="currentColor" d="M256 141.3l0 309.3 .5-.2C311.1 427.7 369.7 416 428.8 416l19.2 0 0-320-19.2 0c-42.2 0-84.1 8.4-123.1 24.6-16.8 7-33.4 13.9-49.7 20.7zM230.9 61.5L256 72 281.1 61.5C327.9 42 378.1 32 428.8 32L464 32c26.5 0 48 21.5 48 48l0 352c0 26.5-21.5 48-48 48l-35.2 0c-50.7 0-100.9 10-147.7 29.5l-12.8 5.3c-7.9 3.3-16.7 3.3-24.6 0l-12.8-5.3C184.1 490 133.9 480 83.2 480L48 480c-26.5 0-48-21.5-48-48L0 80C0 53.5 21.5 32 48 32l35.2 0c50.7 0 100.9 10 147.7 29.5z"/></svg></span><span class="h2-kicker">Featured Story</span><span class="h2-line"></span></div>
-            <div class="blk h2-blk"><span class="tag" data-for="h2">h2</span><h2 data-t="h2" data-s="h2"></h2></div>
+            <div class="blk"><span class="tag" data-for="h2">h2</span><h2 data-t="h2" data-s="h2"></h2></div>
             <div class="gap-s"></div>
             <div class="blk"><span class="tag" data-for="p">p</span><p data-t="p" data-s="p2"></p></div>
             <div class="gap-m"></div>
@@ -824,11 +869,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- 右：役割とタグ調整 -->
     <section class="panel-tags" aria-label="フォントの役割とタグの調整">
       <div class="sec">
-        <div class="sec-head"><h2><span class="eb">Roles</span>フォントの役割</h2><button type="button" class="help" data-tip="レフトバーのカードで「役割に設定」を押すと、見出し・本文・欧文のフォントをまとめて変えられます。" aria-label="説明：レフトバーのカードで「役割に設定」を押すと、見出し・本文・欧文のフォントをまとめて変えられます。">?</button></div>
+        <div class="sec-head"><h2 class="hx"><span class="hx-ic" aria-hidden="true"><svg class="fa fa-layer-group" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M232.5 5.2c14.9-6.9 32.1-6.9 47 0l218.6 101c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L13.9 149.8C5.4 145.8 0 137.3 0 128s5.4-17.9 13.9-21.8L232.5 5.2zM48.1 218.4l164.3 75.9c27.7 12.8 59.6 12.8 87.3 0l164.3-75.9 34.1 15.8c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L13.9 277.8C5.4 273.8 0 265.3 0 256s5.4-17.9 13.9-21.8l34.1-15.8zM13.9 362.2l34.1-15.8 164.3 75.9c27.7 12.8 59.6 12.8 87.3 0l164.3-75.9 34.1 15.8c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L13.9 405.8C5.4 401.8 0 393.3 0 384s5.4-17.9 13.9-21.8z"/></svg></span><span class="hx-t"><span class="eb">Roles</span>フォントの役割</span></h2><button type="button" class="help" data-tip="レフトバーのカードで「役割に設定」を押すと、見出し・本文・欧文のフォントをまとめて変えられます。" aria-label="説明：レフトバーのカードで「役割に設定」を押すと、見出し・本文・欧文のフォントをまとめて変えられます。">?</button></div>
         <div class="role-list" id="roles"></div>
       </div>
       <div class="sec">
-        <div class="sec-head"><h2><span class="eb">Tags</span>タグ別の調整 <button type="button" class="help" data-tip="キャンバスの文字をクリックしても選べます。Shift＋クリックで複数選択。青い点は初期値から変えたタグです。" aria-label="説明：キャンバスの文字をクリックしても選べます。Shift＋クリックで複数選択。青い点は初期値から変えたタグです。">?</button></h2><label class="multi"><input type="checkbox" id="multi">複数選択</label></div>
+        <div class="sec-head"><h2 class="hx"><span class="hx-ic" aria-hidden="true"><svg class="fa fa-tags" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M401.2 39.1L549.4 189.4c27.7 28.1 27.7 73.1 0 101.2L393 448.9c-9.3 9.4-24.5 9.5-33.9 .2s-9.5-24.5-.2-33.9L515.3 256.8c9.2-9.3 9.2-24.4 0-33.7L367 72.9c-9.3-9.4-9.2-24.6 .2-33.9s24.6-9.2 33.9 .2zM32.1 229.5L32.1 96c0-35.3 28.7-64 64-64l133.5 0c17 0 33.3 6.7 45.3 18.7l144 144c25 25 25 65.5 0 90.5L285.4 418.7c-25 25-65.5 25-90.5 0l-144-144c-12-12-18.7-28.3-18.7-45.3zm144-85.5a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg></span><span class="hx-t"><span class="eb">Tags</span>タグ別の調整</span> <button type="button" class="help" data-tip="キャンバスの文字をクリックしても選べます。Shift＋クリックで複数選択。青い点は初期値から変えたタグです。" aria-label="説明：キャンバスの文字をクリックしても選べます。Shift＋クリックで複数選択。青い点は初期値から変えたタグです。">?</button></h2><label class="multi icon-toggle" title="複数選択（Shift＋クリックでも）"><input type="checkbox" id="multi" aria-label="複数選択"><svg class="fa fa-object-group" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M32 119.4C12.9 108.4 0 87.7 0 64 0 28.7 28.7 0 64 0 87.7 0 108.4 12.9 119.4 32l337.1 0c11.1-19.1 31.7-32 55.4-32 35.3 0 64 28.7 64 64 0 23.7-12.9 44.4-32 55.4l0 273.1c19.1 11.1 32 31.7 32 55.4 0 35.3-28.7 64-64 64-23.7 0-44.4-12.9-55.4-32l-337.1 0c-11.1 19.1-31.7 32-55.4 32-35.3 0-64-28.7-64-64 0-23.7 12.9-44.4 32-55.4l0-273.1zm448 0c-9.7-5.6-17.8-13.7-23.4-23.4L119.4 96c-5.6 9.7-13.7 17.8-23.4 23.4l0 273.1c9.7 5.6 17.8 13.7 23.4 23.4l337.1 0c5.6-9.7 13.7-17.8 23.4-23.4l0-273.1zM144 176c0-17.7 14.3-32 32-32l112 0c17.7 0 32 14.3 32 32l0 64c0 17.7-14.3 32-32 32l-112 0c-17.7 0-32-14.3-32-32l0-64zM256 320l32 0c44.2 0 80-35.8 80-80l32 0c17.7 0 32 14.3 32 32l0 64c0 17.7-14.3 32-32 32l-112 0c-17.7 0-32-14.3-32-32l0-16z"/></svg></label></div>
         <div class="tag-grid" id="tagGrid" role="group" aria-label="調整するタグ"></div>
       </div>
       <div class="detail" id="detail"></div>
@@ -839,13 +884,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <nav class="tabbar" aria-label="表示の切り替え">
     <button type="button" data-view="fonts" aria-pressed="true">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7V5h16v2M12 5v14M9 19h6"/></svg>フォント</button>
+      <svg class="fa fa-font" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M285.1 50.7C279.9 39.3 268.5 32 256 32s-23.9 7.3-29.1 18.7L59.5 416 48 416c-17.7 0-32 14.3-32 32s14.3 32 32 32l88 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-6.1 0 22-48 208.3 0 22 48-6.1 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l88 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-11.5 0-167.4-365.3zM330.8 304L181.2 304 256 140.8 330.8 304z"/></svg>フォント</button>
     <button type="button" data-view="tags" aria-pressed="false">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>タグ調整</button>
+      <svg class="fa fa-sliders" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 224zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384z"/></svg>タグ調整</button>
     <button type="button" data-view="preview" aria-pressed="false">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>プレビュー</button>
+      <svg class="fa fa-display" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M448 96l0 256-384 0 0-256 384 0zM64 32C28.7 32 0 60.7 0 96L0 352c0 35.3 28.7 64 64 64l144 0-16 48-72 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l272 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-72 0-16-48 144 0c35.3 0 64-28.7 64-64l0-256c0-35.3-28.7-64-64-64L64 32z"/></svg>プレビュー</button>
     <button type="button" data-open-output aria-haspopup="dialog">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>出力</button>
+      <svg class="fa fa-file-export" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M96.5 0c-35.3 0-64 28.7-64 64l0 384c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-96 78.1 0-31 31c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l72-72c9.4-9.4 9.4-24.6 0-33.9l-72-72c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l31 31-78.1 0 0-133.5c0-17-6.7-33.3-18.7-45.3L291.2 18.7C279.2 6.7 263 0 246 0L96.5 0zM358 176l-93.5 0c-13.3 0-24-10.7-24-24L240.5 58.5 358 176zM224.5 328c0-13.3 10.7-24 24-24l104 0 0 48-104 0c-13.3 0-24-10.7-24-24z"/></svg>出力</button>
   </nav>
 
   <!-- 使い方ツアー -->
@@ -867,7 +912,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- 大きな画面でフォントを選ぶ（レフトバーの一覧をここへ移して表示する） -->
   <dialog class="big" id="bigDlg" aria-labelledby="bigTitle">
     <div class="big-head">
-      <div><span class="eb">Fonts</span><h2 id="bigTitle">大きな画面で選ぶ</h2></div>
+      <h2 class="hx" id="bigTitle"><span class="hx-ic" aria-hidden="true"><svg class="fa fa-expand" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M32 32C14.3 32 0 46.3 0 64l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 32zM64 352c0-17.7-14.3-32-32-32S0 334.3 0 352l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96z"/></svg></span><span class="hx-t"><span class="eb">Fonts</span>大きな画面で選ぶ</span></h2>
       <div class="big-spec" id="bigSpec" aria-live="polite"></div>
       <button type="button" class="btn primary" id="bigDone">完了</button>
     </div>
@@ -878,10 +923,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <dialog class="out" id="outDlg" aria-labelledby="outTitle">
     <div class="out-head">
       <div>
-        <h2 id="outTitle">プロンプト・CSSを出力</h2>
+        <h2 class="hx" id="outTitle"><span class="hx-ic" aria-hidden="true"><svg class="fa fa-file-export" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M96.5 0c-35.3 0-64 28.7-64 64l0 384c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-96 78.1 0-31 31c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l72-72c9.4-9.4 9.4-24.6 0-33.9l-72-72c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l31 31-78.1 0 0-133.5c0-17-6.7-33.3-18.7-45.3L291.2 18.7C279.2 6.7 263 0 246 0L96.5 0zM358 176l-93.5 0c-13.3 0-24-10.7-24-24L240.5 58.5 358 176zM224.5 328c0-13.3 10.7-24 24-24l104 0 0 48-104 0c-13.3 0-24-10.7-24-24z"/></svg></span><span class="hx-t"><span class="eb">Export</span>プロンプト・CSSを出力</span></h2>
         <p id="outLead"></p>
       </div>
-      <button type="button" class="icon-btn" id="outClose" aria-label="閉じる"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <button type="button" class="icon-btn" id="outClose" aria-label="閉じる"><svg class="fa fa-xmark" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M55.1 73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L147.2 256 9.9 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192.5 301.3 329.9 438.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.8 256 375.1 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192.5 210.7 55.1 73.4z"/></svg></button>
     </div>
     <div class="out-kind seg" id="outKind" role="group" aria-label="出力する内容">
       <button type="button" data-kind="prompt" aria-pressed="true">AIに渡すプロンプト</button>
@@ -913,7 +958,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="out-block" data-show="code">
         <div class="ob-head">
           <h3>A. HTMLに直接書く</h3>
-          <button type="button" class="btn sm" data-copy="codeHtml"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>コピー</span></button>
+          <button type="button" class="btn sm" data-copy="codeHtml"><svg class="fa fa-copy" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M384 336l-192 0c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l133.5 0c4.2 0 8.3 1.7 11.3 4.7l58.5 58.5c3 3 4.7 7.1 4.7 11.3L400 320c0 8.8-7.2 16-16 16zM192 384l192 0c35.3 0 64-28.7 64-64l0-197.5c0-17-6.7-33.3-18.7-45.3L370.7 18.7C358.7 6.7 342.5 0 325.5 0L192 0c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-16-48 0 0 16c0 8.8-7.2 16-16 16L64 464c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l16 0 0-48-16 0z"/></svg><span>コピー</span></button>
         </div>
         <p class="ob-desc">HTMLの <code>&lt;head&gt;</code> 内に貼り付けます。フォントの読み込みと <code>&lt;style&gt;</code> がひとまとまりになっています。</p>
         <p class="ob-desc mix-note" hidden></p>
@@ -924,24 +969,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="out-block" data-show="code">
         <div class="ob-head">
           <h3>B. CSSファイルにする</h3>
-          <button type="button" class="btn sm" data-copy="codeCss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>コピー</span></button>
+          <button type="button" class="btn sm" data-copy="codeCss"><svg class="fa fa-copy" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M384 336l-192 0c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l133.5 0c4.2 0 8.3 1.7 11.3 4.7l58.5 58.5c3 3 4.7 7.1 4.7 11.3L400 320c0 8.8-7.2 16-16 16zM192 384l192 0c35.3 0 64-28.7 64-64l0-197.5c0-17-6.7-33.3-18.7-45.3L370.7 18.7C358.7 6.7 342.5 0 325.5 0L192 0c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-16-48 0 0 16c0 8.8-7.2 16-16 16L64 464c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l16 0 0-48-16 0z"/></svg><span>コピー</span></button>
         </div>
         <p class="ob-desc">このファイル1つで、フォントの読み込み（<code>@import</code>）まで完結します。</p>
         <p class="ob-desc mix-note" hidden></p>
         <div class="file-row">
           <label class="fname" for="cssName">ファイル名<input type="text" id="cssName" value="typography.css" spellcheck="false" autocomplete="off"></label>
-          <button type="button" class="btn primary sm" id="saveCss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span id="saveLabel">CSSファイルを保存</span></button>
+          <button type="button" class="btn primary sm" id="saveCss"><svg class="fa fa-download" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M256 32c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 210.7-41.4-41.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8 12.5 45.3 0l96-96c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 242.7 256 32zM64 320c-35.3 0-64 28.7-64 64l0 32c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-32c0-35.3-28.7-64-64-64l-46.9 0-56.6 56.6c-31.2 31.2-81.9 31.2-113.1 0L110.9 320 64 320zm304 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg><span id="saveLabel">CSSファイルを保存</span></button>
         </div>
         <textarea id="codeCss" readonly spellcheck="false" aria-label="CSSファイルの中身"></textarea>
         <div class="link-line">
           <span>HTMLの <code>&lt;head&gt;</code> に追加する1行</span>
-          <div class="ll-row"><code id="linkTag"></code><button type="button" class="btn sm" data-copy="linkTag"><span>コピー</span></button></div>
+          <div class="ll-row"><code id="linkTag"></code><button type="button" class="btn sm" data-copy="linkTag"><svg class="fa fa-copy" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M384 336l-192 0c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l133.5 0c4.2 0 8.3 1.7 11.3 4.7l58.5 58.5c3 3 4.7 7.1 4.7 11.3L400 320c0 8.8-7.2 16-16 16zM192 384l192 0c35.3 0 64-28.7 64-64l0-197.5c0-17-6.7-33.3-18.7-45.3L370.7 18.7C358.7 6.7 342.5 0 325.5 0L192 0c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-16-48 0 0 16c0 8.8-7.2 16-16 16L64 464c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l16 0 0-48-16 0z"/></svg><span>コピー</span></button></div>
         </div>
       </div>
     </div>
     <div class="out-foot">
       <span class="hint" id="outMsg" aria-live="polite"></span>
-      <button type="button" class="btn primary" id="outCopy" data-show="prompt"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>プロンプトをコピー</span></button>
+      <button type="button" class="btn primary" id="outCopy" data-show="prompt"><svg class="fa fa-copy" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M384 336l-192 0c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l133.5 0c4.2 0 8.3 1.7 11.3 4.7l58.5 58.5c3 3 4.7 7.1 4.7 11.3L400 320c0 8.8-7.2 16-16 16zM192 384l192 0c35.3 0 64-28.7 64-64l0-197.5c0-17-6.7-33.3-18.7-45.3L370.7 18.7C358.7 6.7 342.5 0 325.5 0L192 0c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-16-48 0 0 16c0 8.8-7.2 16-16 16L64 464c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l16 0 0-48-16 0z"/></svg><span>プロンプトをコピー</span></button>
     </div>
   </dialog>
 </div>
@@ -1178,11 +1223,12 @@ const sampleMarker = document.createElement('meta');
 sampleMarker.name = 'font-sample-end';
 document.head.appendChild(sampleMarker);
 const sampleLinks = new Set();
-function loadCss(url, isSample) {
+function loadCss(url, isSample, fam) {
   if (cssCache.has(url)) return cssCache.get(url);
   const p = new Promise(resolve => {
     const l = document.createElement('link');
     l.rel = 'stylesheet'; l.href = url;
+    if (fam) l.dataset.fam = fam;
     l.onload = () => resolve(true);
     l.onerror = () => resolve(false);
     if (isSample) { document.head.insertBefore(l, sampleMarker); sampleLinks.add(l); }
@@ -1196,16 +1242,33 @@ function clearSampleLinks() {
   sampleLinks.clear();
 }
 const withTimeout = (p, ms) => Promise.race([p, new Promise(r => setTimeout(r, ms))]);
+/* 全文字を読み込んだフォント。
+   同じフォントの「試し書きの文字だけ」版が残っていると、ブラウザがそちらを選んで
+   試し書きに無い文字（例：Vol.01 の V・0・1）だけ別の書体になることがあるため、外す */
+const fullFams = new Set();
+function dropSampleLinks(fam) {
+  for (const l of [...sampleLinks]) {
+    if (l.dataset.fam !== fam) continue;
+    cssCache.delete(l.href); l.remove(); sampleLinks.delete(l);
+  }
+}
 async function loadFace(f, weights, text, isSample) {
   if (f.src !== 'google') return;
+  if (isSample && fullFams.has(f.family)) {
+    // すでに全文字を読み込んでいるので、それを使う
+    await loadFull(f);
+    await withTimeout(Promise.all(weights.map(x => document.fonts.load(`${x} 24px "${f.family}"`, text || 'Aあ'))), 6000).catch(() => {});
+    return;
+  }
   let url = `https://fonts.googleapis.com/css2?family=${famParam(f)}:wght@${weights.join(';')}&display=swap`;
   if (text) url += `&text=${encodeURIComponent(uniqChars(text))}`;
-  const ok = await loadCss(url, isSample);
+  const ok = await loadCss(url, isSample, f.family);
   if (ok) await withTimeout(Promise.all(weights.map(x => document.fonts.load(`${x} 24px "${f.family}"`, text || 'Aあ'))), 6000).catch(() => {});
 }
 function loadFull(f) {
   if (!f || f.src !== 'google') return Promise.resolve();
-  if (f.wght) return loadCss(`https://fonts.googleapis.com/css2?family=${famParam(f)}:wght@${f.wght[0]}..${f.wght[1]}&display=swap`, false);
+  if (!fullFams.has(f.family)) { fullFams.add(f.family); dropSampleLinks(f.family); }
+  if (f.wght) return loadCss(`https://fonts.googleapis.com/css2?family=${famParam(f)}:wght@${f.wght[0]}..${f.wght[1]}&display=swap`, false, f.family);
   return loadFace(f, f.weights, '', false);
 }
 
@@ -1275,12 +1338,12 @@ function renderTarget() {
   }
   const latin = state.pickTarget === 'latin';
   el.className = 'target' + (latin ? ' latin' : '');
-  el.innerHTML = `<span class="t-lab">適用先</span><span class="t-chips">${state.selTags.map(k => `<span class="t-chip">${tagLabel(k)}</span>`).join('')}</span>
+  el.innerHTML = `<span class="t-lab" title="適用先"><svg class="fa fa-crosshairs" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M288-16c17.7 0 32 14.3 32 32l0 18.3c98.1 14 175.7 91.6 189.7 189.7l18.3 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-18.3 0c-14 98.1-91.6 175.7-189.7 189.7l0 18.3c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-18.3C157.9 463.7 80.3 386.1 66.3 288L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l18.3 0C80.3 125.9 157.9 48.3 256 34.3L256 16c0-17.7 14.3-32 32-32zM131.2 288c12.7 62.7 62.1 112.1 124.8 124.8l0-12.8c0-17.7 14.3-32 32-32s32 14.3 32 32l0 12.8c62.7-12.7 112.1-62.1 124.8-124.8L432 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l12.8 0C432.1 161.3 382.7 111.9 320 99.2l0 12.8c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-12.8C193.3 111.9 143.9 161.3 131.2 224l12.8 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-12.8 0zM288 208a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg><span class="visually-hidden">適用先</span></span><span class="t-chips">${state.selTags.map(k => `<span class="t-chip">${tagLabel(k)}</span>`).join('')}</span>
     <div class="t-part" role="group" aria-label="適用する部分" title="${latin ? 'フォントをクリックすると、このタグの英数字だけに適用します（和文はそのまま）' : 'フォントをクリックすると、このタグの文字全体に適用します'}">
       <button type="button" data-pick="all" aria-pressed="${!latin}">文字全体</button>
       <button type="button" data-pick="latin" aria-pressed="${latin}">英数字<span class="t-ex">Aa12</span></button>
     </div>
-    <button type="button" class="t-clear" data-clear title="選択を解除" aria-label="選択を解除"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <button type="button" class="t-clear" data-clear title="選択を解除" aria-label="選択を解除"><svg class="fa fa-xmark" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M55.1 73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L147.2 256 9.9 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192.5 301.3 329.9 438.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.8 256 375.1 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192.5 210.7 55.1 73.4z"/></svg></button>
     ${doneMsg ? `<span class="t-done${doneWarn ? ' warn' : ''}">${esc(doneMsg)}</span>` : ''}`;
 }
 
@@ -1312,7 +1375,7 @@ function cardWeight(f) {
 
 function cardHTML(f) {
   const badges = [];
-  if (f.pick) badges.push('<span class="badge">定番</span>');
+  if (f.pick) badges.push('<span class="badge ic" title="定番"><svg class="fa fa-star" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M309.5-18.9c-4.1-8-12.4-13.1-21.4-13.1s-17.3 5.1-21.4 13.1L193.1 125.3 33.2 150.7c-8.9 1.4-16.3 7.7-19.1 16.3s-.5 18 5.8 24.4l114.4 114.5-25.2 159.9c-1.4 8.9 2.3 17.9 9.6 23.2s16.9 6.1 25 2L288.1 417.6 432.4 491c8 4.1 17.7 3.3 25-2s11-14.2 9.6-23.2L441.7 305.9 556.1 191.4c6.4-6.4 8.6-15.8 5.8-24.4s-10.1-14.9-19.1-16.3L383 125.3 309.5-18.9z"/></svg><span class="visually-hidden">定番</span></span>');
   if (f.wght) badges.push('<span class="badge">可変</span>');
   if (f.src === 'system') badges.push(systemAvailable(f) ? '<span class="badge ok">この端末で表示可</span>' : '<span class="badge">この端末には無し</span>');
   return `
@@ -1326,11 +1389,11 @@ function cardHTML(f) {
     ${f.src === 'system' && !systemAvailable(f) ? '<div class="note">この端末には無いため、代わりの書体で表示しています。</div>' : ''}
     <div class="card-actions">
       <button type="button" class="apply-btn" data-apply hidden></button>
-      <label class="wsel">太さ<select data-wsel aria-label="${esc(f.family)} の太さ">${f.weights.map(w => `<option value="${w}">${w}</option>`).join('')}</select></label>
-      <button type="button" class="more-btn" data-more aria-expanded="false">太さ一覧${chevron}</button>
+      <label class="wsel" title="太さ"><svg class="fa fa-weight-hanging" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M224 96a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm122.5 32c3.5-10 5.5-20.8 5.5-32 0-53-43-96-96-96s-96 43-96 96c0 11.2 1.9 22 5.5 32l-21.8 0c-28.3 0-53.2 18.5-61.3 45.6L2.4 440.2C.8 445.4 0 450.8 0 456.2 0 487 25 512 55.8 512l400.4 0c30.8 0 55.8-25 55.8-55.8 0-5.4-.8-10.8-2.4-16l-80-266.5c-8.1-27.1-33-45.6-61.3-45.6l-21.8 0z"/></svg><select data-wsel aria-label="${esc(f.family)} の太さ">${f.weights.map(w => `<option value="${w}">${w}</option>`).join('')}</select></label>
+      <button type="button" class="more-btn" data-more aria-expanded="false" title="太さ一覧" aria-label="太さ一覧"><svg class="fa fa-list" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>${chevron}</button>
     </div>
     <div class="role-row">
-      <span class="lbl">役割に設定：</span>
+      <span class="lbl" title="役割に設定"><svg class="fa fa-layer-group" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M232.5 5.2c14.9-6.9 32.1-6.9 47 0l218.6 101c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L13.9 149.8C5.4 145.8 0 137.3 0 128s5.4-17.9 13.9-21.8L232.5 5.2zM48.1 218.4l164.3 75.9c27.7 12.8 59.6 12.8 87.3 0l164.3-75.9 34.1 15.8c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L13.9 277.8C5.4 273.8 0 265.3 0 256s5.4-17.9 13.9-21.8l34.1-15.8zM13.9 362.2l34.1-15.8 164.3 75.9c27.7 12.8 59.6 12.8 87.3 0l164.3-75.9 34.1 15.8c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L13.9 405.8C5.4 401.8 0 393.3 0 384s5.4-17.9 13.9-21.8z"/></svg><span class="visually-hidden">役割に設定：</span></span>
       ${ROLES.map(r => `<button type="button" class="role-btn" data-role="${r.key}" aria-pressed="false">${r.label}</button>`).join('')}
     </div>
     <div class="waterfall"></div>`;
@@ -1511,7 +1574,7 @@ function renderRoles() {
     return `<div class="role">
       <span class="role-label">${r.label}</span>
       <span class="role-font" title="${esc(f.family)}" style="font-family:${esc(f.css)}">${esc(f.family)}</span>
-      <button type="button" data-find="${esc(f.id)}">変更</button>
+      <button type="button" data-find="${esc(f.id)}" title="${r.label}のフォントを変更" aria-label="${r.label}のフォントを変更"><svg class="fa fa-pen-to-square" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L368 46.1 465.9 144 490.3 119.6c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L432 177.9 334.1 80 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg></button>
     </div>`;
   }).join('');
 }
@@ -1655,7 +1718,6 @@ function update(opts = {}) {
   site.style.setProperty('--f-body', roleFont('body').css);
   site.style.setProperty('--f-accent', roleFont('accent').css);
   site.style.setProperty('--w-accent', nearest(roleFont('accent').weights, 500));
-  site.style.setProperty('--h2c', tagColor('h2'));
   for (const r of ROLES) loadFull(roleFont(r.key));
   for (const t of TAGS) { loadFull(tagFont(state.tags[t.key])); if (state.tags[t.key].mix !== 'none') loadFull(latinOf(state.tags[t.key])); }
   // キャンバスの文字サイズは「画面幅」の代わりに枠の幅（cqi）で計算する
@@ -1751,7 +1813,7 @@ function renderDetail() {
         ${ROLES.map(r => `<button type="button" data-act="role" data-v="${r.key}" aria-pressed="${allSame(roles) && roles[0] === r.key}">${r.label}</button>`).join('')}
         ${anyCustom ? `<button type="button" data-act="noop" aria-pressed="${allSame(roles) && roles[0] === 'custom'}" title="レフトバーで選んだフォント">個別</button>` : ''}
       </div>
-      <div class="row-between"><span class="mini-lab">太さ${f.src === 'system' ? helpBtn('システムフォントの太さは端末によって異なります。') : ''}</span><button type="button" class="link-btn open-big" data-act="big">大画面で選ぶ</button></div>
+      <div class="row-between"><span class="mini-lab" title="太さ"><svg class="fa fa-weight-hanging" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M224 96a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm122.5 32c3.5-10 5.5-20.8 5.5-32 0-53-43-96-96-96s-96 43-96 96c0 11.2 1.9 22 5.5 32l-21.8 0c-28.3 0-53.2 18.5-61.3 45.6L2.4 440.2C.8 445.4 0 450.8 0 456.2 0 487 25 512 55.8 512l400.4 0c30.8 0 55.8-25 55.8-55.8 0-5.4-.8-10.8-2.4-16l-80-266.5c-8.1-27.1-33-45.6-61.3-45.6l-21.8 0z"/></svg>太さ${f.src === 'system' ? helpBtn('システムフォントの太さは端末によって異なります。') : ''}</span><button type="button" class="mini-icon open-big" data-act="big" title="大きな画面で選ぶ" aria-label="大きな画面で選ぶ"><svg class="fa fa-expand" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M32 32C14.3 32 0 46.3 0 64l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 32zM64 352c0-17.7-14.3-32-32-32S0 334.3 0 352l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96z"/></svg></button></div>
       <div class="wgrid" role="group" aria-label="太さ">
         ${f.weights.map(x => `<button type="button" class="wbtn" data-act="weight" data-v="${x}" aria-pressed="${allSame(effW) && effW[0] === x}">${x}</button>`).join('')}
       </div>`;
@@ -1810,13 +1872,13 @@ function renderDetail() {
   box.innerHTML = `
     <div class="detail-head">
       <span class="t">${multi ? sel.map(tagLabel).join('・') : tagLabel(key)}</span><span class="d">${multi ? `${sel.length}件をまとめて` : TAG_BY_KEY[key].desc}</span>
-      <button type="button" data-act="reset-tag" ${modified ? '' : 'disabled'}>元に戻す</button>
+      <button type="button" class="mini-icon" data-act="reset-tag" ${modified ? '' : 'disabled'} title="このタグを元に戻す" aria-label="元に戻す"><svg class="fa fa-rotate-left" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 192l144 0c9.7 0 18.5-5.8 22.2-14.8s1.7-19.3-5.2-26.2l-46.7-46.7c75.3-58.6 184.3-53.3 253.5 15.9 75 75 75 196.5 0 271.5s-196.5 75-271.5 0c-10.2-10.2-19-21.3-26.4-33-9.5-14.9-29.3-19.3-44.2-9.8s-19.3 29.3-9.8 44.2C49.7 408.7 61.4 423.5 75 437 175 537 337 537 437 437S537 175 437 75C342.8-19.3 193.3-24.7 92.7 58.8L41 7C34.1 .2 23.8-1.9 14.8 1.8S0 14.3 0 24L0 168c0 13.3 10.7 24 24 24z"/></svg></button>
     </div>
     ${specimenHTML()}
-    ${sec('font', 'フォント', fontMeta, fontBody)}
-    ${sec('latin', '英数字', latinMeta, latinBody, latinHelp)}
-    ${sec('size', 'サイズ・間隔', sizeMeta, sizeBody, sizeHelp)}
-    ${sec('color', key === 'button' && !multi ? '背景色' : '文字色', colorMeta, colorFieldHTML(), colorHelp)}`;
+    ${sec('font', '<svg class="fa fa-font" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M285.1 50.7C279.9 39.3 268.5 32 256 32s-23.9 7.3-29.1 18.7L59.5 416 48 416c-17.7 0-32 14.3-32 32s14.3 32 32 32l88 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-6.1 0 22-48 208.3 0 22 48-6.1 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l88 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-11.5 0-167.4-365.3zM330.8 304L181.2 304 256 140.8 330.8 304z"/></svg>フォント', fontMeta, fontBody)}
+    ${sec('latin', '<svg class="fa fa-a" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M221.5 51.7C216.6 39.8 204.9 32 192 32s-24.6 7.8-29.5 19.7c-93.3 224-146.7 352-160 384-6.8 16.3 .9 35 17.2 41.8s35-.9 41.8-17.2l31.8-76.3 197.3 0 31.8 76.3c6.8 16.3 25.5 24 41.8 17.2s24-25.5 17.2-41.8c-13.3-32-66.7-160-160-384zM264 320l-144 0 72-172.8 72 172.8z"/></svg>英数字', latinMeta, latinBody, latinHelp)}
+    ${sec('size', '<svg class="fa fa-text-height" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M40 32C17.9 32 0 49.9 0 72l0 56c0 17.7 14.3 32 32 32s32-14.3 32-32l0-32 64 0 0 320-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l128 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0 0-320 64 0 0 32c0 17.7 14.3 32 32 32s32-14.3 32-32l0-56c0-22.1-17.9-40-40-40L40 32zM438.6 361.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l64 64c12.5 12.5 32.8 12.5 45.3 0l64-64c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-9.4 9.4 0-229.5 9.4 9.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-64-64c-6-6-14.1-9.4-22.6-9.4s-16.6 3.4-22.6 9.4l-64 64c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l9.4-9.4 0 229.5-9.4-9.4z"/></svg>サイズ・間隔', sizeMeta, sizeBody, sizeHelp)}
+    ${sec('color', key === 'button' && !multi ? '<svg class="fa fa-fill-drip" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M309.7 71.6l-64.4 64.4 33.4 33.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-33.4-33.4-96.4 96.4c-2.9 2.9-5.1 6.5-6.3 10.3l321.5 0 53.7-53.7c4.9-4.9 7.6-11.5 7.6-18.3s-2.7-13.5-7.6-18.3L346.3 71.6C341.5 66.7 334.9 64 328 64s-13.5 2.7-18.3 7.6zM58.3 232.4l96.4-96.4-49.4-49.4c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L200 90.7 264.4 26.3C281.3 9.5 304.1 0 328 0s46.7 9.5 63.6 26.3L517.7 152.4C534.5 169.3 544 192.1 544 216s-9.5 46.7-26.3 63.6L311.6 485.7C294.7 502.5 271.9 512 248 512s-46.7-9.5-63.6-26.3L58.3 359.6C41.5 342.7 32 319.9 32 296s9.5-46.7 26.3-63.6zM512 544c-35.3 0-64-28.7-64-64 0-25.2 32.6-79.6 51.2-108.7 6-9.4 19.5-9.4 25.5 0 18.7 29.1 51.2 83.5 51.2 108.7 0 35.3-28.7 64-64 64z"/></svg>背景色' : '<svg class="fa fa-palette" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M512 256c0 .9 0 1.8 0 2.7-.4 36.5-33.6 61.3-70.1 61.3L344 320c-26.5 0-48 21.5-48 48 0 3.4 .4 6.7 1 9.9 2.1 10.2 6.5 20 10.8 29.9 6.1 13.8 12.1 27.5 12.1 42 0 31.8-21.6 60.7-53.4 62-3.5 .1-7 .2-10.6 .2-141.4 0-256-114.6-256-256S114.6 0 256 0 512 114.6 512 256zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm0-96a32 32 0 1 0 0-64 32 32 0 1 0 0 64zM288 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm96 96a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"/></svg>文字色', colorMeta, colorFieldHTML(), colorHelp)}`;
 
   renderSpecimen();
   if (!sizeInherit) {
@@ -1852,7 +1914,7 @@ function specimenHTML() {
       <div class="spec-top">
         <span class="cap" id="specCap"></span>
         ${slots.length > 1 ? `<span class="slot-tabs" role="group" aria-label="表示する文章">${slots.map((x, i) => `<button type="button" data-act="slot" data-v="${x.s}" aria-pressed="${sl && sl.s === x.s}">${i + 1}</button>`).join('')}</span>` : ''}
-        ${sl ? `<button type="button" class="mini-icon" data-act="text-reset" ${edited ? '' : 'disabled'} title="元の文章に戻す" aria-label="元の文章に戻す"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>` : ''}
+        ${sl ? `<button type="button" class="mini-icon" data-act="text-reset" ${edited ? '' : 'disabled'} title="元の文章に戻す" aria-label="元の文章に戻す"><svg class="fa fa-rotate-left" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 192l144 0c9.7 0 18.5-5.8 22.2-14.8s1.7-19.3-5.2-26.2l-46.7-46.7c75.3-58.6 184.3-53.3 253.5 15.9 75 75 75 196.5 0 271.5s-196.5 75-271.5 0c-10.2-10.2-19-21.3-26.4-33-9.5-14.9-29.3-19.3-44.2-9.8s-19.3 29.3-9.8 44.2C49.7 408.7 61.4 423.5 75 437 175 537 337 537 437 437S537 175 437 75C342.8-19.3 193.3-24.7 92.7 58.8L41 7C34.1 .2 23.8-1.9 14.8 1.8S0 14.3 0 24L0 168c0 13.3 10.7 24 24 24z"/></svg></button>` : ''}
         ${helpBtn(tip)}
       </div>
       <div class="txt" id="specTxt" ${sl ? `role="textbox" aria-label="${tagLabel(key)} の文章（書き換えられます）" spellcheck="false" data-slot="${sl.s}"` : ''}></div>
@@ -1952,7 +2014,7 @@ function textFieldHTML() {
   const edited = slots.some(x => state.texts[x.s] != null);
   const canLink = ['p', 'li', 'small', 'a'].includes(key);
   return `<div class="fld texts">
-      <span class="lab">サンプルの文章<button type="button" class="link-btn" data-act="text-reset" ${edited ? '' : 'disabled'}>元の文章に戻す</button></span>
+      <span class="lab">サンプルの文章<button type="button" class="mini-icon" data-act="text-reset" ${edited ? '' : 'disabled'} title="元の文章に戻す" aria-label="元の文章に戻す"><svg class="fa fa-rotate-left" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 192l144 0c9.7 0 18.5-5.8 22.2-14.8s1.7-19.3-5.2-26.2l-46.7-46.7c75.3-58.6 184.3-53.3 253.5 15.9 75 75 75 196.5 0 271.5s-196.5 75-271.5 0c-10.2-10.2-19-21.3-26.4-33-9.5-14.9-29.3-19.3-44.2-9.8s-19.3 29.3-9.8 44.2C49.7 408.7 61.4 423.5 75 437 175 537 337 537 437 437S537 175 437 75C342.8-19.3 193.3-24.7 92.7 58.8L41 7C34.1 .2 23.8-1.9 14.8 1.8S0 14.3 0 24L0 168c0 13.3 10.7 24 24 24z"/></svg></button></span>
       ${slots.map((x, i) => `<textarea class="txt-in" data-slot="${x.s}" rows="${x.text.length > 40 ? 3 : 1}" aria-label="${tagLabel(key)} の文章 ${i + 1}">${esc(slotText(x.s))}</textarea>`).join('')}
       ${canLink ? '<p class="hint" style="margin:0">［ ］で囲んだ部分はリンク（a）になります。</p>' : ''}
       ${state.selTags.length > 1 ? `<p class="hint" style="margin:0">${tagLabel(key)} の文章を表示しています。</p>` : ''}
@@ -1967,11 +2029,11 @@ function colorFieldHTML() {
   const [r, g, b] = hexToRgb(hex);
   const custom = sel.some(k => state.tags[k].color);
   return `
-      <div class="row-between"><span class="mini-lab">読みやすさ</span><span id="contrast"></span></div>
+      <div class="row-between"><span class="mini-lab" title="読みやすさ（背景との明るさの差）"><svg class="fa fa-circle-half-stroke" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M448 256c0-106-86-192-192-192l0 384c106 0 192-86 192-192zM0 256a256 256 0 1 1 512 0 256 256 0 1 1 -512 0z"/></svg>読みやすさ</span><span id="contrast"></span></div>
       <div class="color-top">
         <label class="picker" title="色を選ぶ"><input type="color" id="in-color" value="${hex.toLowerCase()}" aria-label="色を選ぶ"><span id="pickSw" style="background:${hex}"></span></label>
         <label class="num hex" for="in-hex"><span class="box"><span class="in-lab">#</span><input type="text" id="in-hex" maxlength="7" spellcheck="false" autocomplete="off" aria-label="HEX" value="${same ? hex.slice(1) : ''}" placeholder="${same ? '' : '混在'}"></span></label>
-        <button type="button" class="c-reset" data-act="color-reset" ${custom ? '' : 'disabled'}>既定</button>
+        <button type="button" class="c-reset" data-act="color-reset" ${custom ? '' : 'disabled'} title="既定の色に戻す" aria-label="既定の色に戻す"><svg class="fa fa-rotate-left" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 192l144 0c9.7 0 18.5-5.8 22.2-14.8s1.7-19.3-5.2-26.2l-46.7-46.7c75.3-58.6 184.3-53.3 253.5 15.9 75 75 75 196.5 0 271.5s-196.5 75-271.5 0c-10.2-10.2-19-21.3-26.4-33-9.5-14.9-29.3-19.3-44.2-9.8s-19.3 29.3-9.8 44.2C49.7 408.7 61.4 423.5 75 437 175 537 337 537 437 437S537 175 437 75C342.8-19.3 193.3-24.7 92.7 58.8L41 7C34.1 .2 23.8-1.9 14.8 1.8S0 14.3 0 24L0 168c0 13.3 10.7 24 24 24z"/></svg></button>
       </div>
       <div class="rgb">
         ${[['in-r', 'R', r], ['in-g', 'G', g], ['in-b', 'B', b]].map(([id, l, v]) => `<label class="num" for="${id}"><span class="box"><span class="in-lab">${l}</span><input type="number" id="${id}" min="0" max="255" step="1" inputmode="numeric" aria-label="${l}" value="${same ? v : ''}" placeholder="${same ? '' : '—'}"></span></label>`).join('')}
@@ -2015,12 +2077,12 @@ function renderContrast() {
 function bgFieldHTML() {
   const hex = state.bg;
   const [r, g, b] = hexToRgb(hex);
-  return `<div class="bgp-head"><span class="bgp-title">サイトの背景色</span>${helpBtn('キャンバスのサイト全体の背景色です。出力では body の background-color になります。文字色の「読みやすさ」も、この背景色との差で計算します。')}<span id="bgContrast" class="contrast"></span></div>
+  return `<div class="bgp-head"><span class="bgp-title"><svg class="fa fa-fill-drip" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M309.7 71.6l-64.4 64.4 33.4 33.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-33.4-33.4-96.4 96.4c-2.9 2.9-5.1 6.5-6.3 10.3l321.5 0 53.7-53.7c4.9-4.9 7.6-11.5 7.6-18.3s-2.7-13.5-7.6-18.3L346.3 71.6C341.5 66.7 334.9 64 328 64s-13.5 2.7-18.3 7.6zM58.3 232.4l96.4-96.4-49.4-49.4c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L200 90.7 264.4 26.3C281.3 9.5 304.1 0 328 0s46.7 9.5 63.6 26.3L517.7 152.4C534.5 169.3 544 192.1 544 216s-9.5 46.7-26.3 63.6L311.6 485.7C294.7 502.5 271.9 512 248 512s-46.7-9.5-63.6-26.3L58.3 359.6C41.5 342.7 32 319.9 32 296s9.5-46.7 26.3-63.6zM512 544c-35.3 0-64-28.7-64-64 0-25.2 32.6-79.6 51.2-108.7 6-9.4 19.5-9.4 25.5 0 18.7 29.1 51.2 83.5 51.2 108.7 0 35.3-28.7 64-64 64z"/></svg>サイトの背景色</span>${helpBtn('キャンバスのサイト全体の背景色です。出力では body の background-color になります。文字色の「読みやすさ」も、この背景色との差で計算します。')}<span id="bgContrast" class="contrast"></span></div>
       <div class="bgp-body">
         <div class="color-top">
           <label class="picker" title="色を選ぶ"><input type="color" id="bg-color" value="${hex.toLowerCase()}" aria-label="背景色を選ぶ"><span id="bgPickSw" style="background:${hex}"></span></label>
           <label class="num hex" for="bg-hex"><span class="box"><span class="in-lab">#</span><input type="text" id="bg-hex" maxlength="7" spellcheck="false" autocomplete="off" aria-label="背景色のHEX" value="${hex.slice(1)}"></span></label>
-          <button type="button" class="c-reset" data-act="bg-reset" ${hex === DEFAULT_BG ? 'disabled' : ''}>既定</button>
+          <button type="button" class="c-reset" data-act="bg-reset" ${hex === DEFAULT_BG ? 'disabled' : ''} title="白に戻す" aria-label="白に戻す"><svg class="fa fa-rotate-left" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 192l144 0c9.7 0 18.5-5.8 22.2-14.8s1.7-19.3-5.2-26.2l-46.7-46.7c75.3-58.6 184.3-53.3 253.5 15.9 75 75 75 196.5 0 271.5s-196.5 75-271.5 0c-10.2-10.2-19-21.3-26.4-33-9.5-14.9-29.3-19.3-44.2-9.8s-19.3 29.3-9.8 44.2C49.7 408.7 61.4 423.5 75 437 175 537 337 537 437 437S537 175 437 75C342.8-19.3 193.3-24.7 92.7 58.8L41 7C34.1 .2 23.8-1.9 14.8 1.8S0 14.3 0 24L0 168c0 13.3 10.7 24 24 24z"/></svg></button>
         </div>
         <div class="rgb">
           ${[['bg-r', 'R', r], ['bg-g', 'G', g], ['bg-b', 'B', b]].map(([id, l, v]) => `<label class="num" for="${id}"><span class="box"><span class="in-lab">${l}</span><input type="number" id="${id}" min="0" max="255" step="1" inputmode="numeric" aria-label="背景色の${l}" value="${v}"></span></label>`).join('')}
@@ -2127,7 +2189,9 @@ function currentZoom() {
 function renderZoomSelect() {
   const sel = $('#zoom');
   const fit = state.device === 'fit';
-  sel.innerHTML = `<option value="auto">自動 ${Math.round((fit ? 1 : autoZoom()) * 100)}%</option>` + ZOOMS.map(z => `<option value="${z}">${z}%</option>`).join('');
+  // Ctrl＋スクロールで決まった半端な倍率も選択肢に入れる
+  const list = !fit && state.zoom !== 'auto' && !ZOOMS.includes(state.zoom) ? [...ZOOMS, state.zoom].sort((a, b) => a - b) : ZOOMS;
+  sel.innerHTML = `<option value="auto">自動 ${Math.round((fit ? 1 : autoZoom()) * 100)}%</option>` + list.map(z => `<option value="${z}">${z}%</option>`).join('');
   sel.value = fit ? 'auto' : String(state.zoom);
   sel.disabled = fit; $('#zoomIn').disabled = fit; $('#zoomOut').disabled = fit;
 }
@@ -3048,6 +3112,44 @@ $('#zoom').addEventListener('change', e => {
   layoutPreview(); save();
 });
 $('#zoomIn').addEventListener('click', () => stepZoom(1));
+/* キャンバスで Ctrl（Mac は ⌘ も）＋スクロール、またはトラックパッドのピンチ：
+   ブラウザ全体ではなく、サイトだけを拡大・縮小する（ポインタの下の位置がずれないように） */
+const ZOOM_MIN = 0.2, ZOOM_MAX = 3;
+let wheelZoomF = null, wheelZoomTimer = null, zoomAnchor = null;
+function zoomAt(k1, cx, cy) {
+  if (state.device === 'fit') { // 枠に合わせる表示のときは、今の幅で固定してから拡大
+    state.width = Math.round($('#vp').offsetWidth); state.device = 'custom';
+  }
+  const stage = $('#stage'), pp = $('.panel-preview'), frame = $('#frame');
+  const k0 = currentZoom(), r0 = frame.getBoundingClientRect();
+  // サイト上の位置。操作の最初に指していた位置を覚えておき、
+  // スクロールの余地がなくて合わせられなかった分も、あとで追いつけるようにする
+  if (!zoomAnchor || zoomAnchor.cx !== cx || zoomAnchor.cy !== cy) zoomAnchor = { cx, cy, sx: (cx - r0.left) / k0, sy: (cy - r0.top) / k0 };
+  const { sx, sy } = zoomAnchor;
+  k1 = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, k1));
+  state.zoom = Math.round(k1 * 100);
+  layoutPreview();
+  const k = state.zoom / 100, r1 = frame.getBoundingClientRect();
+  stage.scrollLeft += (r1.left + sx * k) - cx;
+  pp.scrollTop += (r1.top + sy * k) - cy;
+  positionInspect();
+}
+$('.panel-preview').addEventListener('wheel', e => {
+  if (!(e.ctrlKey || e.metaKey)) return;
+  e.preventDefault();
+  if (wheelZoomF === null) wheelZoomF = currentZoom();
+  // マウスのホイールは1回で約10%、ピンチは細かく
+  const d = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+  wheelZoomF = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, wheelZoomF * Math.exp(-d * 0.0022)));
+  zoomAt(wheelZoomF, e.clientX, e.clientY);
+  clearTimeout(wheelZoomTimer);
+  wheelZoomTimer = setTimeout(() => { wheelZoomF = null; zoomAnchor = null; save(); }, 250);
+}, { passive: false });
+// Safari のピンチ
+let gestureBase = null;
+$('.panel-preview').addEventListener('gesturestart', e => { e.preventDefault(); gestureBase = currentZoom(); });
+$('.panel-preview').addEventListener('gesturechange', e => { e.preventDefault(); if (gestureBase) zoomAt(gestureBase * e.scale, e.clientX, e.clientY); });
+$('.panel-preview').addEventListener('gestureend', e => { e.preventDefault(); gestureBase = null; zoomAnchor = null; save(); });
 $('#zoomOut').addEventListener('click', () => stepZoom(-1));
 $('#showTags').addEventListener('change', e => { $('#site').classList.toggle('show-tags', e.target.checked); spreadTags(); });
 
