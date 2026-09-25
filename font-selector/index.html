@@ -592,6 +592,23 @@ body { font-feature-settings: "palt"; letter-spacing: .01em; }
 @media (max-width: 1023px) { .topbar { padding: 0 12px; gap: 8px; } .logo { transform: scale(.72); transform-origin: left center; margin-right: -40px; } .topbar-actions { gap: 6px; } #reset { width: 36px; padding: 0; justify-content: center; } }
 @media (max-width: 1023px) { .num .box, .picker, .c-reset { height: 42px; } .detail .sw, .bg-pop .sw { height: 30px; } .help { width: 22px; height: 22px; } }
 
+/* ===== 四角いアイコンボタンの中身は上下左右の中央に ===== */
+.preview-bar label.icon-toggle, .sec-head label.icon-toggle { display: inline-grid; place-items: center; gap: 0; }
+
+/* ===== ヘッダー・レフトバー・ライトバー：白に限りなく近い水色とオレンジのグラデーション =====
+   ぱっと見は白。よく見ると、左上から水色、右下にかけてオレンジがほんのり差している */
+:root {
+  --tint-blue: color-mix(in srgb, var(--accent) 5%, var(--surface));
+  --tint-blue-2: color-mix(in srgb, var(--accent) 2.5%, var(--surface));
+  --tint-orange: color-mix(in srgb, var(--coral) 5%, var(--surface));
+  --tint-orange-2: color-mix(in srgb, var(--coral) 2.5%, var(--surface));
+}
+.topbar { background-color: var(--surface); background-image: linear-gradient(100deg, var(--tint-blue) 0%, var(--surface) 38%, var(--surface) 62%, var(--tint-orange) 100%); }
+.panel-fonts { background-color: var(--surface); background-image: linear-gradient(172deg, var(--tint-blue) 0%, var(--surface) 42%, var(--surface) 70%, var(--tint-orange-2) 100%); }
+.panel-tags { background-color: var(--surface); background-image: linear-gradient(188deg, var(--tint-orange) 0%, var(--surface) 40%, var(--surface) 72%, var(--tint-blue-2) 100%); }
+/* スマホの下のタブも同じ質感に */
+@media (max-width: 1023px) { .tabbar { background-image: linear-gradient(100deg, var(--tint-blue-2), var(--surface) 45%, var(--tint-orange-2)); } }
+
 /* ===== スキップリンク（Tab を押したときだけ左上に出る） ===== */
 .skip-links a { position: fixed; left: 12px; top: -60px; z-index: 3000; padding: 10px 14px; border-radius: 8px; background: var(--ink); color: var(--surface); font-size: 13px; font-weight: 600; text-decoration: none; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
 .skip-links a:focus { top: 12px; outline: 2px solid var(--coral); outline-offset: 2px; }
