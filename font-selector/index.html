@@ -2,6 +2,13 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-W46G2Z64');</script>
+<!-- End Google Tag Manager -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Webサイトのフォントを、分類別に試して選べるツール。見出し・本文などタグごとのサイズやスマホ表示も調整でき、CSSファイルやAIへの指示文（プロンプト）で書き出せます。デザイナーが制作するサイトにも、AIで作ったサイトにも使えます。">
 <link rel="canonical" href="https://kentonagaya.com/font-selector/">
@@ -106,7 +113,7 @@ button { cursor: pointer; }
 
 /* ===== 左：フォント一覧 ===== */
 .panel-fonts { display: flex; flex-direction: column; min-height: 0; background: var(--surface); border-right: 1px solid var(--line); }
-.controls { padding: 16px; display: flex; flex-direction: column; gap: 12px; border-bottom: 1px solid var(--line); }
+.controls { padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--line); }
 .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .panel-head h2 { margin: 0; font-size: 15px; font-weight: 700; }
 .panel-head .count { font-size: 11px; color: var(--ink-2); }
@@ -117,7 +124,21 @@ button { cursor: pointer; }
 .search { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 10px; color: var(--ink-2); background: var(--surface); }
 .search:focus-within { border-color: var(--accent); }
 .search input { border: 0; outline: none; background: transparent; flex: 1; min-width: 0; font-size: 13px; color: var(--ink); }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips { display: flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); padding-right: 24px; }
+.chips::-webkit-scrollbar { display: none; }
+.chips .chip { flex-shrink: 0; }
+.search-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+.opt-btn { position: relative; width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-2); display: grid; place-items: center; }
+.opt-btn:hover, .opt-btn[aria-expanded="true"] { border-color: var(--accent); color: var(--accent-ink); }
+.opt-btn[aria-expanded="true"] { background: var(--accent-soft); }
+.opt-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 2px var(--surface); }
+.opts { display: flex; flex-direction: column; gap: 10px; padding: 10px 12px 12px; border-radius: 10px; background: var(--seg); }
+.big-body .opts[hidden] { display: flex !important; }
+.big-body .opts { background: none; padding: 0; }
+.big-body .opt-btn { display: none; }
+.big-body .search-row { grid-template-columns: minmax(0, 1fr); }
+.big-body .chips { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; padding-right: 0; }
 .chip { height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--surface); font-size: 12px; display: inline-flex; align-items: center; gap: 5px; }
 .chip .n { font-family: var(--mono); font-size: 10px; color: var(--ink-2); }
 .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); font-weight: 700; }
@@ -163,10 +184,12 @@ button { cursor: pointer; }
 .sentinel { height: 1px; }
 
 /* ===== 中央：プレビュー ===== */
-.panel-preview { min-height: 0; overflow-y: auto; padding: 14px 24px 32px; display: flex; flex-direction: column; gap: 10px; }
-.preview-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; font-size: 12px; color: var(--ink-2); }
+.panel-preview { min-height: 0; overflow-y: auto; padding: 14px 24px 14px; display: flex; flex-direction: column; gap: 10px; }
+.copyright { margin: auto 0 0; padding-top: 14px; text-align: center; font: 400 10px/1 var(--mono); letter-spacing: .06em; color: var(--ink-3); }
+.copyright small { font-size: inherit; }
+.preview-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 12px; color: var(--ink-2); }
 .preview-bar .seg { grid-auto-columns: auto; }
-.preview-bar .seg button { padding: 0 12px; font-size: 12px; }
+.preview-bar .seg button { padding: 0 9px; font-size: 12px; }
 .preview-bar .zoom { font-size: 11px; }
 .preview-bar label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--ink); }
 .preview-bar input { accent-color: var(--accent); margin: 0; }
@@ -174,7 +197,7 @@ button { cursor: pointer; }
 .ruler { display: flex; align-items: center; gap: 8px; width: 100%; font: 10px var(--mono); color: var(--ink-2); }
 .ruler::before, .ruler::after { content: ""; flex: 1; height: 1px; background: var(--line-strong); }
 .frame { position: relative; width: 100%; flex: 0 1 auto; }
-.frame.fixed { overflow: hidden; border-radius: 10px; }
+.frame.fixed { border-radius: 10px; }
 /* .vp が「画面幅」の代わり。中の文字サイズは cqi（= この幅の1%）で計算する */
 .vp { container-type: inline-size; width: 100%; }
 .frame.fixed .vp { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
@@ -198,14 +221,25 @@ button { cursor: pointer; }
 .site .cta { display: inline-flex; align-items: center; min-height: 46px; padding: 0 26px; border-radius: 999px; background: #26241F; color: #FFFFFF; text-decoration: none; }
 .site blockquote { padding-left: 18px; border-left: 2px solid currentColor; }
 .site small { color: #6B5E4B; }
+/* h2 の飾り（見本サイトだけの装飾。出力には含めない） */
+.site .h2-deco { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; color: var(--h2c, #26241F); }
+.site .h2-ic { flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--h2c, #26241F); color: var(--site-bg, #FFFFFF); box-shadow: 0 0 0 4px var(--site-bg, #FFFFFF), 0 0 0 5px color-mix(in srgb, var(--h2c, #26241F) 28%, transparent); }
+.site .h2-ic svg { width: 15px; height: 15px; }
+.site .h2-kicker { font-family: var(--f-accent); font-weight: var(--w-accent); font-size: 13px; letter-spacing: .22em; text-transform: uppercase; opacity: .8; white-space: nowrap; }
+.site .h2-line { flex: 1; min-width: 16px; height: 1px; background: currentColor; opacity: .22; }
+.site .h2-no { font-family: var(--f-accent); font-weight: var(--w-accent); font-size: 13px; letter-spacing: .12em; opacity: .6; white-space: nowrap; }
+.site .h2-blk { padding-bottom: 16px; background: linear-gradient(var(--h2c, #26241F), var(--h2c, #26241F)) left bottom / 44px 3px no-repeat; }
 .site .rule { height: 1px; background: currentColor; opacity: .14; margin: 8px 0 28px; }
 .site [data-t] { cursor: pointer; }
 .site [data-t]:hover { outline: 1px dashed #9DB0FF; outline-offset: 4px; }
 .site .blk { position: relative; }
-.site .tag { position: absolute; left: -46px; top: .35em; font: 500 10px/1 var(--mono); padding: 3px 5px; border-radius: 4px; background: #EBEFFF; color: #1E3FD8; display: none; pointer-events: none; }
+/* タグ名：縮小表示のときは --tag-k 倍にして、画面上の大きさを保つ */
+.site .tag { position: absolute; right: calc(100% + 6px); top: .15em; transform: scale(var(--tag-k, 1)); transform-origin: right top;
+  font: 600 11px/1 var(--mono); letter-spacing: .02em; white-space: nowrap; padding: 2px 5px; border-radius: 4px;
+  background: #EBEFFF; color: #1E3FD8; box-shadow: 0 0 0 1px rgba(43,80,255,.16); display: none; pointer-events: none; z-index: 1; }
 .site .tag.on { background: #2B50FF; color: #FFFFFF; }
 .site.show-tags .tag { display: block; }
-@container (max-width: 600px) { .site .tag { left: auto; right: 0; top: -16px; } }
+@container (max-width: 600px) { .site .tag { right: 0; top: auto; bottom: calc(100% + 2px); transform-origin: right bottom; } }
 .gap-xs { height: 8px; } .gap-s { height: 14px; } .gap-m { height: 26px; } .gap-l { height: 52px; }
 
 /* ===== 右：タグ調整 ===== */
@@ -273,7 +307,9 @@ button { cursor: pointer; }
 .target.empty { background: var(--seg); color: var(--ink-2); }
 .target .t-lab { font-weight: 700; }
 .target .t-chip { font: 500 11px/1.6 var(--mono); padding: 0 7px; border-radius: 6px; background: var(--accent); color: var(--on-accent); }
-.target .t-clear { margin-left: auto; border: 0; background: none; color: inherit; font-size: 11px; text-decoration: underline; text-underline-offset: 2px; padding: 2px 0; }
+.target .t-clear { flex-shrink: 0; width: 26px; height: 26px; margin-left: -2px; border: 0; border-radius: 6px; background: none; color: inherit; display: grid; place-items: center; padding: 0; }
+.target .t-clear:hover { background: rgba(255,255,255,.7); }
+.target .t-chips { display: inline-flex; flex-wrap: wrap; gap: 4px; }
 .target .t-hint { flex-basis: 100%; font-size: 11px; line-height: 1.5; }
 .target .t-done { flex-basis: 100%; font-size: 11px; font-weight: 700; }
 .target .t-done.warn { font-weight: 500; line-height: 1.6; padding: 6px 8px; border-radius: 6px; background: color-mix(in srgb, #C98A00 16%, var(--surface)); color: var(--ink); }
@@ -309,13 +345,19 @@ button.wf-row[aria-pressed="true"] { background: var(--accent-soft); }
 .pal { display: grid; grid-template-columns: 64px minmax(0, 1fr); align-items: center; gap: 6px; }
 .pal-name { font-size: 11px; color: var(--ink-2); }
 .sw-row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; }
-.detail .sw, .bg-box .sw { height: 26px; border-radius: 7px; border: 0; padding: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
-.detail .sw:hover, .bg-box .sw:hover { transform: translateY(-1px); }
-.detail .sw[aria-pressed="true"], .bg-box .sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
-/* サイトの背景 */
-.bg-box { border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; }
-.bg-box .sec-d { border-top: 0; }
-.bg-box .sd-meta { font-size: 11px; }
+.detail .sw, .bg-pop .sw { height: 26px; border-radius: 7px; border: 0; padding: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+.detail .sw:hover, .bg-pop .sw:hover { transform: translateY(-1px); }
+.detail .sw[aria-pressed="true"], .bg-pop .sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+/* サイトの背景色（キャンバス上部のボタンとポップアップ） */
+.bg-btn { height: 34px; display: inline-flex; align-items: center; gap: 7px; padding: 0 10px 0 7px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface); font-size: 12px; color: var(--ink); }
+.bg-btn:hover, .bg-btn[aria-expanded="true"] { border-color: var(--accent); }
+.bg-btn svg { color: var(--ink-3); }
+.bg-sw { width: 20px; height: 20px; border-radius: 6px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.18); }
+.bg-pop { position: fixed; z-index: 1500; width: min(300px, calc(100vw - 16px)); box-sizing: border-box; padding: 12px 14px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); box-shadow: 0 12px 40px rgba(13,14,17,.18); }
+.bgp-head { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.bgp-title { font-size: 12px; font-weight: 600; }
+.bgp-head .contrast { margin-left: auto; font-family: var(--mono); }
+.bgp-body { display: flex; flex-direction: column; gap: 10px; }
 .contrast { font-size: 10px; padding: 1px 6px; border-radius: 5px; }
 .contrast.ok { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); }
 .contrast.warn { background: color-mix(in srgb, #C98A00 18%, transparent); color: #9A6A00; }
@@ -331,15 +373,19 @@ button.wf-row[aria-pressed="true"] { background: var(--accent-soft); }
 
 /* ===== 追加：キャンバスの操作 ===== */
 .wbox { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); }
-.wbox input { width: 70px; height: 32px; border: 1px solid var(--line-strong); border-radius: 8px; padding: 0 8px; background: var(--surface); font: 12px var(--mono); color: var(--ink); }
+.wbox-in { display: inline-flex; align-items: center; height: 32px; padding: 0 8px 0 0; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); }
+.wbox-in:focus-within { border-color: var(--accent); }
+.wbox-in .u { font: 10px var(--mono); color: var(--ink-3); }
+.wbox input { width: 40px; height: 30px; border: 0; border-radius: 8px; padding: 0 2px 0 8px; text-align: right; -moz-appearance: textfield; appearance: textfield; background: var(--surface); font: 12px var(--mono); color: var(--ink); }
 .wbox input:focus { border-color: var(--accent); outline: none; }
+.wbox input::-webkit-inner-spin-button, .wbox input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .zoom-ctl { display: inline-flex; align-items: center; border: 1px solid var(--line-strong); border-radius: 10px; overflow: hidden; background: var(--surface); }
 .zoom-ctl button { width: 30px; height: 32px; border: 0; background: none; font-size: 15px; color: var(--ink); }
 .zoom-ctl button:hover:not(:disabled) { background: var(--seg); }
 .zoom-ctl select { height: 32px; border: 0; border-left: 1px solid var(--line); border-right: 1px solid var(--line); background: var(--surface); font: 12px var(--mono); padding: 0 6px; color: var(--ink); }
 .zoom-ctl :disabled { opacity: .4; cursor: default; }
 .preview-bar .tag-toggle { margin-left: auto; }
-.stage { position: relative; overflow-x: auto; align-items: safe center; padding-bottom: 8px; }
+.stage { position: relative; flex-shrink: 0; overflow-x: auto; align-items: safe center; padding: 0 18px 8px; box-sizing: border-box; }
 .frame-row { display: flex; align-items: flex-start; gap: 6px; }
 .stage.fit .frame-row { width: 100%; }
 .stage.fit .resize { display: none; }
@@ -487,8 +533,8 @@ body { font-feature-settings: "palt"; letter-spacing: .01em; }
 .mix-font.picking { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .mf-lab { font-size: 11px; color: var(--ink-2); white-space: nowrap; }
 .mf-name { font-size: 20px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.t-part { flex-basis: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; padding: 2px; border-radius: 7px; background: rgba(255,255,255,.6); }
-.t-part button { height: 28px; border: 0; border-radius: 5px; background: transparent; font-size: 12px; color: var(--accent-ink); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.t-part { flex: 1 1 150px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; padding: 2px; border-radius: 7px; background: rgba(255,255,255,.6); }
+.t-part button { height: 26px; white-space: nowrap; border: 0; border-radius: 5px; background: transparent; font-size: 12px; color: var(--accent-ink); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .t-part button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); font-weight: 600; }
 .t-part .t-ex { font: 10px var(--mono); opacity: .75; }
 .target.flash { animation: flash .8s ease; }
@@ -535,7 +581,7 @@ body { font-feature-settings: "palt"; letter-spacing: .01em; }
 .num .box { height: 34px; }
 .pal { grid-template-columns: 40px minmax(0, 1fr); }
 .pal-name { font-size: 10px; }
-.detail .sw, .bg-box .sw { height: 22px; }
+.detail .sw, .bg-pop .sw { height: 22px; }
 .mini-icon { width: 22px; height: 22px; padding: 0; border-radius: 5px; border: 1px solid #D1D3DA; background: #FFFFFF; color: #585B64; display: inline-grid; place-items: center; }
 .mini-icon:hover:not(:disabled) { background: #0D0E11; border-color: #0D0E11; color: #FFFFFF; }
 .mini-icon:disabled { opacity: .35; cursor: default; }
@@ -550,7 +596,7 @@ body { font-feature-settings: "palt"; letter-spacing: .01em; }
 .tip-float.above::before { top: auto; bottom: -4px; }
 .sec-head h2 .help { margin-left: 4px; }
 @media (max-width: 1023px) { .topbar { padding: 0 12px; gap: 8px; } .logo { transform: scale(.84); transform-origin: left center; } .topbar-actions { gap: 6px; } #reset { width: 36px; padding: 0; justify-content: center; } }
-@media (max-width: 1023px) { .num .box, .picker, .c-reset { height: 42px; } .detail .sw, .bg-box .sw { height: 30px; } .help { width: 22px; height: 22px; } }
+@media (max-width: 1023px) { .num .box, .picker, .c-reset { height: 42px; } .detail .sw, .bg-pop .sw { height: 30px; } .help { width: 22px; height: 22px; } }
 
 /* ===== 使い方ツアー ===== */
 .tour-btn { width: 36px; height: 36px; border-radius: 8px; font: 600 15px var(--ui); color: var(--ink-2); }
@@ -640,6 +686,10 @@ body.resizing iframe, body.resizing .panel-preview { pointer-events: none; }
 </style>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W46G2Z64"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 <div class="app" id="app" data-view="fonts">
   <header class="topbar">
     <button type="button" class="logo" id="logo" aria-label="フォントセレクター（触れると書体が入れ替わります）">
@@ -674,11 +724,15 @@ body.resizing iframe, body.resizing .panel-preview { pointer-events: none; }
         </div>
         <div class="target" id="target" aria-live="polite"></div>
         <div class="seg" id="tabs" role="group" aria-label="フォントの種類"></div>
-        <label class="search">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-          <input type="search" id="q" placeholder="フォント名で検索（例：Noto, Zen）" aria-label="フォント名で検索" autocomplete="off">
-        </label>
+        <div class="search-row">
+          <label class="search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input type="search" id="q" placeholder="フォント名で検索" aria-label="フォント名で検索" autocomplete="off">
+          </label>
+          <button type="button" class="opt-btn" id="optBtn" aria-expanded="false" aria-controls="opts" title="絞り込み・並び順・試し書き" aria-label="絞り込み・並び順・試し書き"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg><span class="opt-dot" id="optDot" hidden></span></button>
+        </div>
         <div class="chips" id="chips" role="group" aria-label="分類"></div>
+        <div class="opts" id="opts" hidden>
         <div class="filters">
           <label><input type="checkbox" id="pickOnly">定番のみ</label>
           <label id="varWrap"><input type="checkbox" id="varOnly">可変フォント</label>
@@ -696,6 +750,7 @@ body.resizing iframe, body.resizing .panel-preview { pointer-events: none; }
             <input type="range" id="size" min="14" max="56" step="2" value="24">
           </label>
         </div>
+        </div>
       </div>
       <div class="font-list" id="list"></div>
     </section>
@@ -709,12 +764,14 @@ body.resizing iframe, body.resizing .panel-preview { pointer-events: none; }
           <button type="button" data-device="pc" aria-pressed="true">PC <span class="n">1280</span></button>
           <button type="button" data-device="fit" aria-pressed="false">枠に合わせる</button>
         </div>
-        <label class="wbox" for="vpWidth">幅<input type="number" id="vpWidth" min="320" max="2560" step="1" inputmode="numeric">px</label>
+        <label class="wbox" for="vpWidth">幅<span class="wbox-in"><input type="number" id="vpWidth" min="320" max="2560" step="1" inputmode="numeric"><span class="u">px</span></span></label>
         <div class="zoom-ctl" role="group" aria-label="表示倍率">
           <button type="button" id="zoomOut" aria-label="縮小">−</button>
           <select id="zoom" aria-label="表示倍率"></select>
           <button type="button" id="zoomIn" aria-label="拡大">＋</button>
         </div>
+        <button type="button" class="bg-btn" id="bgBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="bgPop" title="サイトの背景色"><span class="bg-sw" id="bgBtnSw"></span>背景<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="bg-pop" id="bgPop" role="dialog" aria-label="サイトの背景色" hidden></div>
         <label class="tag-toggle"><input type="checkbox" id="showTags" checked>タグ名を表示</label>
       </div>
       <div class="stage" id="stage">
@@ -732,7 +789,8 @@ body.resizing iframe, body.resizing .panel-preview { pointer-events: none; }
             <div class="gap-m"></div>
             <div class="blk"><span class="tag" data-for="button">button</span><a class="cta" data-t="button" data-s="btn" href="#site"></a></div>
             <div class="gap-l"></div>
-            <div class="blk"><span class="tag" data-for="h2">h2</span><h2 data-t="h2" data-s="h2"></h2></div>
+            <div class="h2-deco" aria-hidden="true"><span class="h2-ic"><svg viewBox="0 0 512 512" aria-hidden="true" focusable="false"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc. --><path fill="currentColor" d="M256 141.3l0 309.3 .5-.2C311.1 427.7 369.7 416 428.8 416l19.2 0 0-320-19.2 0c-42.2 0-84.1 8.4-123.1 24.6-16.8 7-33.4 13.9-49.7 20.7zM230.9 61.5L256 72 281.1 61.5C327.9 42 378.1 32 428.8 32L464 32c26.5 0 48 21.5 48 48l0 352c0 26.5-21.5 48-48 48l-35.2 0c-50.7 0-100.9 10-147.7 29.5l-12.8 5.3c-7.9 3.3-16.7 3.3-24.6 0l-12.8-5.3C184.1 490 133.9 480 83.2 480L48 480c-26.5 0-48-21.5-48-48L0 80C0 53.5 21.5 32 48 32l35.2 0c50.7 0 100.9 10 147.7 29.5z"/></svg></span><span class="h2-kicker">Featured Story</span><span class="h2-line"></span></div>
+            <div class="blk h2-blk"><span class="tag" data-for="h2">h2</span><h2 data-t="h2" data-s="h2"></h2></div>
             <div class="gap-s"></div>
             <div class="blk"><span class="tag" data-for="p">p</span><p data-t="p" data-s="p2"></p></div>
             <div class="gap-m"></div>
@@ -760,6 +818,7 @@ body.resizing iframe, body.resizing .panel-preview { pointer-events: none; }
         <div class="hover-box" id="hoverBox" hidden><span id="hoverLabel"></span></div>
         <div class="inspect" id="inspect" hidden></div>
       </div>
+      <p class="copyright"><small>© 2026 Kento Nagaya</small></p>
     </section>
 
     <!-- 右：役割とタグ調整 -->
@@ -767,10 +826,6 @@ body.resizing iframe, body.resizing .panel-preview { pointer-events: none; }
       <div class="sec">
         <div class="sec-head"><h2><span class="eb">Roles</span>フォントの役割</h2><button type="button" class="help" data-tip="レフトバーのカードで「役割に設定」を押すと、見出し・本文・欧文のフォントをまとめて変えられます。" aria-label="説明：レフトバーのカードで「役割に設定」を押すと、見出し・本文・欧文のフォントをまとめて変えられます。">?</button></div>
         <div class="role-list" id="roles"></div>
-      </div>
-      <div class="sec">
-        <div class="sec-head"><h2><span class="eb">Page</span>サイトの背景 <button type="button" class="help" data-tip="キャンバスのサイト全体の背景色です。出力では body の background-color になります。文字色の「読みやすさ」も、この背景色との差で計算します。" aria-label="説明：キャンバスのサイト全体の背景色です。出力では body の background-color になります。">?</button></h2></div>
-        <div class="bg-box" id="bgBox"></div>
       </div>
       <div class="sec">
         <div class="sec-head"><h2><span class="eb">Tags</span>タグ別の調整 <button type="button" class="help" data-tip="キャンバスの文字をクリックしても選べます。Shift＋クリックで複数選択。青い点は初期値から変えたタグです。" aria-label="説明：キャンバスの文字をクリックしても選べます。Shift＋クリックで複数選択。青い点は初期値から変えたタグです。">?</button></h2><label class="multi"><input type="checkbox" id="multi">複数選択</label></div>
@@ -1215,18 +1270,18 @@ function renderTarget() {
   const el = $('#target');
   if (!state.selTags.length) {
     el.className = 'target empty';
-    el.innerHTML = '<span class="t-hint">キャンバスの文字やライトバーのタグを選ぶと、フォントをクリックするだけでそのタグに適用できます。</span>';
+    el.innerHTML = '<span class="t-hint">タグを選ぶと、フォントをクリックして適用できます</span>';
     return;
   }
   const latin = state.pickTarget === 'latin';
   el.className = 'target' + (latin ? ' latin' : '');
-  el.innerHTML = `<span class="t-lab">適用先</span>${state.selTags.map(k => `<span class="t-chip">${tagLabel(k)}</span>`).join('')}
-    <button type="button" class="t-clear" data-clear>選択を解除</button>
-    <div class="t-part" role="group" aria-label="適用する部分">
+  el.innerHTML = `<span class="t-lab">適用先</span><span class="t-chips">${state.selTags.map(k => `<span class="t-chip">${tagLabel(k)}</span>`).join('')}</span>
+    <div class="t-part" role="group" aria-label="適用する部分" title="${latin ? 'フォントをクリックすると、このタグの英数字だけに適用します（和文はそのまま）' : 'フォントをクリックすると、このタグの文字全体に適用します'}">
       <button type="button" data-pick="all" aria-pressed="${!latin}">文字全体</button>
-      <button type="button" data-pick="latin" aria-pressed="${latin}">英数字だけ<span class="t-ex">Aa 12</span></button>
+      <button type="button" data-pick="latin" aria-pressed="${latin}">英数字<span class="t-ex">Aa12</span></button>
     </div>
-    ${doneMsg ? `<span class="t-done${doneWarn ? ' warn' : ''}">${esc(doneMsg)}</span>` : `<span class="t-hint">${latin ? 'フォントをクリックすると、このタグの英数字だけに適用します（和文はそのまま）。' : 'フォントをクリックすると、このタグに適用します。'}</span>`}`;
+    <button type="button" class="t-clear" data-clear title="選択を解除" aria-label="選択を解除"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    ${doneMsg ? `<span class="t-done${doneWarn ? ' warn' : ''}">${esc(doneMsg)}</span>` : ''}`;
 }
 
 /* ===== レフトバー：一覧 ===== */
@@ -1600,6 +1655,7 @@ function update(opts = {}) {
   site.style.setProperty('--f-body', roleFont('body').css);
   site.style.setProperty('--f-accent', roleFont('accent').css);
   site.style.setProperty('--w-accent', nearest(roleFont('accent').weights, 500));
+  site.style.setProperty('--h2c', tagColor('h2'));
   for (const r of ROLES) loadFull(roleFont(r.key));
   for (const t of TAGS) { loadFull(tagFont(state.tags[t.key])); if (state.tags[t.key].mix !== 'none') loadFull(latinOf(state.tags[t.key])); }
   // キャンバスの文字サイズは「画面幅」の代わりに枠の幅（cqi）で計算する
@@ -1959,9 +2015,8 @@ function renderContrast() {
 function bgFieldHTML() {
   const hex = state.bg;
   const [r, g, b] = hexToRgb(hex);
-  return `<details class="sec-d" data-sec="bg" ${state.openSecs.bg ? 'open' : ''}>
-      <summary><span class="sd-title">背景色</span><span class="sd-meta"><span class="sd-sw" id="bgMetaSw" style="background:${hex}"></span><span id="bgMetaHex">${hex}</span><span id="bgContrast" class="contrast"></span></span>${chev}</summary>
-      <div class="sd-body">
+  return `<div class="bgp-head"><span class="bgp-title">サイトの背景色</span>${helpBtn('キャンバスのサイト全体の背景色です。出力では body の background-color になります。文字色の「読みやすさ」も、この背景色との差で計算します。')}<span id="bgContrast" class="contrast"></span></div>
+      <div class="bgp-body">
         <div class="color-top">
           <label class="picker" title="色を選ぶ"><input type="color" id="bg-color" value="${hex.toLowerCase()}" aria-label="背景色を選ぶ"><span id="bgPickSw" style="background:${hex}"></span></label>
           <label class="num hex" for="bg-hex"><span class="box"><span class="in-lab">#</span><input type="text" id="bg-hex" maxlength="7" spellcheck="false" autocomplete="off" aria-label="背景色のHEX" value="${hex.slice(1)}"></span></label>
@@ -1973,12 +2028,27 @@ function bgFieldHTML() {
         <div class="palettes">
           ${BG_PALETTES.map(p => `<div class="pal"><span class="pal-name">${p.name}</span><div class="sw-row">${p.colors.map(([c, n]) => `<button type="button" class="sw" data-act="bg" data-v="${c}" style="background:${c}" title="${n} ${c}" aria-label="背景 ${n} ${c}" aria-pressed="${hex === c}"></button>`).join('')}</div></div>`).join('')}
         </div>
-      </div>
-    </details>`;
+      </div>`;
 }
 function renderBg() {
-  $('#bgBox').innerHTML = bgFieldHTML();
+  $('#bgPop').innerHTML = bgFieldHTML();
   syncBgFields();
+}
+/* 背景色のポップアップ：ボタンの下に出す（画面からはみ出さないように） */
+function placeBgPop() {
+  const pop = $('#bgPop'), r = $('#bgBtn').getBoundingClientRect();
+  const w = pop.offsetWidth, h = pop.offsetHeight;
+  let left = Math.min(r.left, innerWidth - w - 8);
+  left = Math.max(8, left);
+  let top = r.bottom + 6;
+  if (top + h > innerHeight - 8) top = Math.max(8, r.top - h - 6);
+  pop.style.left = left + 'px'; pop.style.top = top + 'px';
+}
+function setBgPop(open) {
+  const pop = $('#bgPop');
+  pop.hidden = !open;
+  $('#bgBtn').setAttribute('aria-expanded', open);
+  if (open) placeBgPop();
 }
 /* 背景色の欄を今の値にそろえる（入力中の欄はそのまま） */
 function syncBgFields(force) {
@@ -1989,10 +2059,10 @@ function syncBgFields(force) {
   set('bg-color', hex.toLowerCase()); set('bg-hex', hex.slice(1));
   set('bg-r', r); set('bg-g', g); set('bg-b', b);
   $('#bgPickSw').style.background = hex;
-  $('#bgMetaSw').style.background = hex;
-  $('#bgMetaHex').textContent = hex;
-  document.querySelectorAll('#bgBox .sw').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === hex));
-  $('#bgBox [data-act="bg-reset"]').disabled = hex === DEFAULT_BG;
+  $('#bgBtnSw').style.background = hex;
+  $('#bgBtn').title = `サイトの背景色（${hex}）`;
+  document.querySelectorAll('#bgPop .sw').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === hex));
+  $('#bgPop [data-act="bg-reset"]').disabled = hex === DEFAULT_BG;
   // 本文の文字色との明るさの差
   const ratio = contrastRatio(tagColor('p'), hex);
   const el = $('#bgContrast');
@@ -2039,7 +2109,15 @@ function updateTags(patch) {
 
 /* ===== キャンバス：画面幅と表示倍率 ===== */
 let dragK = null;
-function stageAvail() { return $('#stage').clientWidth - 20; }
+function stageAvail() { return $('#stage').clientWidth - 36 - 20; }
+/* タグ名の拡大率：画面上で 10.5px 前後を保つ。左の余白（サイトの余白＋キャンバスの余白）に収まる範囲で */
+function tagScale(z) {
+  if (z >= 1) return 1;
+  const pad = parseFloat(getComputedStyle($('#site')).paddingLeft) || 40;
+  const room = pad * z + 18;          // 画面上で使える幅
+  const need = 56 * z;                // いちばん長いタグ名（button）の幅 × 倍率
+  return Math.max(1, Math.min(1 / z, room / need));
+}
 function autoZoom() { return Math.min(1, stageAvail() / state.width); }
 function currentZoom() {
   if (state.device === 'fit') return 1;
@@ -2049,7 +2127,7 @@ function currentZoom() {
 function renderZoomSelect() {
   const sel = $('#zoom');
   const fit = state.device === 'fit';
-  sel.innerHTML = `<option value="auto">自動（${Math.round((fit ? 1 : autoZoom()) * 100)}%）</option>` + ZOOMS.map(z => `<option value="${z}">${z}%</option>`).join('');
+  sel.innerHTML = `<option value="auto">自動 ${Math.round((fit ? 1 : autoZoom()) * 100)}%</option>` + ZOOMS.map(z => `<option value="${z}">${z}%</option>`).join('');
   sel.value = fit ? 'auto' : String(state.zoom);
   sel.disabled = fit; $('#zoomIn').disabled = fit; $('#zoomOut').disabled = fit;
 }
@@ -2063,6 +2141,7 @@ function layoutPreview() {
     frame.classList.remove('fixed');
     frame.style.width = ''; frame.style.height = '';
     vp.style.width = ''; vp.style.transform = '';
+    vp.style.setProperty('--tag-k', 1);
     $('#ruler').style.width = '';
     const w = Math.round(vp.offsetWidth);
     $('#ruler').textContent = `${w}px`;
@@ -2072,6 +2151,7 @@ function layoutPreview() {
     frame.classList.add('fixed');
     vp.style.width = w + 'px';
     vp.style.transform = k !== 1 ? `scale(${k})` : '';
+    vp.style.setProperty('--tag-k', tagScale(k).toFixed(3));
     frame.style.width = w * k + 'px';
     frame.style.height = vp.offsetHeight * k + 'px';
     $('#ruler').style.width = w * k + 'px';
@@ -2079,8 +2159,25 @@ function layoutPreview() {
     if (document.activeElement !== $('#vpWidth')) $('#vpWidth').value = w;
   }
   renderZoomSelect();
+  spreadTags();
   positionInspect();
   styleSpecimen();
+}
+/* タグ名が上下で重なるときは、下のタグ名を少しずらす */
+function spreadTags() {
+  const site = $('#site');
+  if (!site.classList.contains('show-tags')) return;
+  const tags = [...site.querySelectorAll('.tag')];
+  tags.forEach(t => { t.style.marginTop = ''; });
+  const z = state.device === 'fit' ? 1 : currentZoom();
+  let prev = -Infinity;
+  for (const t of tags) {
+    const r = t.getBoundingClientRect();
+    if (!r.height) continue;
+    const gap = prev + 2 - r.top;
+    if (gap > 0) t.style.marginTop = (gap / z) + 'px';
+    prev = r.bottom + Math.max(0, gap);
+  }
 }
 function setWidth(w) {
   w = Math.round(Math.min(2560, Math.max(320, w)));
@@ -2653,17 +2750,35 @@ $('#q').addEventListener('input', e => {
   clearTimeout(qTimer);
   qTimer = setTimeout(() => { state.q = e.target.value; renderList(); }, 150);
 });
-$('#pickOnly').addEventListener('change', e => { state.pickOnly = e.target.checked; renderList(); save(); });
-$('#varOnly').addEventListener('change', e => { state.varOnly = e.target.checked; renderList(); save(); });
-$('#sort').addEventListener('change', e => { state.sort = e.target.value; renderList(); save(); });
+/* 絞り込み・並び順・試し書き（ふだんは畳んでおく） */
+function setOpts(open) {
+  $('#opts').hidden = !open;
+  $('#optBtn').setAttribute('aria-expanded', open);
+}
+function updateOptDot() {
+  const changed = state.pickOnly || state.varOnly || state.sort !== 'pop' || state.size !== 24 || !!(state.sample[state.tab] && state.sample[state.tab] !== DEFAULT_SAMPLE[state.tab]);
+  $('#optDot').hidden = !changed;
+}
+$('#optBtn').addEventListener('click', () => setOpts($('#opts').hidden));
+// 分類のチップ：縦のホイールでも横に送れるように
+$('#chips').addEventListener('wheel', e => {
+  const c = e.currentTarget;
+  if (c.scrollWidth <= c.clientWidth || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+  c.scrollLeft += e.deltaY; e.preventDefault();
+}, { passive: false });
+$('#pickOnly').addEventListener('change', e => { state.pickOnly = e.target.checked; renderList(); updateOptDot(); save(); });
+$('#varOnly').addEventListener('change', e => { state.varOnly = e.target.checked; renderList(); updateOptDot(); save(); });
+$('#sort').addEventListener('change', e => { state.sort = e.target.value; renderList(); updateOptDot(); save(); });
 $('#size').addEventListener('input', e => {
   state.size = Number(e.target.value);
   listEl.style.setProperty('--sample-size', state.size + 'px');
   $('#sizeOut').textContent = state.size + 'px';
+  updateOptDot();
   save();
 });
 let sTimer;
 $('#sample').addEventListener('input', e => {
+  state.sample[state.tab] = e.target.value; updateOptDot();
   const text = e.target.value || DEFAULT_SAMPLE[state.tab];
   listEl.querySelectorAll('.card').forEach(el => {
     el.querySelector('.sample').textContent = text;
@@ -2884,13 +2999,21 @@ $('#detail').addEventListener('input', e => {
   updateTags({ [lim[0]]: v });
 });
 /* ===== イベント：サイトの背景色 ===== */
-$('#bgBox').addEventListener('click', e => {
+$('#bgBtn').addEventListener('click', () => setBgPop($('#bgPop').hidden));
+document.addEventListener('pointerdown', e => {
+  if ($('#bgPop').hidden || e.target.closest('#bgPop, #bgBtn, .tip-float')) return;
+  setBgPop(false);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#bgPop').hidden) { setBgPop(false); $('#bgBtn').focus(); } });
+window.addEventListener('resize', () => { if (!$('#bgPop').hidden) placeBgPop(); });
+document.addEventListener('scroll', e => { if (!$('#bgPop').hidden && !$('#bgPop').contains(e.target)) placeBgPop(); }, true);
+$('#bgPop').addEventListener('click', e => {
   const b = e.target.closest('[data-act]');
   if (!b) return;
   if (b.dataset.act === 'bg') setBg(b.dataset.v, false);
   else if (b.dataset.act === 'bg-reset') setBg(DEFAULT_BG, false);
 });
-$('#bgBox').addEventListener('input', e => {
+$('#bgPop').addEventListener('input', e => {
   const id = e.target.id;
   if (id === 'bg-color') { setBg(e.target.value.toUpperCase(), true); return; }
   if (id === 'bg-hex') { const h = normHex(e.target.value); if (h) setBg(h, true); return; }
@@ -2900,11 +3023,7 @@ $('#bgBox').addEventListener('input', e => {
   }
 });
 // 欄を離れたら表記を整える
-$('#bgBox').addEventListener('change', e => { if (/^bg-/.test(e.target.id)) syncBgFields(true); });
-$('#bgBox').addEventListener('toggle', e => {
-  const d = e.target;
-  if (d.dataset && d.dataset.sec) state.openSecs[d.dataset.sec] = d.open;
-}, true);
+$('#bgPop').addEventListener('change', e => { if (/^bg-/.test(e.target.id)) syncBgFields(true); });
 $('#reset').addEventListener('click', () => {
   state.roles = { ...DEFAULT_ROLES }; state.tags = cloneTags(); state.texts = {}; cardWeightPick.clear();
   state.bg = DEFAULT_BG;
@@ -2930,7 +3049,7 @@ $('#zoom').addEventListener('change', e => {
 });
 $('#zoomIn').addEventListener('click', () => stepZoom(1));
 $('#zoomOut').addEventListener('click', () => stepZoom(-1));
-$('#showTags').addEventListener('change', e => $('#site').classList.toggle('show-tags', e.target.checked));
+$('#showTags').addEventListener('change', e => { $('#site').classList.toggle('show-tags', e.target.checked); spreadTags(); });
 
 /* 枠の右端をドラッグして幅を変える（中央寄せなので移動量の2倍） */
 (function resizeHandle() {
@@ -3067,6 +3186,7 @@ document.querySelector('.tabbar').addEventListener('click', e => {
 $('#sample').value = state.sample[state.tab] || '';
 $('#sample').placeholder = DEFAULT_SAMPLE[state.tab];
 $('#size').value = state.size; $('#sizeOut').textContent = state.size + 'px';
+updateOptDot();
 listEl.style.setProperty('--sample-size', state.size + 'px');
 $('#pickOnly').checked = state.pickOnly; $('#varOnly').checked = state.varOnly; $('#sort').value = state.sort;
 $('#multi').checked = state.multi;
