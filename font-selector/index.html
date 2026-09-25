@@ -302,7 +302,6 @@ button { cursor: pointer; }
 .target .t-lab { font-weight: 700; }
 .target .t-chip { font: 500 11px/1.6 var(--mono); padding: 0 7px; border-radius: 6px; background: var(--accent); color: var(--on-accent); }
 .target .t-clear { flex-shrink: 0; width: 26px; height: 26px; margin-left: -2px; border: 0; border-radius: 6px; background: none; color: inherit; display: grid; place-items: center; padding: 0; }
-.target .t-clear:hover { background: color-mix(in srgb, var(--surface) 70%, transparent); }
 .target .t-chips { display: inline-flex; flex-wrap: wrap; gap: 4px; }
 .target .t-hint { flex-basis: 100%; font-size: 11px; line-height: 1.5; }
 .target .t-done { flex-basis: 100%; font-size: 11px; font-weight: 700; }
@@ -442,7 +441,7 @@ button.wf-row[aria-pressed="true"] { background: var(--accent-soft); }
 .out-block + .out-block { padding-top: 14px; border-top: 1px solid var(--line); }
 .ob-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .ob-head h3 { margin: 0; font-size: 14px; }
-.ob-head .count { font-size: 11px; color: var(--ink-2); }
+.ob-head .count { font-size: 11px; color: var(--ink-2); font-weight: 400; margin-left: 8px; }
 .ob-desc { margin: 0; font-size: 12px; color: var(--ink-2); }
 .ob-desc code, .link-line code { font: 11px var(--mono); padding: 1px 4px; border-radius: 4px; background: var(--seg); color: var(--ink); }
 .out-block textarea { resize: vertical; min-height: 200px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: 11.5px/1.75 var(--mono), var(--ui); white-space: pre-wrap; overflow-wrap: anywhere; overflow: auto; tab-size: 2; }
@@ -480,6 +479,10 @@ body { font-feature-settings: "palt"; letter-spacing: .01em; }
 .ph-right { display: flex; align-items: center; gap: 8px; }
 .icon-btn.sm { width: 30px; height: 30px; border-radius: 7px; color: var(--ink-2); }
 .icon-btn.sm:hover { color: var(--accent-ink); border-color: var(--accent); }
+#outClose, #bigDone { color: var(--ink-2); transition: background-color .15s, border-color .15s, color .15s; }
+#outClose:hover, #bigDone:hover, #outClose:focus-visible, #bigDone:focus-visible { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.target .t-clear { transition: background-color .15s, color .15s; }
+.target .t-clear:hover { background: var(--accent-ink); color: var(--surface); }
 .topbar { height: 60px; box-sizing: border-box; box-shadow: 0 1px 0 rgba(13,14,17,.02); }
 .btn { font-weight: 500; border-radius: 8px; }
 .btn.primary { box-shadow: 0 1px 2px rgba(43,80,255,.25), inset 0 1px 0 rgba(255,255,255,.18); }
@@ -603,11 +606,15 @@ body { font-feature-settings: "palt"; letter-spacing: .01em; }
   --tint-orange: color-mix(in srgb, var(--coral) 5%, var(--surface));
   --tint-orange-2: color-mix(in srgb, var(--coral) 2.5%, var(--surface));
 }
-.topbar { background-color: var(--surface); background-image: linear-gradient(100deg, var(--tint-blue) 0%, var(--surface) 38%, var(--surface) 62%, var(--tint-orange) 100%); }
-.panel-fonts { background-color: var(--surface); background-image: linear-gradient(172deg, var(--tint-blue) 0%, var(--surface) 42%, var(--surface) 70%, var(--tint-orange-2) 100%); }
-.panel-tags { background-color: var(--surface); background-image: linear-gradient(188deg, var(--tint-orange) 0%, var(--surface) 40%, var(--surface) 72%, var(--tint-blue-2) 100%); }
+.topbar, .panel-fonts, .panel-tags {
+  background-color: var(--surface);
+  background-image: linear-gradient(115deg, var(--tint-blue) 0%, var(--tint-blue-2) 22%, var(--surface) 50%, var(--tint-orange-2) 78%, var(--tint-orange) 100%);
+  background-attachment: fixed; background-size: 100vw 100vh;
+}
 /* スマホの下のタブも同じ質感に */
-@media (max-width: 1023px) { .tabbar { background-image: linear-gradient(100deg, var(--tint-blue-2), var(--surface) 45%, var(--tint-orange-2)); } }
+@media (max-width: 1023px) { .tabbar { background-image: linear-gradient(115deg, var(--tint-blue) 0%, var(--tint-blue-2) 22%, var(--surface) 50%, var(--tint-orange-2) 78%, var(--tint-orange) 100%); background-attachment: fixed; background-size: 100vw 100vh; } }
+/* 枠で囲まれた四角は白いまま（グラデーションを透かさない） */
+.role, .steps .num, .field input[type="text"], .badge, .wbox-in, .zoom-ctl, .bg-btn, .seg:not(.t-part) button[aria-pressed="true"] { background-color: var(--surface); }
 
 /* ===== スキップリンク（Tab を押したときだけ左上に出る） ===== */
 .skip-links a { position: fixed; left: 12px; top: -60px; z-index: 3000; padding: 10px 14px; border-radius: 8px; background: var(--ink); color: var(--surface); font-size: 13px; font-weight: 600; text-decoration: none; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
@@ -642,6 +649,11 @@ body { font-feature-settings: "palt"; letter-spacing: .01em; }
 .tag-toggle .tt-off { display: none; }
 .tag-toggle:not(:has(input:checked)) .tt-on { display: none; }
 .tag-toggle:not(:has(input:checked)) .tt-off { display: grid; }
+.icon-toggle.tag-toggle:has(input:checked) { background: var(--surface); border-color: var(--line-strong); color: var(--ink-2); }
+.icon-toggle.tag-toggle:has(input:checked):hover { border-color: var(--accent); color: var(--accent-ink); }
+.icon-toggle.tag-toggle:not(:has(input:checked)) { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-ink); }
+/* 青い状態のホバー（押すと戻ることがわかるように、色を濃くする） */
+.icon-toggle.tag-toggle:not(:has(input:checked)):hover, .icon-toggle:not(.tag-toggle):has(input:checked):hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .lab-row { display: inline-flex; align-items: center; gap: 4px; }
 .lab-row .fa { font-size: 10px; color: var(--ink-3); }
 #sizeOut { margin-left: 4px; }
@@ -703,7 +715,19 @@ h2.hx > .hx-t { grid-row: 2; grid-column: 2; align-self: start; display: flex; a
 .tour-foot { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
 .tour-dots { display: flex; gap: 4px; margin-right: auto; }
 .tour-dots i { width: 6px; height: 6px; border-radius: 3px; background: var(--line-strong); transition: width .2s; }
-.tour-dots i.on { width: 16px; background: var(--accent); }
+.tour-dots i.on { width: 16px; background: var(--coral); }
+/* チュートリアル：オレンジのアクセント（上端の帯・小見出し・強調枠・ステップのアイコン） */
+.tour-card { overflow: hidden; }
+.tour-card::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: linear-gradient(90deg, var(--coral), color-mix(in srgb, var(--coral) 55%, #FFB199)); }
+.tour-card::after { content: ""; position: absolute; right: -46px; top: -46px; width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--coral) 14%, transparent), transparent 70%); pointer-events: none; }
+.tour-step { color: color-mix(in srgb, var(--coral) 80%, var(--ink)) !important; font-weight: 600; }
+.tour-step::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 3px color-mix(in srgb, var(--coral) 22%, transparent); }
+.tour-hole { outline-color: var(--coral) !important; box-shadow: 0 0 0 9999px rgba(13,14,17,.58), 0 0 0 6px color-mix(in srgb, var(--coral) 30%, transparent) !important; }
+.tour-list .tl-ic { color: var(--coral); border-color: color-mix(in srgb, var(--coral) 45%, var(--line-strong)); background: color-mix(in srgb, var(--coral) 7%, var(--surface)); }
+.tour-list li:first-child .tl-ic { background: var(--coral); border-color: var(--coral); color: #FFFFFF; }
+.tour-list li { position: relative; }
+.tour-list li:not(:last-child)::after { content: ""; position: absolute; left: 13.5px; top: 31px; bottom: -8px; width: 1px; background: repeating-linear-gradient(var(--coral) 0 3px, transparent 3px 6px); opacity: .5; }
+.tour-card h3 { position: relative; }
 .tour-skip { border: 0; background: none; padding: 4px; font-size: 12px; color: var(--ink-3); text-decoration: underline; text-underline-offset: 2px; }
 .tour-skip:hover { color: var(--ink); }
 
@@ -994,7 +1018,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <!-- プロンプト -->
       <div class="out-block grow" data-show="prompt">
-        <div class="ob-head"><h3>プロンプト</h3><span class="mono count" id="outCount"></span></div>
+        <div class="ob-head"><h3>プロンプト<span class="mono count" id="outCount"></span></h3><button type="button" class="btn primary sm" id="outCopy"><svg class="fa fa-copy" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M384 336l-192 0c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l133.5 0c4.2 0 8.3 1.7 11.3 4.7l58.5 58.5c3 3 4.7 7.1 4.7 11.3L400 320c0 8.8-7.2 16-16 16zM192 384l192 0c35.3 0 64-28.7 64-64l0-197.5c0-17-6.7-33.3-18.7-45.3L370.7 18.7C358.7 6.7 342.5 0 325.5 0L192 0c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-16-48 0 0 16c0 8.8-7.2 16-16 16L64 464c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l16 0 0-48-16 0z"/></svg><span>コピー</span></button></div>
         <textarea id="outText" readonly spellcheck="false" aria-label="プロンプト"></textarea>
       </div>
 
@@ -1030,7 +1054,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <div class="out-foot">
       <span class="hint" id="outMsg" aria-live="polite"></span>
-      <button type="button" class="btn primary" id="outCopy" data-show="prompt"><svg class="fa fa-copy" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M384 336l-192 0c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l133.5 0c4.2 0 8.3 1.7 11.3 4.7l58.5 58.5c3 3 4.7 7.1 4.7 11.3L400 320c0 8.8-7.2 16-16 16zM192 384l192 0c35.3 0 64-28.7 64-64l0-197.5c0-17-6.7-33.3-18.7-45.3L370.7 18.7C358.7 6.7 342.5 0 325.5 0L192 0c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-16-48 0 0 16c0 8.8-7.2 16-16 16L64 464c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l16 0 0-48-16 0z"/></svg><span>プロンプトをコピー</span></button>
     </div>
   </dialog>
 </div>
