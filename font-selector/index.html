@@ -302,7 +302,7 @@ button { cursor: pointer; }
 .target .t-lab { font-weight: 700; }
 .target .t-chip { font: 500 11px/1.6 var(--mono); padding: 0 7px; border-radius: 6px; background: var(--accent); color: var(--on-accent); }
 .target .t-clear { flex-shrink: 0; width: 26px; height: 26px; margin-left: -2px; border: 0; border-radius: 6px; background: none; color: inherit; display: grid; place-items: center; padding: 0; }
-.target .t-clear:hover { background: rgba(255,255,255,.7); }
+.target .t-clear:hover { background: color-mix(in srgb, var(--surface) 70%, transparent); }
 .target .t-chips { display: inline-flex; flex-wrap: wrap; gap: 4px; }
 .target .t-hint { flex-basis: 100%; font-size: 11px; line-height: 1.5; }
 .target .t-done { flex-basis: 100%; font-size: 11px; font-weight: 700; }
@@ -527,7 +527,7 @@ body { font-feature-settings: "palt"; letter-spacing: .01em; }
 .mix-font.picking { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .mf-lab { font-size: 11px; color: var(--ink-2); white-space: nowrap; }
 .mf-name { font-size: 20px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.t-part { flex: 1 1 150px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; padding: 2px; border-radius: 7px; background: rgba(255,255,255,.6); }
+.t-part { flex: 1 1 150px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; padding: 2px; border-radius: 7px; background: color-mix(in srgb, var(--surface) 60%, transparent); }
 .t-part button { height: 26px; white-space: nowrap; border: 0; border-radius: 5px; background: transparent; font-size: 12px; color: var(--accent-ink); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .t-part button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); font-weight: 600; }
 .t-part .t-ex { font: 10px var(--mono); opacity: .75; }
@@ -592,6 +592,9 @@ body { font-feature-settings: "palt"; letter-spacing: .01em; }
 @media (max-width: 1023px) { .topbar { padding: 0 12px; gap: 8px; } .logo { transform: scale(.72); transform-origin: left center; margin-right: -40px; } .topbar-actions { gap: 6px; } #reset { width: 36px; padding: 0; justify-content: center; } }
 @media (max-width: 1023px) { .num .box, .picker, .c-reset { height: 42px; } .detail .sw, .bg-pop .sw { height: 30px; } .help { width: 22px; height: 22px; } }
 
+/* ===== スキップリンク（Tab を押したときだけ左上に出る） ===== */
+.skip-links a { position: fixed; left: 12px; top: -60px; z-index: 3000; padding: 10px 14px; border-radius: 8px; background: var(--ink); color: var(--surface); font-size: 13px; font-weight: 600; text-decoration: none; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+.skip-links a:focus { top: 12px; outline: 2px solid var(--coral); outline-offset: 2px; }
 /* ===== アイコン（Font Awesome Free） ===== */
 .fa { display: inline-block; flex-shrink: 0; height: 1em; width: auto; overflow: visible; vertical-align: -.125em; }
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
@@ -617,8 +620,11 @@ body { font-feature-settings: "palt"; letter-spacing: .01em; }
 .preview-bar .seg button .fa { font-size: 13px; }
 .preview-bar .seg button { gap: 5px; }
 .ic-land { display: inline-grid; place-items: center; transform: rotate(-90deg); }
-.tt-chip { font: 600 10px/1 var(--mono); padding: 3px 4px; border-radius: 3px; background: #EBEFFF; color: #1E3FD8; box-shadow: 0 0 0 1px rgba(43,80,255,.2); pointer-events: none; }
-.icon-toggle:not(:has(input:checked)) .tt-chip { background: transparent; color: var(--ink-3); box-shadow: 0 0 0 1px var(--line-strong); text-decoration: line-through; }
+/* タグ名の表示：表示中は目、非表示中は斜線の入った目 */
+.tag-toggle .tt-on, .tag-toggle .tt-off { display: grid; place-items: center; pointer-events: none; }
+.tag-toggle .tt-off { display: none; }
+.tag-toggle:not(:has(input:checked)) .tt-on { display: none; }
+.tag-toggle:not(:has(input:checked)) .tt-off { display: grid; }
 .lab-row { display: inline-flex; align-items: center; gap: 4px; }
 .lab-row .fa { font-size: 10px; color: var(--ink-3); }
 #sizeOut { margin-left: 4px; }
@@ -752,6 +758,11 @@ body.resizing iframe, body.resizing .panel-preview { pointer-events: none; }
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W46G2Z64"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
+<nav class="skip-links" aria-label="移動">
+  <a href="#site" data-skip="preview">キャンバスへ移動</a>
+  <a href="#tagGrid" data-skip="tags">タグの調整へ移動</a>
+  <a href="#openOutput" data-skip="">出力へ移動</a>
+</nav>
 <div class="app" id="app" data-view="fonts">
   <header class="topbar">
     <button type="button" class="logo" id="logo" aria-label="フォントセレクター（触れると書体が入れ替わります）">
@@ -834,7 +845,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <button type="button" class="bg-btn" id="bgBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="bgPop" title="サイトの背景色"><svg class="fa fa-fill-drip" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M309.7 71.6l-64.4 64.4 33.4 33.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-33.4-33.4-96.4 96.4c-2.9 2.9-5.1 6.5-6.3 10.3l321.5 0 53.7-53.7c4.9-4.9 7.6-11.5 7.6-18.3s-2.7-13.5-7.6-18.3L346.3 71.6C341.5 66.7 334.9 64 328 64s-13.5 2.7-18.3 7.6zM58.3 232.4l96.4-96.4-49.4-49.4c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L200 90.7 264.4 26.3C281.3 9.5 304.1 0 328 0s46.7 9.5 63.6 26.3L517.7 152.4C534.5 169.3 544 192.1 544 216s-9.5 46.7-26.3 63.6L311.6 485.7C294.7 502.5 271.9 512 248 512s-46.7-9.5-63.6-26.3L58.3 359.6C41.5 342.7 32 319.9 32 296s9.5-46.7 26.3-63.6zM512 544c-35.3 0-64-28.7-64-64 0-25.2 32.6-79.6 51.2-108.7 6-9.4 19.5-9.4 25.5 0 18.7 29.1 51.2 83.5 51.2 108.7 0 35.3-28.7 64-64 64z"/></svg><span class="bg-sw" id="bgBtnSw"></span><span class="visually-hidden">背景色</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="bg-pop" id="bgPop" role="dialog" aria-label="サイトの背景色" hidden></div>
-        <label class="tag-toggle icon-toggle" title="タグ名（h1 など）を表示"><input type="checkbox" id="showTags" checked aria-label="タグ名を表示"><span class="tt-chip" aria-hidden="true">h1</span></label>
+        <label class="tag-toggle icon-toggle" title="タグ名（h1 など）の表示・非表示"><input type="checkbox" id="showTags" checked aria-label="タグ名を表示"><span class="tt-on" aria-hidden="true"><svg class="fa fa-eye" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6-46.8 43.5-78.1 95.4-93 131.1-3.3 7.9-3.3 16.7 0 24.6 14.9 35.7 46.2 87.7 93 131.1 47.1 43.7 111.8 80.6 192.6 80.6s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1 3.3-7.9 3.3-16.7 0-24.6-14.9-35.7-46.2-87.7-93-131.1-47.1-43.7-111.8-80.6-192.6-80.6zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64-11.5 0-22.3-3-31.7-8.4-1 10.9-.1 22.1 2.9 33.2 13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-12.2-45.7-55.5-74.8-101.1-70.8 5.3 9.3 8.4 20.1 8.4 31.7z"/></svg></span><span class="tt-off" aria-hidden="true"><svg class="fa fa-eye-slash" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M41-24.9c-9.4-9.4-24.6-9.4-33.9 0S-2.3-.3 7 9.1l528 528c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-96.4-96.4c2.7-2.4 5.4-4.8 8-7.2 46.8-43.5 78.1-95.4 93-131.1 3.3-7.9 3.3-16.7 0-24.6-14.9-35.7-46.2-87.7-93-131.1-47.1-43.7-111.8-80.6-192.6-80.6-56.8 0-105.6 18.2-146 44.2L41-24.9zM204.5 138.7c23.5-16.8 52.4-26.7 83.5-26.7 79.5 0 144 64.5 144 144 0 31.1-9.9 59.9-26.7 83.5l-34.7-34.7c12.7-21.4 17-47.7 10.1-73.7-13.7-51.2-66.4-81.6-117.6-67.9-8.6 2.3-16.7 5.7-24 10l-34.7-34.7zM325.3 395.1c-11.9 3.2-24.4 4.9-37.3 4.9-79.5 0-144-64.5-144-144 0-12.9 1.7-25.4 4.9-37.3L69.4 139.2c-32.6 36.8-55 75.8-66.9 104.5-3.3 7.9-3.3 16.7 0 24.6 14.9 35.7 46.2 87.7 93 131.1 47.1 43.7 111.8 80.6 192.6 80.6 37.3 0 71.2-7.9 101.5-20.6l-64.2-64.2z"/></svg></span></label>
       </div>
       <div class="stage" id="stage">
         <div class="ruler" id="ruler">1280px</div>
@@ -3261,6 +3272,18 @@ $('#outDlg').addEventListener('click', e => {
 $('#cssName').addEventListener('input', () => { $('#linkTag').textContent = `<link rel="stylesheet" href="${cssFileName()}">`; });
 $('#saveCss').addEventListener('click', saveCssFile);
 prepareSave();
+
+/* ===== スキップリンク：目的の場所の最初の操作部品へ ===== */
+document.querySelector('.skip-links').addEventListener('click', e => {
+  const a = e.target.closest('a[data-skip]');
+  if (!a) return;
+  e.preventDefault();
+  if (a.dataset.skip && isNarrowView()) setView(a.dataset.skip);
+  const to = { '#site': '#devices button[aria-pressed="true"]', '#tagGrid': '#tagGrid button', '#openOutput': isNarrowView() ? '.tabbar [data-open-output]' : '#openOutput' }[a.getAttribute('href')];
+  const el = document.querySelector(to);
+  if (el) { el.focus(); el.scrollIntoView({ block: 'nearest' }); }
+});
+const isNarrowView = () => matchMedia('(max-width: 1023px)').matches;
 
 /* ===== スマホ用タブ ===== */
 function setView(v) {
