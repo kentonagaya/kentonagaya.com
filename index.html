@@ -3,318 +3,546 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>長屋 健斗 - Kento Nagaya｜Web制作・マーケティング・多言語対応</title>
-<meta name="description" content="言葉になっていないものを、形にする。大阪を拠点に、Web制作・マーケティング・多言語対応を行うフリーランスの長屋健斗です。">
+<title>長屋 健斗｜Web制作・マーケティング・多言語対応</title>
+<meta name="description" content="言葉になっていないものを、形にする。話を聞くところから公開後の運用まで。大阪・東京を拠点に、Webサイト制作・マーケティング・多言語対応を行うフリーランスの長屋健斗です。">
 <meta property="og:type" content="website">
-<meta property="og:title" content="長屋 健斗 - Kento Nagaya">
-<meta property="og:description" content="言葉になっていないものを、形にする。大阪を拠点に、Web制作・マーケティング・多言語対応を行っています。">
+<meta property="og:title" content="長屋 健斗｜Web制作・マーケティング・多言語対応">
+<meta property="og:description" content="言葉になっていないものを、形にする。話を聞くところから公開後の運用まで。">
 <meta property="og:url" content="https://kentonagaya.com/">
+<meta property="og:image" content="https://kentonagaya.com/assets/ogp.jpg">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://kentonagaya.com/">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
-
-<style>
-:root{
-  --ink:#2B2B2B;
-  --ink-70:#5C5C5C;
-  --ink-40:#9A9A9A;
-  --rule:#E4E4E4;
-  --white:#FFFFFF;
-  --grad:linear-gradient(128deg,#F3A2CC 0%,#E6559E 30%,#C063BE 58%,#EE7B72 82%,#F26A5C 100%);
-  --font:"Zen Kaku Gothic New",sans-serif;
-}
-
-*,*::before,*::after{box-sizing:border-box;}
-html{-webkit-text-size-adjust:100%;}
-body{
-  margin:0;
-  background:var(--white);
-  color:var(--ink);
-  font-family:var(--font);
-  font-size:16px;
-  line-height:1.9;
-  font-feature-settings:"palt" 1;
-  -webkit-font-smoothing:antialiased;
-}
-
-.wrap{
-  max-width:56rem;
-  margin:0 auto;
-  padding:clamp(2rem,6vw,4.5rem) clamp(1.5rem,6vw,4rem) clamp(2rem,5vw,3.5rem);
-  min-height:100vh;
-  min-height:100svh;
-  display:flex;
-  flex-direction:column;
-}
-
-/* ---------- masthead ---------- */
-.masthead{
-  display:flex;
-  align-items:center;
-  gap:clamp(.9rem,2.5vw,1.4rem);
-}
-.mark{
-  width:clamp(2.4rem,6vw,3.2rem);
-  height:auto;
-  flex:none;
-}
-.names{margin:0;}
-.name-ja{
-  display:block;
-  font-size:clamp(1.5rem,4.6vw,2.1rem);
-  font-weight:500;
-  letter-spacing:.12em;
-  line-height:1.3;
-}
-.name-en{
-  display:block;
-  font-size:clamp(.82rem,2.2vw,.95rem);
-  font-weight:400;
-  letter-spacing:.06em;
-  color:var(--ink-70);
-  line-height:1.5;
-}
-
-/* ---------- hero ---------- */
-.hero{padding:clamp(3rem,10vw,6rem) 0 clamp(2.5rem,6vw,4rem);}
-.essence{
-  margin:0;
-  font-size:clamp(1.6rem,5.4vw,2.9rem);
-  font-weight:700;
-  line-height:1.6;
-  letter-spacing:.04em;
-}
-.essence .accent{
-  background:var(--grad);
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-.lede{
-  margin:clamp(1.6rem,4vw,2.4rem) 0 0;
-  max-width:33rem;
-  font-size:clamp(.92rem,2.4vw,1rem);
-  color:var(--ink-70);
-}
-
-/* ---------- bilingual rows (from the card) ---------- */
-.section{
-  padding:clamp(2.2rem,5vw,3rem) 0;
-  border-top:1px solid var(--rule);
-}
-.eyebrow{
-  margin:0 0 1.4rem;
-  font-size:.7rem;
-  font-weight:700;
-  letter-spacing:.22em;
-  color:var(--ink-40);
-}
-.bilingual{margin:0;padding:0;list-style:none;}
-.bilingual li{
-  display:grid;
-  grid-template-columns:minmax(9rem,14rem) 1fr;
-  gap:.5rem 1.5rem;
-  padding:.65rem 0;
-  border-bottom:1px solid var(--rule);
-}
-.bilingual li:last-child{border-bottom:0;}
-.ja{font-size:1rem;font-weight:500;letter-spacing:.06em;}
-.en{font-size:1rem;font-weight:400;color:var(--ink-70);letter-spacing:.02em;}
-
-.facts{
-  display:flex;
-  flex-wrap:wrap;
-  gap:1rem 3.5rem;
-}
-.fact{margin:0;}
-.fact dt{
-  font-size:.7rem;
-  font-weight:700;
-  letter-spacing:.18em;
-  color:var(--ink-40);
-  margin-bottom:.2rem;
-}
-.fact dd{
-  margin:0;
-  font-size:1rem;
-  letter-spacing:.04em;
-}
-.fact .num{
-  font-size:1.6rem;
-  font-weight:700;
-  letter-spacing:.02em;
-  margin-right:.15em;
-}
-
-/* ---------- black block (from the card back) ---------- */
-.block{
-  background:var(--ink);
-  color:var(--white);
-  margin-top:auto;
-  padding:clamp(1.6rem,4.5vw,2.4rem);
-  display:flex;
-  flex-wrap:wrap;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap:1.4rem 2rem;
-}
-.block .eyebrow{color:rgba(255,255,255,.55);margin-bottom:.7rem;}
-.block a{color:var(--white);text-decoration:none;}
-.mailto{
-  font-size:clamp(1rem,3.2vw,1.35rem);
-  font-weight:500;
-  letter-spacing:.03em;
-  border-bottom:1px solid rgba(255,255,255,.4);
-  padding-bottom:.15rem;
-  transition:border-color .2s ease;
-  word-break:break-all;
-}
-.mailto:hover,.mailto:focus-visible{border-color:var(--white);}
-.block-links{display:flex;gap:1.6rem;font-size:.88rem;letter-spacing:.06em;}
-.block-links a{
-  border-bottom:1px solid transparent;
-  transition:border-color .2s ease;
-  padding-bottom:.1rem;
-}
-.block-links a:hover,.block-links a:focus-visible{border-color:rgba(255,255,255,.6);}
-
-/* ---------- tagline ---------- */
-.tagline{
-  padding:clamp(1.6rem,4vw,2.2rem) 0 0;
-  display:flex;
-  align-items:baseline;
-  flex-wrap:wrap;
-  gap:.4rem 1rem;
-}
-.tagline .jp{
-  font-size:clamp(1rem,3vw,1.15rem);
-  font-weight:700;
-  letter-spacing:.14em;
-  background:var(--grad);
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-.tagline .fr{
-  font-size:.76rem;
-  letter-spacing:.16em;
-  color:var(--ink-40);
-}
-
-.notice{
-  margin:1.4rem 0 0;
-  font-size:.74rem;
-  color:var(--ink-40);
-  letter-spacing:.04em;
-}
-
-a:focus-visible{outline:2px solid var(--ink);outline-offset:3px;}
-.block a:focus-visible{outline-color:var(--white);}
-
-@media (max-width:30rem){
-  .bilingual li{grid-template-columns:1fr;gap:.1rem;}
-  .en{font-size:.86rem;}
-}
-
-/* ---------- motion ---------- */
-@media (prefers-reduced-motion:no-preference){
-  .rise{opacity:0;transform:translateY(10px);animation:rise .8s cubic-bezier(.2,.7,.3,1) forwards;}
-  .d1{animation-delay:.1s;} .d2{animation-delay:.28s;}
-  .d3{animation-delay:.46s;} .d4{animation-delay:.62s;} .d5{animation-delay:.78s;}
-  @keyframes rise{to{opacity:1;transform:none;}}
-}
-</style>
 </head>
 <body>
-<div class="wrap">
 
-  <!-- ================= ナビゲーション ================= -->
-  <nav class="nav">
-    <a class="nav-home" href="/">
-      <svg class="nav-mark" viewBox="0 0 100 92" role="img" aria-label="ホームへ">
-        <defs>
-          <linearGradient id="navg" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#F3A2CC"/><stop offset="30%" stop-color="#E6559E"/>
-            <stop offset="58%" stop-color="#C063BE"/><stop offset="82%" stop-color="#EE7B72"/>
-            <stop offset="100%" stop-color="#F26A5C"/>
-          </linearGradient>
-        </defs>
-        <path fill="url(#navg)" d="M50 88C20 66 4 46 4 30 4 14 16 4 29 4c10 0 17 6 21 13 4-7 11-13 21-13 13 0 25 10 25 26 0 16-16 36-46 58Z"/>
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <div class="header-in">
+    <a class="logo" href="/">
+      <svg viewBox="0 0 100 92" role="img" aria-label="ホーム">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#F3A2CC"/><stop offset="28%" stop-color="#E6559E"/>
+          <stop offset="56%" stop-color="#C063BE"/><stop offset="82%" stop-color="#EE7B72"/>
+          <stop offset="100%" stop-color="#F26A5C"/></linearGradient></defs>
+        <path fill="url(#lg)" d="M50 88C20 66 4 46 4 30 4 14 16 4 29 4c10 0 17 6 21 13 4-7 11-13 21-13 13 0 25 10 25 26 0 16-16 36-46 58Z"/>
       </svg>
-      <span class="nav-name">長屋 健斗</span>
+      <span><b>長屋 健斗</b><span>KENTO NAGAYA</span></span>
     </a>
-    <div class="nav-links">
-      <a href="/works.html">WORKS</a>
+
+    <button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="gnav">
+      <i></i><i></i><i></i>
+    </button>
+
+    <nav class="gnav" id="gnav">
+      <a href="/#works">WORKS</a>
+      <a href="/#service">SERVICE</a>
+      <a href="/#price">PRICE</a>
+      <a href="/#flow">FLOW</a>
       <a href="/about.html">ABOUT</a>
-      <a href="#contact">CONTACT</a>
-    </div>
-  </nav>
-
-  <header class="masthead rise d1">
-    <h1 class="names">
-      <span class="name-ja">長屋 健斗</span>
-      <span class="name-en">Kento Nagaya</span>
-    </h1>
-  </header>
-
-  <main>
-    <section class="hero">
-      <p class="essence rise d2">言葉になっていないものを、<br><span class="accent">形にする。</span></p>
-      <p class="lede rise d3">
-        サーバーエンジニアを経て、フリーランスでWebサイトの制作とマーケティングのお手伝いをしています。<br>
-        お話を聞いて、デザインしたり、販売方法を考えたり。<br>
-        東京生まれ。フィリピン・ジョージア・フランスでの生活を経て、いまは大阪を拠点にしています。
-      </p>
-    </section>
-
-    <section class="section rise d4">
-      <p class="eyebrow">SERVICES</p>
-      <ul class="bilingual">
-        <li><span class="ja">Web制作</span><span class="en">Web Design &amp; Development</span></li>
-        <li><span class="ja">マーケティング</span><span class="en">Web Marketing</span></li>
-        <li><span class="ja">多言語対応</span><span class="en">Localization</span></li>
-      </ul>
-    </section>
-
-    <section class="section rise d4">
-      <p class="eyebrow">BACKGROUND</p>
-      <div class="facts">
-        <dl class="fact">
-          <dt>制作実績</dt>
-          <dd><span class="num">32</span>件</dd>
-        </dl>
-        <dl class="fact">
-          <dt>拠点</dt>
-          <dd>大阪・東京</dd>
-          <dd>Osaka, Tokyo</dd>
-        </dl>
-        <dl class="fact">
-          <dt>言語</dt>
-          <dd>日本語・英語・フランス語</dd>
-          <dd>Japanese, English, French</dd>
-        </dl>
-      </div>
-    </section>
-  </main>
-
-  <section class="block rise d5">
-    <div>
-      <p class="eyebrow">CONTACT</p>
-      <a class="mailto" href="mailto:knip.89@gmail.com">Email</a>
-    </div>
-    <nav class="block-links">
-      <a href="https://www.instagram.com/kentonagaya" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://note.com/kentonagaya" target="_blank" rel="noopener">Note</a>
+      <a class="btn-nav" href="/#contact">お問い合わせ</a>
     </nav>
-  </section>
+  </div>
+</header>
 
-  <p class="notice rise d5">Kento Nagaya</p>
+<main>
 
-</div>
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <span class="blob blob-a"></span>
+  <span class="blob blob-b"></span>
+  <div class="container hero-in">
+    <p class="hero-label rv">WEB DESIGN &amp; MARKETING</p>
+    <h1 class="rv">言葉になっていないものを、<br><span class="accent">形にする。</span></h1>
+    <p class="hero-lead rv">
+      伝えたいことは、もうお持ちのはずです。<br>
+      それがまだ言葉になっていないだけ。<br>
+      聞いて、整理して、形にするところから、公開後の改善までお手伝いします。
+    </p>
+    <ul class="hero-tags rv">
+      <li>制作実績 32件</li>
+      <li>デザインから実装まで一貫対応</li>
+      <li>アクセス解析・改善</li>
+      <li>AI活用ツール開発</li>
+      <li>英語・フランス語対応</li>
+    </ul>
+    <div class="hero-cta rv">
+      <a class="btn btn-grad" href="#contact">無料で相談する</a>
+      <a class="btn btn-ghost" href="#works">実績を見る</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROBLEM ================= -->
+<section class="sec sec-tint">
+  <div class="container">
+    <div class="sec-head center rv">
+      <span class="sec-en">FOR YOU</span>
+      <h2 class="sec-ja">このような方から<br class="sp-br">ご依頼いただいています</h2>
+    </div>
+
+    <div class="problems rv">
+      <div class="problem">
+        <span class="no">01</span>
+        <p>何を伝えればいいのか、<br>自分でも整理できていない
+          <span>やりたいことはある。でも言葉にすると急にぼやける。そこから一緒に考えます。</span></p>
+      </div>
+      <div class="problem">
+        <span class="no">02</span>
+        <p>サイトはあるが、<br>機能している実感がない
+          <span>作り直しよりも先に、どこで止まっているかを確認するところから始めます。</span></p>
+      </div>
+      <div class="problem">
+        <span class="no">03</span>
+        <p>作って終わりではなく、<br>相談し続けられる相手が欲しい
+          <span>公開後の更新や改善まで、同じ担当者が続けて対応します。</span></p>
+      </div>
+      <div class="problem">
+        <span class="no">04</span>
+        <p>Webだけでなく、<br>紙やロゴもまとめて頼みたい
+          <span>名刺、フライヤー、メニュー表、ロゴ。媒体をまたいでトーンを揃えられます。</span></p>
+      </div>
+    </div>
+
+    <p class="problem-answer rv">
+      ひとつずつ聞きながら、<br>
+      <span class="accent">使えるものに変えていきます。</span>
+    </p>
+  </div>
+</section>
+
+<!-- ================= WORKS ================= -->
+<section class="sec" id="works">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-en">WORKS</span>
+      <h2 class="sec-ja">制作実績</h2>
+      <p class="sec-note">これまでに32件の制作に携わりました。そのうち掲載の許可をいただいたものを紹介します。</p>
+    </div>
+
+    <div class="work-grid rv">
+      <a class="work-card" href="/works.html#case01">
+        <div class="work-thumb"><img src="/assets/aromatise-pc.jpg" alt="AromatiseのWebサイト" loading="lazy" width="1440" height="900"></div>
+        <span class="work-cat">AROMA &amp; PERFUMERY</span>
+        <h3 class="work-name">Aromatise</h3>
+        <p class="work-desc">調香・アロマの講師業とサロン運営。機能していなかった既存サイトを全面的に作り直しました。</p>
+        <ul class="work-tags"><li>WEB DESIGN</li><li>DEVELOPMENT</li><li>OPERATION</li></ul>
+      </a>
+
+      <a class="work-card" href="/works.html#case02">
+        <div class="work-thumb"><img src="/assets/kimidoriya-pc.jpg" alt="ゲストハウス君彩家のWebサイト" loading="lazy" width="1440" height="900"></div>
+        <span class="work-cat">GUEST HOUSE</span>
+        <h3 class="work-name">ゲストハウス君彩家</h3>
+        <p class="work-desc">築90年の古民家を改装した、大阪・城東の宿。公式サイトを新規に制作しました。</p>
+        <ul class="work-tags"><li>WEB DESIGN</li><li>DEVELOPMENT</li><li>OPERATION</li></ul>
+      </a>
+
+      <a class="work-card" href="/works.html#case03">
+        <div class="work-thumb"><img src="/assets/gamo4fes-pc.jpg" alt="がもよんフェスのWebサイト" loading="lazy" width="1440" height="900"></div>
+        <span class="work-cat">EVENT</span>
+        <h3 class="work-name">がもよんフェス</h3>
+        <p class="work-desc">蒲生四丁目の街をまるごと会場にする音楽フェス。一度閉じたサイトをゼロから立て直しました。</p>
+        <ul class="work-tags"><li>WEB DESIGN</li><li>DEVELOPMENT</li></ul>
+      </a>
+    </div>
+
+    <p class="sec-more rv"><a class="btn btn-ghost" href="/works.html">実績をすべて見る</a></p>
+  </div>
+</section>
+
+<!-- ================= SERVICE / POINT ================= -->
+<section class="sec sec-tint" id="service">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-en">SERVICE</span>
+      <h2 class="sec-ja">できること</h2>
+      <p class="sec-note">サイトを作って終わり、ではありません。数字を見ながら直すところ、業務そのものを仕組みで軽くするところまで。ひとりで完結できる範囲が広いことが強みです。</p>
+    </div>
+
+      <ul class="svc-grid rv">
+        <li>
+          <span class="svc-no">01</span>
+          <h3>Web制作<span>WEB DESIGN &amp; DEVELOPMENT</span></h3>
+          <p>コーポレートサイト、LP、採用ページ。デザインから実装、公開作業まで一貫して担当します。</p>
+          <p class="svc-tools">WordPress / STUDIO / Figma / HTML・CSS / PHP</p>
+        </li>
+        <li>
+          <span class="svc-no">02</span>
+          <h3>Webマーケティング<span>WEB MARKETING</span></h3>
+          <p>アクセス解析の環境を整え、どのページで離脱しているかを確認しながら改善します。数字を見ないまま作り直す、ということをしません。</p>
+          <p class="svc-tools">Google Analytics (GA4) / Search Console / Tag Manager / SEO改善 / LP改善</p>
+        </li>
+        <li>
+          <span class="svc-no">03</span>
+          <h3>システム開発<span>SYSTEM DEVELOPMENT</span></h3>
+          <p>サイトだけでは解けない業務を、小さな仕組みで片付けます。AIを組み込んだツールの開発や、社内で使っている表計算の自動化まで。</p>
+          <p class="svc-tools">AI活用Webアプリ / 業務ツール / 各種API連携 / VBAマクロ / サーバー構築・運用</p>
+        </li>
+        <li>
+          <span class="svc-no">04</span>
+          <h3>グラフィックデザイン<span>GRAPHIC DESIGN</span></h3>
+          <p>ロゴ、名刺、フライヤー、ポスター、メニュー表。Webと合わせてトーンを揃えられます。</p>
+          <p class="svc-tools">ロゴ / 名刺 / フライヤー / ポスター / メニュー表</p>
+        </li>
+        <li>
+          <span class="svc-no">05</span>
+          <h3>多言語対応<span>LOCALIZATION</span></h3>
+          <p>英語ページの制作、海外向けの制作物。フランスの飲食店ではフランス語の名刺とフライヤーを担当しました。</p>
+          <p class="svc-tools">日本語 / 英語 / フランス語</p>
+        </li>
+      </ul>
+
+    <div class="point rv">
+      <div>
+        <p class="point-no">POINT 01</p>
+        <h3>まず、話を聞くところから</h3>
+        <p>
+          いきなりデザインの話はしません。何のために作るのか、誰に届けたいのか、いま何に困っているのか。
+          そこを一緒に整理してから手を動かします。「言葉にできていない感覚まで汲み取ってくれた」と言っていただけたことが、
+          いまの仕事の基準になっています。
+        </p>
+      </div>
+      <div class="point-visual"><p class="kw"><b>聞いてから、<br>つくる</b><small>LISTEN FIRST</small></p></div>
+    </div>
+
+    <div class="point rv">
+      <div>
+        <p class="point-no">POINT 02</p>
+        <h3>作って終わりにしない</h3>
+        <p>
+          公開してからが本番です。人が来て、数字を見て、直していく。そこまでが仕事だと考えています。
+          元々サーバーエンジニアだったので、ドメインやサーバーまわりのトラブルにも対応できます。
+          公開後に相談先がなくなる、ということが起きません。
+        </p>
+      </div>
+      <div class="point-visual"><p class="kw"><b>公開後も、<br>ずっと相談先に</b><small>KEEP IMPROVING</small></p></div>
+    </div>
+
+    <div class="point rv">
+      <div>
+        <p class="point-no">POINT 03</p>
+        <h3>領域をまたいで、まとめて引き受けられます</h3>
+        <p>
+          サイト、ロゴ、名刺、フライヤー、社内のExcelマクロ。これまで媒体を選ばずに引き受けてきました。
+          サーバーエンジニア出身なので、デザインの話も、サーバーやデータの話も、同じ相手にまとめて相談できます。
+          フランスの飲食店ではフランス語の制作物も担当しました。
+        </p>
+      </div>
+      <div class="point-visual"><p class="kw"><b>媒体も領域も、<br>またげる</b><small>WEB / MARKETING / SYSTEM / PRINT</small></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRICE ================= -->
+<section class="sec" id="price">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-en">PRICE</span>
+      <h2 class="sec-ja">料金の目安</h2>
+      <p class="sec-note">内容によって変わるため、あくまで目安です。ご予算をお聞きしたうえで、できる範囲をご提案します。</p>
+    </div>
+
+    <!-- ▼▼ 金額は仮です。実際の価格に必ず差し替えてください ▼▼ -->
+    <div class="plans rv">
+      <div class="plan">
+        <h3>ランディングページ<span>LANDING PAGE</span></h3>
+        <p class="price">150,000<small>円〜（税込）</small></p>
+        <p class="from">1ページ完結型</p>
+        <ul>
+          <li>ヒアリング・構成設計</li>
+          <li>デザイン（PC・スマートフォン）</li>
+          <li>実装・公開作業</li>
+          <li>お問い合わせフォーム</li>
+          <li>基本的なSEO設定</li>
+          <li>OGP画像・ファビコン</li>
+        </ul>
+        <p class="plan-note">広告の遷移先や、単発のキャンペーンに。</p>
+      </div>
+
+      <div class="plan feature">
+        <h3>コーポレートサイト<span>WEBSITE</span></h3>
+        <p class="price">300,000<small>円〜（税込）</small></p>
+        <p class="from">5ページ程度から</p>
+        <ul>
+          <li>ヒアリング・サイト設計</li>
+          <li>デザイン（PC・スマートフォン）</li>
+          <li>実装・公開作業</li>
+          <li>お問い合わせフォーム</li>
+          <li>基本的なSEO設定</li>
+          <li>OGP画像・ファビコン</li>
+          <li>ドメイン・サーバー設定の代行</li>
+          <li>公開後1ヶ月のサポート</li>
+        </ul>
+        <p class="plan-note">会社・店舗・宿など、継続して使うサイトに。</p>
+      </div>
+
+      <div class="plan">
+        <h3>デザイン・その他<span>DESIGN &amp; OTHERS</span></h3>
+        <p class="price">30,000<small>円〜（税込）</small></p>
+        <p class="from">内容により変動</p>
+        <ul>
+          <li>ロゴマーク</li>
+          <li>名刺・ショップカード</li>
+          <li>フライヤー・ポスター</li>
+          <li>メニュー表</li>
+          <li>既存サイトの修正・改善</li>
+          <li>英語・フランス語ページ</li>
+        </ul>
+        <p class="plan-note">Webと合わせてのご依頼も、単発のご依頼も承ります。</p>
+      </div>
+
+      <div class="plan">
+        <h3>マーケティング・開発<span>MARKETING &amp; DEVELOPMENT</span></h3>
+        <p class="price">要相談</p>
+        <p class="from">内容・期間により変動</p>
+        <ul>
+          <li>アクセス解析の導入・設定</li>
+          <li>サイト改善の提案・実施</li>
+          <li>SEO改善</li>
+          <li>AIを活用したツール・Webアプリ開発</li>
+          <li>業務の自動化（表計算・各種API連携）</li>
+          <li>サーバー構築・運用、トラブル対応</li>
+        </ul>
+        <p class="plan-note">やりたいことをお聞きしてから、規模と進め方をご提案します。</p>
+      </div>
+    </div>
+    <!-- ▲▲ 金額は仮です ▲▲ -->
+
+    <p class="price-caution rv">
+      ※ 表示は目安です。ページ数・機能・素材の有無によって変動します。<br>
+      ※ ドメイン取得費用、サーバー費用、有料素材費は別途実費となります。<br>
+      ※ お見積りは無料です。まずはご相談ください。
+    </p>
+  </div>
+</section>
+
+<!-- ================= VOICE ================= -->
+<section class="sec sec-tint">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-en">VOICE</span>
+      <h2 class="sec-ja">いただいた言葉</h2>
+    </div>
+
+    <div class="voices rv">
+      <blockquote class="voice">
+        <span class="qm">“</span>
+        <p>思いを汲み取ってくれる。言葉にできていない感覚も含めて、デザインに落とし込んでくれた。</p>
+        <footer>アロマサロン／Aromatise様</footer>
+      </blockquote>
+
+      <blockquote class="voice">
+        <span class="qm">“</span>
+        <p>君彩家のブレイン。</p>
+        <footer>ゲストハウス／君彩家様</footer>
+      </blockquote>
+
+      <blockquote class="voice">
+        <span class="qm">“</span>
+        <p>当日、探していた情報にすぐ辿り着けた。便利だった。</p>
+        <footer>がもよんフェス 来場者様</footer>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FLOW ================= -->
+<section class="sec" id="flow">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-en">FLOW</span>
+      <h2 class="sec-ja">ご依頼から公開まで</h2>
+      <p class="sec-note">初めての方でも進め方がわかるように、各段階でやることを事前にお伝えします。</p>
+    </div>
+
+    <ol class="flow rv">
+      <li>
+        <h3>お問い合わせ</h3>
+        <p>フォームまたはメールからご連絡ください。内容を確認のうえ、2営業日以内にご返信します。この時点で費用は発生しません。</p>
+      </li>
+      <li>
+        <h3>ヒアリング</h3>
+        <p>オンラインまたは対面で、目的・ご予算・時期をお聞きします。まだ固まっていない状態でも問題ありません。整理するところからご一緒します。</p>
+      </li>
+      <li>
+        <h3>お見積り・ご提案</h3>
+        <p>お聞きした内容をもとに、構成と金額をご提示します。ご予算に合わない場合は、優先順位をつけて調整します。</p>
+      </li>
+      <li>
+        <h3>制作</h3>
+        <p>構成 → デザイン → 実装の順に進めます。各段階で確認をお願いしているので、最後に「イメージと違う」ということが起きません。</p>
+      </li>
+      <li>
+        <h3>公開</h3>
+        <p>ドメイン・サーバーの設定も代行します。更新方法が必要な場合は、操作方法をお伝えします。</p>
+      </li>
+      <li>
+        <h3>公開後の改善</h3>
+        <p>アクセス状況を見ながら、直したほうがいい箇所をご相談します。ここからが本番だと考えています。</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= PROFILE ================= -->
+<section class="sec sec-tint" id="profile">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-en">PROFILE</span>
+      <h2 class="sec-ja">制作者について</h2>
+    </div>
+
+    <div class="profile rv">
+      <div class="profile-photo">
+        <img src="/assets/profile.jpg" alt="長屋 健斗" loading="lazy" width="600" height="600">
+      </div>
+      <div>
+        <h3 class="profile-name" style="border:0;padding:0;margin:0;">長屋 健斗<span>KENTO NAGAYA</span></h3>
+        <p class="profile-meta">1994年 東京生まれ／大阪・東京／Web制作・マーケティング</p>
+
+        <h3>サーバーエンジニアから始まりました</h3>
+        <p>大学卒業後、ITエンジニアとして社内システムとインフラの運用を担当。その後フィリピンで、日本企業向けのサーバー運用を現地から担当しました。技術よりも伝え方のほうが仕事を左右する、と気づいたのはこの時期です。</p>
+
+        <h3>4カ国で暮らし、50カ国以上を旅しました</h3>
+        <p>フィリピン、ジョージア、フランス。住んでみて分かったのは、海外に住みたいわけではないということでした。行きたい場所を自分で選べる状態でいたい。いまの働き方は、そこから来ています。</p>
+
+        <h3>いまはフリーランスとして</h3>
+        <p>Webサイト、LP、ロゴ、名刺、紙媒体まで、これまでに32件。<a href="/about.html" style="color:inherit;">もう少し詳しいプロフィールはこちら</a>。普段考えていることは<a href="https://note.com/kentonagaya" target="_blank" rel="noopener" style="color:inherit;">note</a>に毎週書いています。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="sec" id="faq">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-en">FAQ</span>
+      <h2 class="sec-ja">よくあるご質問</h2>
+    </div>
+
+    <div class="faq rv">
+      <details>
+        <summary>何も決まっていない状態でも相談できますか？</summary>
+        <p class="a">はい。むしろその状態からのご相談が多いです。「何を作ればいいか分からない」という段階から、一緒に整理していきます。まだ発注を決めていない段階のご相談でも構いません。</p>
+      </details>
+      <details>
+        <summary>原稿や写真は用意が必要ですか？</summary>
+        <p class="a">お持ちの素材があればお送りください。無い場合も、内容をお聞きしながら文章を整えていきます。写真については、有料素材のご提案や、撮影が必要な場合のご相談も承ります。</p>
+      </details>
+      <details>
+        <summary>公開までどのくらいかかりますか？</summary>
+        <p class="a">内容によりますが、LPで3〜4週間、サイト全体で1.5〜2ヶ月程度が目安です。素材や原稿が揃っているかどうかで変動します。お急ぎの場合はご相談ください。</p>
+      </details>
+      <details>
+        <summary>公開後、自分で更新できますか？</summary>
+        <p class="a">更新の頻度によってご提案が変わります。よく変わる箇所がある場合は、ご自身で編集できる形で作ります。逆にほとんど更新しないサイトであれば、表示速度を優先した作りにします。どちらが向いているかは、ヒアリングの段階で相談させてください。</p>
+      </details>
+      <details>
+        <summary>すでにあるサイトの修正だけでも対応できますか？</summary>
+        <p class="a">はい。部分的な修正や改善のみのご依頼も承っています。サーバーやドメインまわりのトラブル対応も可能です。</p>
+      </details>
+      <details>
+        <summary>サイト制作以外の相談もできますか？</summary>
+        <p class="a">はい。アクセス解析の導入や既存サイトの改善、業務を楽にするためのツール開発など、Web制作以外のご相談も承っています。「これは頼める内容なのか」という確認だけでも構いませんので、まずはお聞かせください。</p>
+      </details>
+      <details>
+        <summary>遠方ですが対応できますか？</summary>
+        <p class="a">オンラインで完結できます。大阪と東京を行き来しているため、どちらかであれば対面での打ち合わせも可能です。</p>
+      </details>
+      <details>
+        <summary>英語やフランス語のページも作れますか？</summary>
+        <p class="a">英語ページの制作経験があります。フランスの飲食店向けに、フランス語の名刺やフライヤーも制作しました。内容によっては翻訳者と連携する形になりますので、まずはご相談ください。</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= CTA ================= -->
+<section class="cta" id="contact">
+  <span class="blob blob-a"></span>
+  <div class="container cta-in">
+    <span class="sec-en">CONTACT</span>
+    <h2>まだ形になっていない段階で、<br>ご相談ください。</h2>
+    <p>
+      ご相談とお見積りは無料です。<br>
+      「これは依頼できる内容なのか」という確認だけでも構いません。
+    </p>
+    <div class="cta-btns">
+      <a class="btn btn-white" href="mailto:knip.89@gmail.com?subject=Web%E5%88%B6%E4%BD%9C%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87">メールで相談する</a>
+      <a class="btn btn-line" href="https://note.com/kentonagaya" target="_blank" rel="noopener">noteを読む</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="container footer-in">
+    <div>
+      <a class="logo" href="/">
+        <svg viewBox="0 0 100 92" role="img" aria-label="ホーム">
+          <defs><linearGradient id="fg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#F3A2CC"/><stop offset="28%" stop-color="#E6559E"/>
+            <stop offset="56%" stop-color="#C063BE"/><stop offset="82%" stop-color="#EE7B72"/>
+            <stop offset="100%" stop-color="#F26A5C"/></linearGradient></defs>
+          <path fill="url(#fg)" d="M50 88C20 66 4 46 4 30 4 14 16 4 29 4c10 0 17 6 21 13 4-7 11-13 21-13 13 0 25 10 25 26 0 16-16 36-46 58Z"/>
+        </svg>
+        <span><b>長屋 健斗</b><span>KENTO NAGAYA</span></span>
+      </a>
+      <p class="footer-tag">言葉になっていないものを、形にする。<br>大阪・東京／Web制作・マーケティング</p>
+    </div>
+
+    <div>
+      <h4>SITE MAP</h4>
+      <ul>
+        <li><a href="/">ホーム</a></li>
+        <li><a href="/works.html">制作実績</a></li>
+        <li><a href="/about.html">プロフィール</a></li>
+        <li><a href="/#price">料金</a></li>
+        <li><a href="/#flow">ご依頼の流れ</a></li>
+        <li><a href="/#faq">よくあるご質問</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>CONTACT</h4>
+      <ul>
+        <li><a href="mailto:knip.89@gmail.com">メールで相談する</a></li>
+        <li><a href="https://note.com/kentonagaya" target="_blank" rel="noopener">note</a></li>
+        <li><a href="https://www.instagram.com/kentonagaya" target="_blank" rel="noopener">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container"><p class="copy">© 2026 KENTO NAGAYA</p></div>
+</footer>
+
+<script>
+(function(){
+  var b=document.querySelector('.burger');
+  if(b){b.addEventListener('click',function(){
+    var o=document.body.classList.toggle('nav-open');
+    b.setAttribute('aria-expanded',o);
+  });}
+  document.querySelectorAll('.gnav a').forEach(function(a){
+    a.addEventListener('click',function(){document.body.classList.remove('nav-open');});
+  });
+  document.querySelectorAll('img').forEach(function(im){
+    im.addEventListener('error',function(){im.style.display='none';});
+    if(im.complete&&im.naturalWidth===0){im.style.display='none';}
+  });
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
+})();
+</script>
 </body>
 </html>
