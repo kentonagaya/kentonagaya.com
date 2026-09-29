@@ -46,6 +46,7 @@
       <a href="/#price">PRICE</a>
       <a href="/#flow">FLOW</a>
       <a href="/about.html">ABOUT</a>
+      <a href="/#note">NOTE</a>
       <a class="btn-nav" href="/#contact">お問い合わせ</a>
     </nav>
   </div>
@@ -404,7 +405,7 @@
       </div>
       <div>
         <h3 class="profile-name" style="border:0;padding:0;margin:0;">長屋 健斗<span>KENTO NAGAYA</span></h3>
-        <p class="profile-meta">1994年 東京生まれ／大阪・東京／Web制作・マーケティング</p>
+        <p class="profile-meta">1994年 東京生まれ／大阪在住／MBTI：ENFJ</p>
 
         <h3>サーバーエンジニアから始まりました</h3>
         <p>大学卒業後、ITエンジニアとして社内システムとインフラの運用を担当。その後フィリピンで、日本企業向けのサーバー運用を現地から担当しました。技術よりも伝え方のほうが仕事を左右する、と気づいたのはこの時期です。</p>
@@ -419,8 +420,28 @@
   </div>
 </section>
 
+<!-- ================= NOTE ================= -->
+<section class="sec" id="note">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-en accent-b">NOTE</span>
+      <h2 class="sec-ja">書いていること</h2>
+      <p class="sec-note">仕事のことも、暮らしのことも、毎週noteに書いています。成功した話だけでなく、うまくいかなかったことも残しています。</p>
+    </div>
+
+    <ul class="note-grid rv" id="note-list">
+      <!-- 読み込み中の仮表示（JSが本物に差し替える） -->
+      <li class="note-skeleton"><div class="note-thumb"></div><div class="bar"></div><div class="bar short"></div></li>
+      <li class="note-skeleton"><div class="note-thumb"></div><div class="bar"></div><div class="bar short"></div></li>
+      <li class="note-skeleton"><div class="note-thumb"></div><div class="bar"></div><div class="bar short"></div></li>
+    </ul>
+
+    <p class="sec-more rv"><a class="btn btn-ghost" href="https://note.com/kentonagaya" target="_blank" rel="noopener">noteをすべて見る</a></p>
+  </div>
+</section>
+
 <!-- ================= FAQ ================= -->
-<section class="sec" id="faq">
+<section class="sec sec-tint" id="faq">
   <div class="container">
     <div class="sec-head rv">
       <span class="sec-en">FAQ</span>
@@ -538,6 +559,31 @@
     im.addEventListener('error',function(){im.style.display='none';});
     if(im.complete&&im.naturalWidth===0){im.style.display='none';}
   });
+  // ---- noteの最新記事を読み込む（/api/note 経由） ----
+  var list=document.getElementById('note-list');
+  if(list){
+    fetch('/api/note').then(function(r){return r.json();}).then(function(d){
+      if(!d.items||!d.items.length){list.parentNode.removeChild(list);return;}
+      list.innerHTML=d.items.map(function(it){
+        var thumb=it.image
+          ? '<div class="note-thumb"><img src="'+esc(it.image)+'" alt="" loading="lazy"></div>'
+          : '<div class="note-thumb"></div>';
+        return '<li><a class="note-card" href="'+esc(it.link)+'" target="_blank" rel="noopener">'
+             + thumb
+             + '<span class="note-date">'+esc(it.date)+'</span>'
+             + '<h3 class="note-title">'+esc(it.title)+'</h3>'
+             + '</a></li>';
+      }).join('');
+    }).catch(function(){
+      list.parentNode.removeChild(list);
+    });
+  }
+  function esc(v){
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
   var io=new IntersectionObserver(function(es){
     es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
   },{rootMargin:'0px 0px -8% 0px'});
