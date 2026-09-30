@@ -1,10 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 92">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#F3A2CC"/><stop offset="28%" stop-color="#E6559E"/>
-      <stop offset="56%" stop-color="#C063BE"/><stop offset="82%" stop-color="#EE7B72"/>
-      <stop offset="100%" stop-color="#F26A5C"/>
-    </linearGradient>
-  </defs>
-  <path fill="url(#g)" d="M50 88C20 66 4 46 4 30 4 14 16 4 29 4c10 0 17 6 21 13 4-7 11-13 21-13 13 0 25 10 25 26 0 16-16 36-46 58Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- 2つの円が重なって、3つ目の形が生まれる -->
+  <defs><clipPath id="c"><circle cx="37" cy="50" r="27"/></clipPath></defs>
+  <rect width="100" height="100" fill="#F7F5F2"/>
+  <circle cx="37" cy="50" r="27" fill="#E0578F"/>
+  <circle cx="63" cy="50" r="27" fill="#6BBFD9"/>
+  <g clip-path="url(#c)"><circle cx="63" cy="50" r="27" fill="#1D1F28"/></g>
 </svg>
