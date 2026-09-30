@@ -14,25 +14,24 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://kentonagaya.com/">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#F7F5F2">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Roboto+Mono:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
+<noscript><style>.rv{opacity:1!important;transform:none!important;}</style></noscript>
+
 </head>
 <body>
+
+<div class="progress" id="progress"></div>
 
 <!-- ================= HEADER ================= -->
 <header class="header">
   <div class="header-in">
     <a class="logo" href="/">
-      <svg viewBox="0 0 100 92" role="img" aria-label="ホーム">
-        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#F3A2CC"/><stop offset="28%" stop-color="#E6559E"/>
-          <stop offset="56%" stop-color="#C063BE"/><stop offset="82%" stop-color="#EE7B72"/>
-          <stop offset="100%" stop-color="#F26A5C"/></linearGradient></defs>
-        <path fill="url(#lg)" d="M50 88C20 66 4 46 4 30 4 14 16 4 29 4c10 0 17 6 21 13 4-7 11-13 21-13 13 0 25 10 25 26 0 16-16 36-46 58Z"/>
-      </svg>
+      <svg viewBox="0 0 100 100" role="img" aria-label="ホーム"><defs><clipPath id="mk0"><circle cx="37" cy="50" r="27"/></clipPath></defs><circle cx="37" cy="50" r="27" fill="#E0578F"/><circle cx="63" cy="50" r="27" fill="#6BBFD9"/><g clip-path="url(#mk0)"><circle cx="63" cy="50" r="27" fill="#1D1F28"/></g></svg>
       <span><b>長屋 健斗</b><span>KENTO NAGAYA</span></span>
     </a>
 
@@ -59,8 +58,9 @@
   <span class="blob blob-a"></span>
   <span class="blob blob-b"></span>
   <div class="container hero-in">
+   <div class="hero-copy">
     <p class="hero-label rv">WEB DESIGN &amp; MARKETING</p>
-    <h1 class="rv">言葉になっていないものを、<br><span class="accent">形にする。</span></h1>
+    <h1 class="rv"><span class="l1">言葉になっていないものを、</span><span class="l2">形にする。</span></h1>
     <p class="hero-lead rv">
       伝えたいことは、もうお持ちのはずです。<br>
       それがまだ言葉になっていないだけ。<br>
@@ -74,10 +74,20 @@
       <li>英語・フランス語対応</li>
     </ul>
     <div class="hero-cta rv">
-      <a class="btn btn-grad" href="#contact">無料で相談する</a>
-      <a class="btn btn-ghost" href="#works">実績を見る</a>
+      <a class="btn btn-grad" href="#contact"><span>無料で相談する</span></a>
+      <a class="btn btn-ghost" href="#works"><span>実績を見る</span></a>
     </div>
+   </div>
+
+   <!-- 輪郭のないものと、輪郭のあるもの。ブランドの一行を図にしている -->
+   <div class="hero-art rv" aria-hidden="true">
+     <span class="pig pig-1"></span>
+     <span class="pig pig-2"></span>
+     <span class="ring ring-1"></span>
+     <span class="ring ring-2"></span>
+   </div>
   </div>
+  <p class="scroll-cue">SCROLL</p>
 </section>
 
 <!-- ================= PROBLEM ================= -->
@@ -129,7 +139,7 @@
 
     <div class="work-grid rv">
       <a class="work-card" href="/works.html#case01">
-        <div class="work-thumb"><img src="/assets/aromatise-pc.jpg" alt="AromatiseのWebサイト" loading="lazy" width="1440" height="900"></div>
+        <div class="work-thumb" data-no="01"><img src="/assets/aromatise-pc.jpg" alt="AromatiseのWebサイト" loading="lazy" width="1440" height="900"></div>
         <span class="work-cat">AROMA &amp; PERFUMERY</span>
         <h3 class="work-name">Aromatise</h3>
         <p class="work-desc">調香・アロマの講師業とサロン運営。機能していなかった既存サイトを全面的に作り直しました。</p>
@@ -137,7 +147,7 @@
       </a>
 
       <a class="work-card" href="/works.html#case02">
-        <div class="work-thumb"><img src="/assets/kimidoriya-pc.jpg" alt="ゲストハウス君彩家のWebサイト" loading="lazy" width="1440" height="900"></div>
+        <div class="work-thumb" data-no="02"><img src="/assets/kimidoriya-pc.jpg" alt="ゲストハウス君彩家のWebサイト" loading="lazy" width="1440" height="900"></div>
         <span class="work-cat">GUEST HOUSE</span>
         <h3 class="work-name">ゲストハウス君彩家</h3>
         <p class="work-desc">築90年の古民家を改装した、大阪・城東の宿。公式サイトを新規に制作しました。</p>
@@ -145,7 +155,7 @@
       </a>
 
       <a class="work-card" href="/works.html#case03">
-        <div class="work-thumb"><img src="/assets/gamo4fes-pc.jpg" alt="がもよんフェスのWebサイト" loading="lazy" width="1440" height="900"></div>
+        <div class="work-thumb" data-no="03"><img src="/assets/gamo4fes-pc.jpg" alt="がもよんフェスのWebサイト" loading="lazy" width="1440" height="900"></div>
         <span class="work-cat">EVENT</span>
         <h3 class="work-name">がもよんフェス</h3>
         <p class="work-desc">蒲生四丁目の街をまるごと会場にする音楽フェス。一度閉じたサイトをゼロから立て直しました。</p>
@@ -153,7 +163,7 @@
       </a>
     </div>
 
-    <p class="sec-more rv"><a class="btn btn-ghost" href="/works.html">実績をすべて見る</a></p>
+    <p class="sec-more rv"><a class="btn btn-ghost" href="/works.html"><span>実績をすべて見る</span></a></p>
   </div>
 </section>
 
@@ -300,7 +310,7 @@
 
       <div class="plan">
         <h3>マーケティング・開発<span>MARKETING &amp; DEVELOPMENT</span></h3>
-        <p class="price">要相談</p>
+        <p class="price is-ja">要相談</p>
         <p class="from">内容・期間により変動</p>
         <ul>
           <li>アクセス解析の導入・設定</li>
@@ -392,7 +402,8 @@
 </section>
 
 <!-- ================= PROFILE ================= -->
-<section class="sec sec-tint" id="profile">
+<section class="sec sec-ink" id="profile">
+  <span class="blob blob-b"></span>
   <div class="container">
     <div class="sec-head rv">
       <span class="sec-en">PROFILE</span>
@@ -405,7 +416,8 @@
       </div>
       <div>
         <h3 class="profile-name" style="border:0;padding:0;margin:0;">長屋 健斗<span>KENTO NAGAYA</span></h3>
-        <p class="profile-meta">1994年 東京生まれ／大阪在住／MBTI：ENFJ</p>
+        <p class="profile-role">東京生まれ大阪在住のWebデザイナー・マーケター</p>
+        <p class="profile-meta">1994年生まれ ／ MBTI：ENFJ</p>
 
         <h3>サーバーエンジニアから始まりました</h3>
         <p>大学卒業後、ITエンジニアとして社内システムとインフラの運用を担当。その後フィリピンで、日本企業向けのサーバー運用を現地から担当しました。技術よりも伝え方のほうが仕事を左右する、と気づいたのはこの時期です。</p>
@@ -436,7 +448,7 @@
       <li class="note-skeleton"><div class="note-thumb"></div><div class="bar"></div><div class="bar short"></div></li>
     </ul>
 
-    <p class="sec-more rv"><a class="btn btn-ghost" href="https://note.com/kentonagaya" target="_blank" rel="noopener">noteをすべて見る</a></p>
+    <p class="sec-more rv"><a class="btn btn-ghost" href="https://note.com/kentonagaya" target="_blank" rel="noopener"><span>noteをすべて見る</span></a></p>
   </div>
 </section>
 
@@ -498,8 +510,8 @@
       「これは依頼できる内容なのか」という確認だけでも構いません。
     </p>
     <div class="cta-btns">
-      <a class="btn btn-white" href="mailto:knip.89@gmail.com?subject=Web%E5%88%B6%E4%BD%9C%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87">メールで相談する</a>
-      <a class="btn btn-line" href="https://note.com/kentonagaya" target="_blank" rel="noopener">noteを読む</a>
+      <a class="btn btn-white" href="mailto:knip.89@gmail.com?subject=Web%E5%88%B6%E4%BD%9C%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87"><span>メールで相談する</span></a>
+      <a class="btn btn-line" href="https://note.com/kentonagaya" target="_blank" rel="noopener"><span>noteを読む</span></a>
     </div>
   </div>
 </section>
@@ -509,16 +521,10 @@
   <div class="container footer-in">
     <div>
       <a class="logo" href="/">
-        <svg viewBox="0 0 100 92" role="img" aria-label="ホーム">
-          <defs><linearGradient id="fg" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#F3A2CC"/><stop offset="28%" stop-color="#E6559E"/>
-            <stop offset="56%" stop-color="#C063BE"/><stop offset="82%" stop-color="#EE7B72"/>
-            <stop offset="100%" stop-color="#F26A5C"/></linearGradient></defs>
-          <path fill="url(#fg)" d="M50 88C20 66 4 46 4 30 4 14 16 4 29 4c10 0 17 6 21 13 4-7 11-13 21-13 13 0 25 10 25 26 0 16-16 36-46 58Z"/>
-        </svg>
+        <svg viewBox="0 0 100 100" role="img" aria-label="ホーム"><defs><clipPath id="mk1"><circle cx="37" cy="50" r="27"/></clipPath></defs><circle cx="37" cy="50" r="27" fill="#E0578F"/><circle cx="63" cy="50" r="27" fill="#6BBFD9"/><g clip-path="url(#mk1)"><circle cx="63" cy="50" r="27" fill="#1D1F28"/></g></svg>
         <span><b>長屋 健斗</b><span>KENTO NAGAYA</span></span>
       </a>
-      <p class="footer-tag">言葉になっていないものを、形にする。<br>大阪・東京／Web制作・マーケティング</p>
+      <p class="footer-tag">言葉になっていないものを、形にする。<br>大阪／Web制作・マーケティング</p>
     </div>
 
     <div>
@@ -563,7 +569,7 @@
   var list=document.getElementById('note-list');
   if(list){
     fetch('/api/note').then(function(r){return r.json();}).then(function(d){
-      if(!d.items||!d.items.length){list.parentNode.removeChild(list);return;}
+      if(!d.items||!d.items.length){hideNote();return;}
       list.innerHTML=d.items.map(function(it){
         var thumb=it.image
           ? '<div class="note-thumb"><img src="'+esc(it.image)+'" alt="" loading="lazy"></div>'
@@ -574,9 +580,11 @@
              + '<h3 class="note-title">'+esc(it.title)+'</h3>'
              + '</a></li>';
       }).join('');
-    }).catch(function(){
-      list.parentNode.removeChild(list);
-    });
+    }).catch(hideNote);
+  }
+  function hideNote(){
+    var sec=document.getElementById('note');
+    if(sec) sec.style.display='none';
   }
   function esc(v){
     return String(v==null?'':v).replace(/[&<>"']/g,function(c){
@@ -584,10 +592,34 @@
     });
   }
 
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
-  },{rootMargin:'0px 0px -8% 0px'});
-  document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
+  // ---- スクロール量に応じたヘッダーと進捗バー ----
+  var hd=document.querySelector('.header'), pg=document.getElementById('progress'), tick=false;
+  function onScroll(){
+    var y=window.scrollY||document.documentElement.scrollTop;
+    if(hd) hd.classList.toggle('is-scrolled', y>12);
+    if(pg){
+      var h=document.documentElement.scrollHeight-window.innerHeight;
+      pg.style.transform='scaleX('+(h>0?Math.min(y/h,1):0)+')';
+    }
+    tick=false;
+  }
+  window.addEventListener('scroll',function(){
+    if(!tick){tick=true;requestAnimationFrame(onScroll);}
+  },{passive:true});
+  onScroll();
+
+  // ---- スクロールで現れる ----
+  // 監視できない環境では最初から表示する。
+  // JSが落ちてもコンテンツが消えないようにするための保険。
+  var rv=document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window)){
+    rv.forEach(function(el){el.classList.add('in');});
+  }else{
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+    },{rootMargin:'0px 0px -8% 0px'});
+    rv.forEach(function(el){io.observe(el);});
+  }
 })();
 </script>
 </body>
