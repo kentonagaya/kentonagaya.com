@@ -1,0 +1,4 @@
+# フォントセレクター → フォントドレッサー（名前の変更にともなう URL の移動）
+/font-selector              /font-dresser/          301
+/font-selector/             /font-dresser/          301
+/font-selector/*            /font-dresser/:splat    301
