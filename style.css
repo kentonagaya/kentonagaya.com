@@ -21,6 +21,11 @@
    ============================================================ */
 
 :root{
+  /* ---- 動き ----
+     減速の長いイージング（参考サイト3点で共通）。
+     速く出て、ゆっくり止まる。 */
+  --ease:cubic-bezier(.19,1,.22,1);
+
   /* ---- 下地 ---- */
   --canvas:#F7F5F2;      /* 生成り。純白にしない */
   --canvas-2:#F1EEE9;    /* 一段沈めた面 */
@@ -157,7 +162,7 @@ a{color:inherit;}
 .gnav a::after{
   content:"";position:absolute;left:0;right:0;bottom:-.4rem;height:1px;
   background:var(--ink);transform:scaleX(0);transform-origin:100% 50%;
-  transition:transform .35s cubic-bezier(.2,.7,.3,1);
+  transition:transform .5s var(--ease);
 }
 .gnav a:hover{color:var(--ink);}
 .gnav a:hover::after{transform:scaleX(1);transform-origin:0 50%;}
@@ -251,8 +256,12 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   content:"";width:3.5rem;height:1px;background:var(--ink-4);transform-origin:0 50%;
 }
 @media (prefers-reduced-motion:no-preference){
-  .scroll-cue::after{animation:cue 2.4s ease-in-out infinite;}
-  @keyframes cue{0%,100%{transform:scaleX(.25);opacity:.4;}50%{transform:scaleX(1);opacity:1;}}
+  .scroll-cue::after{
+    background:linear-gradient(90deg,var(--ink) 50%,var(--line) 50%);
+    background-size:200% 100%;
+    animation:cue 2.2s var(--ease) infinite;
+  }
+  @keyframes cue{from{background-position:100% 0;}to{background-position:-100% 0;}}
 }
 @media (max-width:48rem){.scroll-cue{display:none;}}
 
@@ -768,9 +777,14 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 /* ============================================================
    スクロールで現れる
    ============================================================ */
+/* JSが動いている時（html.js）だけ隠す。JSが無ければ最初から全部見える */
 @media (prefers-reduced-motion:no-preference){
-  .rv{opacity:0;transform:translateY(26px);transition:opacity 1s cubic-bezier(.2,.7,.3,1),transform 1s cubic-bezier(.2,.7,.3,1);}
-  .rv.in{opacity:1;transform:none;}
+  .js .rv{
+    opacity:0;transform:translateY(40px);
+    transition:opacity 1.2s var(--ease),transform 1.2s var(--ease);
+    transition-delay:var(--d,0s);
+  }
+  .js .rv.in{opacity:1;transform:none;}
 }
 
 .sp-br{display:none;}
@@ -950,3 +964,169 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 
 /* 行間のばらつきを抑える */
 .hero-lead,.sec-note{line-height:1.95;}
+
+/* ============================================================
+   MOTION（参考サイト3点から取り入れた細部の動き）
+
+   取り入れたもの
+   - 見出しの文字が、下から1文字ずつ立ち上がる
+   - 画像が下からめくれ、少し引いた状態から定位置に収まる
+   - カードが1枚ずつ、順番に現れる
+   - 線が引かれるように伸びる
+   取り入れなかったもの
+   - パーティクル、WebGL、常に動き続ける装飾
+     （読む邪魔になるため）
+
+   すべて「視差効果を減らす」設定がオンなら止まる。
+   すべて html.js が付いた時だけ。JSが無ければ何も隠さない。
+   ============================================================ */
+
+/* ---------- なめらかスクロール（ライブラリ側の必須スタイル） ---------- */
+html.lenis,html.lenis body{height:auto;}
+.lenis.lenis-smooth{scroll-behavior:auto!important;}
+.lenis.lenis-stopped{overflow:clip;}
+
+/* ---------- ヒーロー見出し ---------- */
+/* 文節ごとの箱。中の文字が下から出てくるので、はみ出しを隠す */
+.hero-title .ph{
+  display:inline-block;white-space:nowrap;overflow:hidden;vertical-align:top;
+}
+.hero-title .ch{display:inline-block;}
+
+/* 「形にする。」の下にマーカーを引く。ブランドの一行の核なので、ここだけ強調する */
+.hero-title .mk{position:relative;z-index:0;}
+.hero-title .mk::after{
+  content:"";position:absolute;left:-.04em;right:.3em;bottom:.12em;height:.32em;
+  background:var(--rose-pale);z-index:-1;transform-origin:left;
+}
+
+@media (prefers-reduced-motion:no-preference){
+  .js .hero-title .ch{transform:translateY(110%);}
+  .js .hero-title.on .ch{
+    animation:chUp 1.1s var(--ease) both;
+    animation-delay:calc(var(--i) * 38ms + .2s);
+  }
+  @keyframes chUp{from{transform:translateY(110%);}to{transform:none;}}
+
+  .js .hero-title .mk::after{transform:scaleX(0);}
+  .js .hero-title.on .mk::after{animation:mkDraw 1s var(--ease) 1.3s both;}
+  @keyframes mkDraw{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+}
+
+/* ---------- セクションの英字ラベル ---------- */
+.sec-en .en-t{display:inline-flex;overflow:hidden;}
+.sec-en .l{display:inline-block;}
+@media (prefers-reduced-motion:no-preference){
+  .js .sec-en .l{
+    transform:translateY(105%);
+    transition:transform 1s var(--ease);
+    transition-delay:calc(var(--i) * 35ms + .15s);
+  }
+  .js .sec-en.in .l{transform:none;}
+
+  /* 左の短い線が、文字より先に引かれる */
+  .js .sec-en::before{
+    transform:scaleX(0);transform-origin:left;
+    transition:transform .9s var(--ease);
+  }
+  .js .sec-head.center .sec-en::before,
+  .js .cta .sec-en::before{transform-origin:right;}
+  .js .sec-en.in::before{transform:scaleX(1);}
+}
+
+/* ---------- カード群を順番に ---------- */
+@media (prefers-reduced-motion:no-preference){
+  /* 箱そのものは動かさず、中身を1つずつ */
+  .js .rv.stg{opacity:1;transform:none;}
+  .js .stg > *{opacity:0;}
+  .js .stg.in > *{
+    opacity:1;
+    animation:stgIn 1.1s var(--ease) backwards;
+    animation-delay:calc(var(--k,0) * 90ms);
+  }
+  /* 最後の状態は通常のスタイルに戻す（ホバーの動きを殺さないため backwards） */
+  @keyframes stgIn{from{opacity:0;transform:translateY(32px);}}
+}
+
+/* ---------- 画像が下からめくれる ---------- */
+@media (prefers-reduced-motion:no-preference){
+  .js .mask{
+    clip-path:inset(100% 0 0 0);
+    transition:clip-path 1.5s var(--ease);
+    transition-delay:calc(var(--k,0) * 90ms + .1s);
+  }
+  .js .mask.in{clip-path:inset(0 0 0 0);}
+  .js .mask img{
+    transform:scale(1.22);
+    transition:transform 2.2s var(--ease),filter .5s;
+    transition-delay:calc(var(--k,0) * 90ms + .1s);
+  }
+  .js .mask.in img{transform:scale(1);}
+  /* 現れ終わったら、ホバー時のズームを通常の速さに戻す */
+  .js .mask.done img{transition:transform .8s var(--ease),filter .5s;transition-delay:0s;}
+  .js .work-card:hover .work-thumb.mask.in img{transform:scale(1.05);}
+}
+
+/* ---------- 線が伸びる ---------- */
+@media (prefers-reduced-motion:no-preference){
+  /* ご依頼の流れ：手順の間の縦線が、上から順に引かれる */
+  .js .flow li::after{
+    transform:scaleY(0);transform-origin:top;
+    transition:transform 1s var(--ease);
+    transition-delay:calc(var(--k,0) * 120ms + .5s);
+  }
+  .js .flow.in li::after{transform:none;}
+}
+
+/* いただいた言葉：上の色線（以前は発火していなかったのを修正） */
+.stg.in .voice::before,
+.case.in .voice::before{
+  transform:scaleX(1);
+  transition-delay:calc(var(--k,0) * 90ms + .5s);
+}
+
+/* ---------- 本文中のリンク：下線が左から伸びる ---------- */
+.prose a,.case-spec a,.profile p a{
+  border-bottom:0;text-decoration:none;
+  background:
+    linear-gradient(currentColor,currentColor) 0 100% / 0 1px no-repeat,
+    linear-gradient(var(--line),var(--line)) 0 100% / 100% 1px no-repeat;
+  transition:background-size .6s var(--ease);
+}
+.prose a:hover,.case-spec a:hover,.profile p a:hover{
+  background-size:100% 1px,100% 1px;
+}
+.sec-ink .profile p a{
+  background:
+    linear-gradient(currentColor,currentColor) 0 100% / 0 1px no-repeat,
+    linear-gradient(rgba(252,251,249,.35),rgba(252,251,249,.35)) 0 100% / 100% 1px no-repeat;
+}
+.sec-ink .profile p a:hover{background-size:100% 1px,100% 1px;}
+
+/* ---------- ヒーローの図：マウスに合わせてわずかにずれる ----------
+   transform はゆっくり漂うアニメーションが使っているので、
+   独立したプロパティ translate を使って干渉させない。 */
+@media (prefers-reduced-motion:no-preference){
+  .hero-art .ring{
+    translate:calc(var(--mx,0) * 14px) calc(var(--my,0) * 14px);
+    transition:translate 1.4s var(--ease);
+  }
+  .hero-art .pig{
+    translate:calc(var(--mx,0) * -20px) calc(var(--my,0) * -20px);
+    transition:translate 1.8s var(--ease);
+  }
+}
+
+/* ---------- 数え上げる数字 ---------- */
+.cnt{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;}
+
+/* ---------- お問い合わせボタン：ゆっくり波紋 ----------
+   行動してほしいボタン1つだけに付ける。他には付けない。 */
+@media (prefers-reduced-motion:no-preference){
+  .cta .btn-white{animation:ctaPulse 2.8s ease-out infinite;}
+  .cta .btn-white:hover{animation:none;}
+  @keyframes ctaPulse{
+    0%{box-shadow:0 0 0 0 rgba(252,251,249,.3);}
+    70%,100%{box-shadow:0 0 0 16px rgba(252,251,249,0);}
+  }
+}
