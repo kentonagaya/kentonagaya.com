@@ -145,17 +145,10 @@ a{color:inherit;}
   max-width:var(--max);margin:0 auto;padding:0 var(--pad);height:100%;
   display:flex;align-items:center;justify-content:space-between;gap:1rem;
 }
-/* ロゴ：Kento ◐ Nagaya
-   2つの円の重なり（レンズ）は文字と同じ色。明るい面でも暗い面でも成立する */
-.logo{display:flex;align-items:center;gap:.9rem;text-decoration:none;color:var(--ink);}
-.logo .wordmark{height:1.5rem;width:auto;display:block;flex:none;overflow:visible;}
-.logo-ja{
-  font-size:.68rem;font-weight:500;letter-spacing:.24em;color:var(--ink-3);
-  padding-left:.9rem;border-left:1px solid var(--line);line-height:1.2;white-space:nowrap;
-}
-.wordmark circle{transition:transform .9s var(--ease);transform-box:fill-box;transform-origin:center;}
-.logo:hover .wordmark circle:first-of-type{transform:translateX(9%);}
-.logo:hover .wordmark circle:nth-of-type(2){transform:translateX(-9%);}
+/* ロゴ（仮）：名刺のハート ＋ 長屋 健斗 / Kento Nagaya
+   独立したSVG画像。明るい面は logo.svg、暗い面は logo-white.svg */
+.logo{display:flex;align-items:center;text-decoration:none;flex:none;}
+.logo img{height:2.3rem;width:auto;display:block;}
 
 .gnav{display:flex;align-items:center;gap:clamp(.9rem,2.2vw,1.8rem);}
 .gnav a{
@@ -1165,8 +1158,7 @@ html.lenis,html.lenis body{height:auto;}
   .hd-actions{margin-left:auto;gap:.4rem;}
   .hd-actions .btn-nav.pc{display:none;}
   .burger{margin-left:.2rem;}
-  .logo-ja{display:none;}
-  .logo .wordmark{height:1.32rem;}
+  .logo img{height:2.05rem;}
   .sns-btn{width:2.35rem;height:2.35rem;font-size:1rem;}
 
   /* メニュー内：お問い合わせとSNSを大きく */
@@ -1225,16 +1217,10 @@ html.lenis,html.lenis body{height:auto;}
 .btn:hover .ic-arrow{transform:translateX(5px);}
 
 /* ---------- フッター ---------- */
-.footer-name{margin:0;font-size:1.05rem;font-weight:700;letter-spacing:.18em;}
 .footer-sns a{display:inline-flex;align-items:center;gap:.6rem;}
 .footer-sns .ic{font-size:1rem;color:rgba(252,251,249,.85);}
 .footer-sns small{font-family:var(--mono);font-size:.68rem;color:rgba(252,251,249,.45);letter-spacing:.04em;}
 
-/* 締めの大きなロゴ */
-.footer-mark{
-  display:block;margin:clamp(3.5rem,8vw,6rem) 0 0;color:var(--paper);text-decoration:none;
-}
-.footer-mark .wordmark{width:100%;height:auto;display:block;}
 .footer .copy{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;}
 .totop{color:rgba(252,251,249,.55);text-decoration:none;transition:color .25s;}
 .totop:hover{color:var(--paper);}
@@ -1322,3 +1308,13 @@ main{counter-reset:sec;}
 .hero-tags li{gap:0;}
 .hero-tags li::before{margin-right:.55rem;}
 .hero-tags .cnt{margin:0 .15em 0 .4em;}
+
+/* フッターのロゴ（通常サイズ） */
+.footer-logo{height:2.6rem;width:auto;display:block;margin-bottom:1.4rem;}
+.footer .copy{margin-top:clamp(3rem,6vw,4rem);}
+
+/* 閉じたメニューを確実に隠す（画面の縦幅が短いとき、上端にはみ出していた） */
+@media (max-width:64rem){
+  .gnav{visibility:hidden;transition:transform .4s cubic-bezier(.4,0,.2,1),visibility 0s linear .4s;}
+  body.nav-open .gnav{visibility:visible;transition:transform .4s cubic-bezier(.4,0,.2,1),visibility 0s;}
+}
