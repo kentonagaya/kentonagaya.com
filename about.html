@@ -21,7 +21,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Roboto+Mono:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 <script>
-/* 動きの準備。main.js が読み込めなかった時は、隠した要素をすべて表示に戻す */
+/* main.js 不達時は表示に戻す */
 document.documentElement.classList.add('js');
 addEventListener('load',function(){setTimeout(function(){if(!window.__kn)document.documentElement.classList.remove('js');},1000);});
 </script>
@@ -38,7 +38,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
 <header class="header">
   <div class="header-in">
     <a class="logo" href="/" aria-label="長屋 健斗 ホーム">
-      <img src="/assets/logo.svg" alt="長屋 健斗 Kento Nagaya" width="336" height="100">
+      <img src="/assets/logo.svg" alt="長屋 健斗 Kento Nagaya" width="314" height="100">
     </a>
 
     <nav class="gnav" id="gnav" aria-label="メインメニュー">
@@ -48,7 +48,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
       <a href="/#flow">FLOW</a>
       <a href="/about.html" aria-current="page">ABOUT</a>
 
-      <!-- スマートフォンのメニュー内だけに出す -->
+      <!-- スマホメニュー用 -->
       <div class="gnav-sp">
         <a class="btn-nav" href="#contact">お問い合わせ</a>
         <p class="gnav-label">FOLLOW</p>
@@ -82,7 +82,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
   </div>
 </section>
 
-<!-- ================= PROFILE ================= -->
+<!-- PROFILE -->
 <section class="sec">
   <div class="container">
     <div class="profile rv">
@@ -112,7 +112,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
   </div>
 </section>
 
-<!-- ================= TIMELINE ================= -->
+<!-- TIMELINE -->
 <section class="sec sec-tint">
   <div class="container">
     <div class="sec-head rv">
@@ -157,7 +157,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
   </div>
 </section>
 
-<!-- ================= THINKING ================= -->
+<!-- THINKING -->
 <section class="sec">
   <div class="container">
     <div class="sec-head rv">
@@ -229,7 +229,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
   <div class="container">
     <div class="footer-in">
       <div>
-        <img class="footer-logo" src="/assets/logo-white.svg" alt="長屋 健斗 Kento Nagaya" width="336" height="100" loading="lazy">
+        <img class="footer-logo" src="/assets/logo-white.svg" alt="長屋 健斗 Kento Nagaya" width="314" height="100" loading="lazy">
         <p class="footer-tag">言葉になっていないものを、形にする。<br>大阪／Web制作・マーケティング</p>
       </div>
       <div>
