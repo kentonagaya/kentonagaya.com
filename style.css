@@ -1,47 +1,28 @@
 @charset "UTF-8";
-/* ============================================================
-   kentonagaya.com  ―  "PIGMENT"
-
-   デザインの考え方
-   モネは黒と土色を使わなかった。影はウルトラマリンと
-   ローズで描かれている。このサイトの「黒」も純黒ではなく、
-   青紫を含んだ #1D1F28。背景も純白ではなく、下地を塗った
-   カンヴァスのような温かい生成り #F7F5F2。
-
-   色数は絞る。基本は白・墨・グレー。
-   ローズ（制作・表現）とアクア（データ・技術）は
-   差し色としてのみ使い、面では使わない。
-
-   可読性は数値で担保している。
-     本文 #1D1F28 / 生成り   15.1:1  （AAA）
-     補助 #606470 / 生成り    5.4:1  （AA）
-     ローズ文字 #B52E6B       5.4:1  （AA）
-     アクア文字 #16708E       5.2:1  （AA）
-   淡い #E0578F・#6BBFD9 は装飾専用。文字には使わない。
-   ============================================================ */
+/* kentonagaya.com
+   純白・純黒は使わない。ローズ／アクアは差し色のみ。
+   文字の差し色は *-ink を使う（#E0578F・#6BBFD9 は装飾専用） */
 
 :root{
-  /* ---- 動き ----
-     減速の長いイージング（参考サイト3点で共通）。
-     速く出て、ゆっくり止まる。 */
+  /* -- 動き -- */
   --ease:cubic-bezier(.19,1,.22,1);
 
-  /* ---- 下地 ---- */
-  --canvas:#F7F5F2;      /* 生成り。純白にしない */
-  --canvas-2:#F1EEE9;    /* 一段沈めた面 */
-  --paper:#FCFBF9;       /* カード。少し浮かせる */
+  /* -- 下地 -- */
+  --canvas:#F7F5F2;
+  --canvas-2:#F1EEE9;
+  --paper:#FCFBF9;
 
-  /* ---- 墨（青紫を含む。純黒は使わない） ---- */
+  /* -- 墨 -- */
   --ink:#1D1F28;
   --ink-2:#40434F;
   --ink-3:#606470;       /* 本文に使える下限 */
   --ink-4:#7E8290;       /* 大きな文字・装飾のみ */
 
-  /* ---- 罫 ---- */
+  /* -- 罫 -- */
   --line:#DDD8D2;
   --line-2:#E9E5DF;
 
-  /* ---- 差し色 ---- */
+  /* -- 差し色 -- */
   --rose:#E0578F;        /* 装飾 */
   --rose-ink:#B52E6B;    /* 文字 */
   --rose-pale:#F6D9E6;
@@ -49,9 +30,7 @@
   --aqua-ink:#16708E;    /* 文字 */
   --aqua-pale:#D6ECF3;
 
-  /* ---- 書体 ----
-     和文＝名刺のゴシック／欧文セリフ＝画廊の気配／
-     等幅＝エンジニアの手つき。3つで人物像を表す。 */
+  /* -- 書体 -- */
   --ja:"Zen Kaku Gothic New",sans-serif;
   --serif:"Instrument Serif","Zen Kaku Gothic New",serif;
   --mono:"Roboto Mono","Zen Kaku Gothic New",monospace;
@@ -78,7 +57,7 @@ body{
   position:relative;
 }
 
-/* カンヴァスの目。全面に薄くのせる */
+/* 紙の質感 */
 body::after{
   content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;
   opacity:.35;mix-blend-mode:multiply;
@@ -96,11 +75,7 @@ a{color:inherit;}
 .accent{color:var(--rose-ink);}
 .accent-b{color:var(--aqua-ink);}
 
-/* ============================================================
-   顔料のにじみ（signature）
-   モネの水面のように、ごくゆっくり動く。
-   コンテンツの背面にしか置かないので可読性に触れない。
-   ============================================================ */
+/* ===== 顔料のにじみ（背景装飾） ===== */
 .blob{
   position:absolute;border-radius:50%;pointer-events:none;
   filter:blur(80px);opacity:.5;
@@ -120,18 +95,14 @@ a{color:inherit;}
   @keyframes drift-b{to{transform:translate3d(3.5rem,-2.5rem,0) scale(1.08);}}
 }
 
-/* ============================================================
-   スクロール位置のインジケータ
-   ============================================================ */
+/* ===== 読み進みバー ===== */
 .progress{
   position:fixed;top:0;left:0;height:2px;width:100%;z-index:200;
   transform:scaleX(0);transform-origin:0 50%;
   background:linear-gradient(90deg,var(--aqua),var(--rose));
 }
 
-/* ============================================================
-   ヘッダー
-   ============================================================ */
+/* ===== ヘッダー ===== */
 .header{
   position:fixed;inset:0 0 auto;z-index:100;height:var(--head);
   background:rgba(247,245,242,.82);
@@ -145,8 +116,7 @@ a{color:inherit;}
   max-width:var(--max);margin:0 auto;padding:0 var(--pad);height:100%;
   display:flex;align-items:center;justify-content:space-between;gap:1rem;
 }
-/* ロゴ（仮）：名刺のハート ＋ 長屋 健斗 / Kento Nagaya
-   独立したSVG画像。明るい面は logo.svg、暗い面は logo-white.svg */
+/* ロゴ（SVG。暗い面は logo-white.svg） */
 .logo{display:flex;align-items:center;text-decoration:none;flex:none;}
 .logo img{height:2.3rem;width:auto;display:block;}
 
@@ -193,9 +163,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   .gnav .btn-nav{text-align:center;margin-top:1.4rem;border-bottom:0;}
 }
 
-/* ============================================================
-   ヒーロー
-   ============================================================ */
+/* ===== ヒーロー ===== */
 .hero{
   position:relative;overflow:hidden;
   min-height:100svh;display:flex;align-items:center;
@@ -224,10 +192,9 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   margin:0;
   font-size:clamp(1.9rem,4.6vw,3.15rem);
   font-weight:900;line-height:1.45;letter-spacing:.005em;
-  /* 日本語を文節で折り返す（対応ブラウザのみ。孤立した1文字を防ぐ） */
+  /* 文節で折り返す */
   word-break:auto-phrase;
 }
-/* 一行目をわずかに沈め、二行目を立たせる。視線の順序をつくる */
 .hero h1 .l1{display:block;color:var(--ink-2);}
 .hero h1 .l2{display:block;}
 
@@ -243,7 +210,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 }
 .hero-cta{display:flex;flex-wrap:wrap;gap:.8rem;margin:2.2rem 0 0;}
 
-/* 下へ促すしるし */
+/* スクロールを促す印 */
 .scroll-cue{
   position:absolute;left:var(--pad);bottom:2rem;
   display:flex;align-items:center;gap:.8rem;
@@ -262,9 +229,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 }
 @media (max-width:48rem){.scroll-cue{display:none;}}
 
-/* ============================================================
-   ボタン
-   ============================================================ */
+/* ===== ボタン ===== */
 .btn{
   position:relative;overflow:hidden;
   display:inline-flex;align-items:center;gap:.6rem;text-decoration:none;
@@ -273,7 +238,6 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s,color .3s,border-color .3s;
 }
 .btn > *{position:relative;z-index:1;}
-/* 下から色が満ちる */
 .btn::before{
   content:"";position:absolute;inset:0;z-index:0;
   transform:translateY(101%);transition:transform .45s cubic-bezier(.2,.7,.3,1);
@@ -296,7 +260,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 .btn-line::before{background:rgba(252,251,249,.14);}
 .btn-line:hover{color:#fff;transform:translateY(-2px);border-color:rgba(252,251,249,.75);}
 
-/* 旧クラスの受け皿 */
+/* 旧クラス */
 .btn-grad{background:var(--ink);color:var(--canvas);}
 .btn-grad::before{background:var(--rose-ink);}
 .btn-grad:hover{color:#fff;transform:translateY(-2px);}
@@ -304,9 +268,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 .btn-grad-b::before{background:var(--aqua-ink);}
 .btn-grad-b:hover{color:#fff;transform:translateY(-2px);}
 
-/* ============================================================
-   セクション
-   ============================================================ */
+/* ===== セクション ===== */
 .sec{padding:var(--gap) 0;position:relative;}
 .sec-tint{background:var(--canvas-2);}
 
@@ -331,9 +293,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 .sec-head.center .sec-note{margin-inline:auto;}
 .sec-more{margin:clamp(2.4rem,5vw,3.4rem) 0 0;text-align:center;}
 
-/* ============================================================
-   お悩み
-   ============================================================ */
+/* ===== お悩み ===== */
 .problems{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));
   gap:1px;background:var(--line);border-block:1px solid var(--line);
@@ -357,9 +317,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   font-size:clamp(1.1rem,3.2vw,1.6rem);font-weight:900;letter-spacing:.03em;line-height:1.75;
 }
 
-/* ============================================================
-   実績カード
-   ============================================================ */
+/* ===== 実績カード ===== */
 .work-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:clamp(1.6rem,3.5vw,2.6rem);}
 .work-card{display:block;text-decoration:none;}
 .work-thumb{
@@ -373,7 +331,6 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   filter:saturate(.92);
 }
 .work-card:hover .work-thumb img{transform:scale(1.05);filter:saturate(1);}
-/* 覗き込むような薄い覆い */
 .work-thumb::after{
   content:"";position:absolute;inset:0;background:var(--ink);opacity:0;
   transition:opacity .5s;
@@ -396,9 +353,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   color:var(--ink-3);border:1px solid var(--line);padding:.28rem .7rem;border-radius:100px;
 }
 
-/* ============================================================
-   できること
-   ============================================================ */
+/* ===== できること ===== */
 .svc-grid{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));
   gap:1px;background:var(--line);border-block:1px solid var(--line);
@@ -423,9 +378,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   font-family:var(--mono);font-size:.68rem;color:var(--ink-3);line-height:1.95;letter-spacing:.02em;
 }
 
-/* ============================================================
-   POINT
-   ============================================================ */
+/* ===== POINT ===== */
 .point{
   display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.8rem,5vw,4.5rem);
   align-items:center;padding:clamp(2.4rem,5.5vw,3.6rem) 0;border-top:1px solid var(--line);
@@ -438,7 +391,6 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   aspect-ratio:4/3;background:var(--paper);border:1px solid var(--line);
   display:grid;place-items:center;padding:1.5rem;position:relative;overflow:hidden;
 }
-/* 顔料のにじみを面の中に閉じ込める */
 .point-visual::before{
   content:"";position:absolute;width:20rem;height:20rem;border-radius:50%;
   filter:blur(60px);opacity:.45;
@@ -461,9 +413,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   .point:nth-child(even) .point-visual{order:0;}
 }
 
-/* ============================================================
-   料金
-   ============================================================ */
+/* ===== 料金 ===== */
 .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(15.5rem,1fr));gap:clamp(1.2rem,2.5vw,1.6rem);}
 .plan{
   border:1px solid var(--line);background:var(--paper);
@@ -487,12 +437,12 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   font-family:var(--serif);font-size:2.45rem;
   font-weight:400;line-height:1;letter-spacing:0;
 }
-/* 単位は必ず改行して、カードごとの高さを揃える */
+/* 単位は改行して高さを揃える */
 .plan .price small{
   display:block;margin:.5rem 0 0;font-family:var(--ja);font-size:.73rem;
   font-weight:500;color:var(--ink-3);letter-spacing:.04em;
 }
-/* 和文の価格はセリフ体を使わない（欧文書体に和字がないため） */
+/* 和文の価格はゴシック */
 .plan .price.is-ja{
   font-family:var(--ja);font-size:1.5rem;font-weight:900;
   letter-spacing:.06em;line-height:1.5;padding:.42rem 0;
@@ -511,9 +461,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 .plan .plan-note{margin:1.2rem 0 0;font-size:.75rem;color:var(--ink-3);line-height:1.85;}
 .price-caution{margin:1.8rem 0 0;font-size:.8rem;color:var(--ink-3);}
 
-/* ============================================================
-   いただいた言葉
-   ============================================================ */
+/* ===== いただいた言葉 ===== */
 .voices{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:clamp(1.2rem,2.5vw,1.8rem);}
 .voice{
   margin:0;background:var(--paper);border:1px solid var(--line);
@@ -536,9 +484,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   letter-spacing:.1em;color:var(--ink-3);
 }
 
-/* ============================================================
-   流れ
-   ============================================================ */
+/* ===== 流れ ===== */
 .flow{margin:0;padding:0;list-style:none;counter-reset:f;}
 .flow li{
   position:relative;padding:0 0 clamp(2.2rem,4.5vw,3rem) clamp(3.4rem,7vw,5rem);
@@ -555,9 +501,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 .flow h3{margin:0 0 .55rem;font-size:1.03rem;font-weight:900;letter-spacing:.04em;}
 .flow p{margin:0;font-size:.91rem;color:var(--ink-3);}
 
-/* ============================================================
-   プロフィール
-   ============================================================ */
+/* ===== プロフィール ===== */
 .profile{display:grid;grid-template-columns:minmax(0,15rem) 1fr;gap:clamp(1.8rem,5vw,4rem);align-items:start;}
 .profile-photo{
   aspect-ratio:1;overflow:hidden;border-radius:50%;position:relative;
@@ -588,9 +532,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   .profile-photo{max-width:10rem;}
 }
 
-/* ============================================================
-   note
-   ============================================================ */
+/* ===== note ===== */
 .note-grid{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));
   gap:clamp(1.3rem,3vw,2.2rem);margin:0;padding:0;list-style:none;
@@ -625,9 +567,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 }
 .note-fail{margin:0;color:var(--ink-3);font-size:.91rem;}
 
-/* ============================================================
-   FAQ
-   ============================================================ */
+/* ===== FAQ ===== */
 .faq{border-top:1px solid var(--line);}
 .faq details{border-bottom:1px solid var(--line);}
 .faq summary{
@@ -651,9 +591,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 .faq details[open] summary::after{transform:rotate(-135deg);}
 .faq .a{padding:0 1rem 1.8rem 2.4rem;margin:0;font-size:.89rem;color:var(--ink-3);}
 
-/* ============================================================
-   CTA
-   ============================================================ */
+/* ===== CTA ===== */
 .cta{
   background:var(--ink);color:var(--paper);
   padding:clamp(4rem,10vw,7rem) 0;position:relative;overflow:hidden;
@@ -665,9 +603,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 .cta p{margin:0 auto 2.4rem;max-width:34rem;font-size:.92rem;color:rgba(252,251,249,.68);}
 .cta-btns{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;}
 
-/* ============================================================
-   フッター
-   ============================================================ */
+/* ===== フッター ===== */
 .footer{background:var(--ink);color:var(--paper);padding:clamp(3rem,6vw,4.5rem) 0 2rem;border-top:1px solid rgba(252,251,249,.1);}
 .footer-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:2.8rem;}
 .footer-tag{margin:1.3rem 0 0;font-size:.83rem;color:rgba(252,251,249,.6);max-width:20rem;}
@@ -684,9 +620,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   font-family:var(--mono);font-size:.63rem;letter-spacing:.16em;color:rgba(252,251,249,.4);
 }
 
-/* ============================================================
-   下層ページの見出し
-   ============================================================ */
+/* ===== 下層ページの見出し ===== */
 .page-head{
   padding:calc(var(--head) + clamp(3.5rem,9vw,6rem)) 0 clamp(2.4rem,5vw,3.5rem);
   position:relative;overflow:hidden;
@@ -701,9 +635,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 .crumb a{text-decoration:none;color:var(--ink-3);transition:color .25s;}
 .crumb a:hover{color:var(--ink);}
 
-/* ============================================================
-   実績（works）
-   ============================================================ */
+/* ===== 実績（works） ===== */
 .case{padding:clamp(3rem,7vw,5rem) 0;border-top:1px solid var(--line);}
 .case-top{display:flex;align-items:baseline;gap:1.2rem;flex-wrap:wrap;margin-bottom:.7rem;}
 .case-no{font-family:var(--serif);font-size:1.8rem;line-height:1;color:var(--rose);}
@@ -739,9 +671,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 .todo{border-left:2px solid var(--line);padding-left:1.1rem;color:var(--ink-4);font-size:.85rem;}
 @media (max-width:40rem){.case-shots,.case-shots.pair{grid-template-columns:1fr 1fr;}}
 
-/* ============================================================
-   経歴・スキル・本文
-   ============================================================ */
+/* ===== 経歴・スキル・本文 ===== */
 .timeline{margin:0;padding:0;list-style:none;}
 .timeline li{display:grid;grid-template-columns:8.5rem 1fr;gap:.4rem 2rem;padding:1.6rem 0;border-bottom:1px solid var(--line);}
 .timeline .yr{
@@ -769,10 +699,8 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 .prose a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line);transition:border-color .25s;}
 .prose a:hover{border-color:var(--ink);}
 
-/* ============================================================
-   スクロールで現れる
-   ============================================================ */
-/* JSが動いている時（html.js）だけ隠す。JSが無ければ最初から全部見える */
+/* ===== スクロールで現れる ===== */
+/* JS有効時のみ隠す */
 @media (prefers-reduced-motion:no-preference){
   .js .rv{
     opacity:0;transform:translateY(40px);
@@ -785,12 +713,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 .sp-br{display:none;}
 @media (max-width:40rem){.sp-br{display:block;}}
 
-/* ============================================================
-   ヒーローの signature
-   「言葉になっていないもの（にじみ）」と
-   「形になったもの（輪郭）」を、そのまま図にしている。
-   ぼけた顔料の上に、細い線の円をきっちり重ねる。
-   ============================================================ */
+/* ===== ヒーローの図 ===== */
 .hero-art{
   position:relative;aspect-ratio:1;width:100%;max-width:24rem;margin-inline:auto;
 }
@@ -823,11 +746,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 }
 @media (max-width:48rem){.hero-art{display:none;}}
 
-/* ============================================================
-   できること ― 一覧の行組みに変更
-   名刺の「和文／欧文 2列」を、そのまま大きくしたもの。
-   項目が何個でも崩れない。
-   ============================================================ */
+/* ===== できること（一覧） ===== */
 .svc-grid{
   display:block;background:none;border:0;border-top:1px solid var(--line);
   margin:0 0 clamp(3rem,7vw,5rem);padding:0;list-style:none;
@@ -866,9 +785,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   .svc-grid li:hover{padding-left:.5rem;}
 }
 
-/* ============================================================
-   実績カードに通し番号を入れる
-   ============================================================ */
+/* ===== 実績カードの番号 ===== */
 .work-card{position:relative;}
 .work-thumb::before{
   content:attr(data-no);position:absolute;left:0;top:0;z-index:2;
@@ -876,17 +793,14 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   background:var(--canvas);padding:.55rem .85rem .7rem;
 }
 
-/* ============================================================
-   細かな調整
-   ============================================================ */
-/* 長い行は読みにくい。本文の幅を抑える */
+/* ===== 調整 ===== */
+/* 本文の最大幅 */
 .flow p,.problem p span,.faq .a{max-width:44rem;text-wrap:pretty;}
 .sec-note,.work-desc,.point p,.timeline p,.prose p,.case-grid p,
 .flow p,.plan .plan-note,.voice p,.faq .a,.problem p span,.svc-grid p,
 .hero-lead,.cta p,.page-head p,.footer-tag{text-wrap:pretty;}
 
-/* 文節での折り返しは、幅が十分にあるときだけ。
-   狭い画面でかけると行末が不揃いになり、かえって読みにくい。 */
+/* 文節折り返しは広い画面のみ */
 @media (min-width:48rem){
   .sec-note,.work-desc,.point p,.timeline p,.prose p,.case-grid p,
   .flow p,.plan .plan-note,.voice p,.faq .a,.problem p span,.svc-grid p,
@@ -894,7 +808,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 }
 .sec-ja,.problem p,.kw b,.point h3,.cta h2,.problem-answer,.page-head h1{word-break:auto-phrase;}
 
-/* POINT の面に、ヒーローと同じ図を小さく置く */
+/* POINT の図 */
 .point-visual::after{
   content:"";position:absolute;width:11rem;height:11rem;border-radius:50%;
   border:1px solid var(--ink);opacity:.14;
@@ -902,10 +816,9 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 }
 .point:nth-child(even) .point-visual::after{right:auto;left:-3rem;top:-3rem;bottom:auto;}
 
-/* 余白の詰め */
 .sec-more{margin-top:clamp(2rem,4vw,2.8rem);}
 
-/* 下層ページの見出し：パンくずの下に細い罫を引く */
+/* 下層ページ見出しの罫 */
 .page-head .crumb{
   display:flex;align-items:center;gap:.7rem;margin-bottom:2rem;
 }
@@ -914,16 +827,12 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
   background:linear-gradient(90deg,var(--rose),transparent);
 }
 
-/* 下層ページ：見出しの直後にセクションが来るときの余白を詰める */
+/* 見出し直後の余白 */
 .page-head + .sec,
 .page-head + .container{padding-top:clamp(1rem,2.5vw,2rem);}
 .page-head + .container > .case:first-child{border-top:0;padding-top:clamp(1.5rem,3vw,2.5rem);}
 
-/* ============================================================
-   暗転する面
-   ページの中盤に一度だけ暗い帯を置き、明暗の起伏をつくる。
-   人物の紹介をここに置いている。
-   ============================================================ */
+/* ===== 暗い帯（プロフィール） ===== */
 .sec-ink{
   background:var(--ink);color:var(--paper);
   position:relative;overflow:hidden;
@@ -945,50 +854,32 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 .sec-ink .skills dt{color:rgba(252,251,249,.5);}
 .sec-ink .skills dd{color:rgba(252,251,249,.85);}
 
-/* ============================================================
-   細部の追い込み
-   ============================================================ */
-/* いただいた言葉：文字を少し大きく、余白を広げる */
+/* ===== 調整 ===== */
+/* いただいた言葉 */
 .voice{padding:clamp(1.8rem,4vw,2.5rem);}
 .voice p{font-size:1.05rem;}
 
-/* スマートフォンでは顔料を控えめに */
+/* スマホでは顔料を控えめに */
 @media (max-width:48rem){
   .blob{opacity:.34;}
 }
 
-/* 行間のばらつきを抑える */
 .hero-lead,.sec-note{line-height:1.95;}
 
-/* ============================================================
-   MOTION（参考サイト3点から取り入れた細部の動き）
+/* ===== モーション（html.js 時のみ／reduced-motion で停止） ===== */
 
-   取り入れたもの
-   - 見出しの文字が、下から1文字ずつ立ち上がる
-   - 画像が下からめくれ、少し引いた状態から定位置に収まる
-   - カードが1枚ずつ、順番に現れる
-   - 線が引かれるように伸びる
-   取り入れなかったもの
-   - パーティクル、WebGL、常に動き続ける装飾
-     （読む邪魔になるため）
-
-   すべて「視差効果を減らす」設定がオンなら止まる。
-   すべて html.js が付いた時だけ。JSが無ければ何も隠さない。
-   ============================================================ */
-
-/* ---------- なめらかスクロール（ライブラリ側の必須スタイル） ---------- */
+/* -- Lenis 必須スタイル -- */
 html.lenis,html.lenis body{height:auto;}
 .lenis.lenis-smooth{scroll-behavior:auto!important;}
 .lenis.lenis-stopped{overflow:clip;}
 
-/* ---------- ヒーロー見出し ---------- */
-/* 文節ごとの箱。中の文字が下から出てくるので、はみ出しを隠す */
+/* -- ヒーロー見出し -- */
 .hero-title .ph{
   display:inline-block;white-space:nowrap;overflow:hidden;vertical-align:top;
 }
 .hero-title .ch{display:inline-block;}
 
-/* 「形にする。」の下にマーカーを引く。ブランドの一行の核なので、ここだけ強調する */
+/* 「形にする。」のマーカー */
 .hero-title .mk{position:relative;z-index:0;}
 .hero-title .mk::after{
   content:"";position:absolute;left:-.04em;right:.3em;bottom:.12em;height:.32em;
@@ -1008,7 +899,7 @@ html.lenis,html.lenis body{height:auto;}
   @keyframes mkDraw{from{transform:scaleX(0);}to{transform:scaleX(1);}}
 }
 
-/* ---------- セクションの英字ラベル ---------- */
+/* -- 英字見出し -- */
 .sec-en .en-t{display:inline-flex;overflow:hidden;}
 .sec-en .l{display:inline-block;}
 @media (prefers-reduced-motion:no-preference){
@@ -1019,7 +910,6 @@ html.lenis,html.lenis body{height:auto;}
   }
   .js .sec-en.in .l{transform:none;}
 
-  /* 左の短い線が、文字より先に引かれる */
   .js .sec-en::before{
     transform:scaleX(0);transform-origin:left;
     transition:transform .9s var(--ease);
@@ -1029,9 +919,8 @@ html.lenis,html.lenis body{height:auto;}
   .js .sec-en.in::before{transform:scaleX(1);}
 }
 
-/* ---------- カード群を順番に ---------- */
+/* -- カードを順番に表示 -- */
 @media (prefers-reduced-motion:no-preference){
-  /* 箱そのものは動かさず、中身を1つずつ */
   .js .rv.stg{opacity:1;transform:none;}
   .js .stg > *{opacity:0;}
   .js .stg.in > *{
@@ -1039,11 +928,11 @@ html.lenis,html.lenis body{height:auto;}
     animation:stgIn 1.1s var(--ease) backwards;
     animation-delay:calc(var(--k,0) * 90ms);
   }
-  /* 最後の状態は通常のスタイルに戻す（ホバーの動きを殺さないため backwards） */
+  /* backwards：ホバーの動きを残すため */
   @keyframes stgIn{from{opacity:0;transform:translateY(32px);}}
 }
 
-/* ---------- 画像が下からめくれる ---------- */
+/* -- 画像のめくれ -- */
 @media (prefers-reduced-motion:no-preference){
   .js .mask{
     clip-path:inset(100% 0 0 0);
@@ -1057,14 +946,13 @@ html.lenis,html.lenis body{height:auto;}
     transition-delay:calc(var(--k,0) * 90ms + .1s);
   }
   .js .mask.in img{transform:scale(1);}
-  /* 現れ終わったら、ホバー時のズームを通常の速さに戻す */
   .js .mask.done img{transition:transform .8s var(--ease),filter .5s;transition-delay:0s;}
   .js .work-card:hover .work-thumb.mask.in img{transform:scale(1.05);}
 }
 
-/* ---------- 線が伸びる ---------- */
+/* -- 線が伸びる -- */
 @media (prefers-reduced-motion:no-preference){
-  /* ご依頼の流れ：手順の間の縦線が、上から順に引かれる */
+  /* ご依頼の流れ */
   .js .flow li::after{
     transform:scaleY(0);transform-origin:top;
     transition:transform 1s var(--ease);
@@ -1073,14 +961,14 @@ html.lenis,html.lenis body{height:auto;}
   .js .flow.in li::after{transform:none;}
 }
 
-/* いただいた言葉：上の色線（以前は発火していなかったのを修正） */
+/* いただいた言葉 */
 .stg.in .voice::before,
 .case.in .voice::before{
   transform:scaleX(1);
   transition-delay:calc(var(--k,0) * 90ms + .5s);
 }
 
-/* ---------- 本文中のリンク：下線が左から伸びる ---------- */
+/* -- リンクの下線 -- */
 .prose a,.case-spec a,.profile p a{
   border-bottom:0;text-decoration:none;
   background:
@@ -1098,9 +986,7 @@ html.lenis,html.lenis body{height:auto;}
 }
 .sec-ink .profile p a:hover{background-size:100% 1px,100% 1px;}
 
-/* ---------- ヒーローの図：マウスに合わせてわずかにずれる ----------
-   transform はゆっくり漂うアニメーションが使っているので、
-   独立したプロパティ translate を使って干渉させない。 */
+/* -- ヒーローの図：マウス追従（transform と干渉しないよう translate） -- */
 @media (prefers-reduced-motion:no-preference){
   .hero-art .ring{
     translate:calc(var(--mx,0) * 14px) calc(var(--my,0) * 14px);
@@ -1112,11 +998,10 @@ html.lenis,html.lenis body{height:auto;}
   }
 }
 
-/* ---------- 数え上げる数字 ---------- */
+/* -- 数え上げ -- */
 .cnt{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;}
 
-/* ---------- お問い合わせボタン：ゆっくり波紋 ----------
-   行動してほしいボタン1つだけに付ける。他には付けない。 */
+/* -- お問い合わせボタンの波紋 -- */
 @media (prefers-reduced-motion:no-preference){
   .cta .btn-white{animation:ctaPulse 2.8s ease-out infinite;}
   .cta .btn-white:hover{animation:none;}
@@ -1126,18 +1011,14 @@ html.lenis,html.lenis body{height:auto;}
   }
 }
 
-/* ============================================================
-   SNSの導線とロゴまわり（v4）
-   「Instagramとnoteがどこにあるか分かりにくい」への対応。
-   どのページでも、ヘッダーに常に見えている状態にする。
-   ============================================================ */
+/* ===== SNS・ロゴ ===== */
 
-/* アイコン（Font Awesome Free を SVG スプライトで読み込み） */
+/* アイコン（Font Awesome Free） */
 .sprite{position:absolute;width:0;height:0;overflow:hidden;}
 .ic{width:1em;height:1em;fill:currentColor;flex:none;display:inline-block;vertical-align:-.125em;}
 .ic-sm{width:.72em;height:.72em;}
 
-/* ---------- ヘッダーの右側 ---------- */
+/* -- ヘッダー右側 -- */
 .hd-actions{display:flex;align-items:center;gap:.5rem;}
 .sns-btn{
   width:2.5rem;height:2.5rem;border-radius:50%;
@@ -1149,7 +1030,6 @@ html.lenis,html.lenis body{height:auto;}
 .sns-btn:hover{background:var(--ink);border-color:var(--ink);color:var(--paper);transform:translateY(-2px);}
 .hd-actions .btn-nav{margin-left:.5rem;}
 
-/* ナビの位置：ロゴの右に寄せず、アクションの手前に置く */
 .header-in > .gnav{margin-left:auto;margin-right:clamp(1rem,2.4vw,2rem);}
 .gnav-sp{display:none;}
 
@@ -1161,7 +1041,7 @@ html.lenis,html.lenis body{height:auto;}
   .logo img{height:2.05rem;}
   .sns-btn{width:2.35rem;height:2.35rem;font-size:1rem;}
 
-  /* メニュー内：お問い合わせとSNSを大きく */
+  /* スマホメニュー内 */
   .gnav-sp{display:block;padding-top:1.6rem;}
   .gnav .gnav-sp .btn-nav{display:block;text-align:center;padding:1rem;font-size:.9rem;border-bottom:0;margin:0;}
   .gnav-label{
@@ -1178,7 +1058,7 @@ html.lenis,html.lenis body{height:auto;}
   .gnav .sns-row .ic-sm{font-size:.9rem;color:var(--ink-3);}
 }
 
-/* ---------- 名前つきのSNSボタン（お問い合わせ欄・プロフィール） ---------- */
+/* -- SNSボタン（名前つき） -- */
 .sns-pill{
   display:inline-flex;align-items:center;gap:.65rem;
   padding:.8rem 1.3rem .8rem 1.1rem;border-radius:100px;
@@ -1211,12 +1091,12 @@ html.lenis,html.lenis body{height:auto;}
 }
 .sec-ink .follow-label{color:rgba(252,251,249,.5)!important;}
 
-/* ---------- ボタンの矢印 ---------- */
+/* -- ボタンの矢印 -- */
 .btn .ic{font-size:.95em;}
 .btn .ic-arrow{transition:transform .5s var(--ease);}
 .btn:hover .ic-arrow{transform:translateX(5px);}
 
-/* ---------- フッター ---------- */
+/* -- フッター -- */
 .footer-sns a{display:inline-flex;align-items:center;gap:.6rem;}
 .footer-sns .ic{font-size:1rem;color:rgba(252,251,249,.85);}
 .footer-sns small{font-family:var(--mono);font-size:.68rem;color:rgba(252,251,249,.45);letter-spacing:.04em;}
@@ -1225,8 +1105,8 @@ html.lenis,html.lenis body{height:auto;}
 .totop{color:rgba(252,251,249,.55);text-decoration:none;transition:color .25s;}
 .totop:hover{color:var(--paper);}
 
-/* ---- v4 調整 ---- */
-/* note は記号だけでは伝わらないので、文字を添える */
+/* -- 調整 -- */
+/* note は文字を添える */
 .sns-btn.is-text{
   width:auto;padding:0 1rem 0 .85rem;border-radius:100px;
   display:inline-flex;align-items:center;gap:.45rem;
@@ -1234,21 +1114,16 @@ html.lenis,html.lenis body{height:auto;}
 }
 .sns-btn.is-text .ic{font-size:.95rem;}
 
-/* スマホメニュー：画面いっぱいに。お問い合わせボタンの文字色を確実に */
+/* スマホメニュー */
 @media (max-width:64rem){
   .gnav{height:calc(100svh - var(--head));overflow-y:auto;}
   .gnav .gnav-sp .btn-nav{color:var(--canvas);letter-spacing:.08em;font-family:var(--ja);font-weight:700;}
   .sns-btn.is-text{padding:0 .85rem 0 .7rem;font-size:.78rem;}
 }
 
-/* お問い合わせ欄の見出しを中央に */
 .cta .cta-sns-label{margin:0 auto 1rem!important;text-align:center;}
 
-/* ============================================================
-   v4：見出しの体系
-   英字をロゴと同じセリフ体で大きく、日本語を添える。
-   右肩の小さな数字は、ページ内でのセクションの順番。
-   ============================================================ */
+/* ===== 見出し（英字＋和文＋番号） ===== */
 main{counter-reset:sec;}
 .sec-head{counter-increment:sec;}
 .sec-head .sec-en{
@@ -1266,7 +1141,7 @@ main{counter-reset:sec;}
 .sec-ink .sec-head .sec-en{color:var(--paper);}
 .sec-ink .sec-head .sec-en::after{color:rgba(252,251,249,.5);}
 
-/* POINT：右の面に大きな番号 */
+/* POINT の番号 */
 #service{counter-reset:pt;}
 .point{counter-increment:pt;}
 .point-visual{place-items:end start;padding:clamp(1.6rem,3vw,2.4rem);}
@@ -1277,7 +1152,7 @@ main{counter-reset:sec;}
   margin-bottom:clamp(1.4rem,3vw,2.2rem);color:var(--ink);
 }
 
-/* ヒーローのタグ：枠をやめて、色の点で区切る */
+/* ヒーローのタグ */
 .hero-tags{gap:.45rem 1.4rem;}
 .hero-tags li{
   border:0;padding:0;background:none;border-radius:0;
@@ -1286,10 +1161,9 @@ main{counter-reset:sec;}
 .hero-tags li::before{content:"";width:.34rem;height:.34rem;border-radius:50%;background:var(--rose);flex:none;}
 .hero-tags li:nth-child(even)::before{background:var(--aqua);}
 
-/* いただいた言葉：引用を少し大きく */
 .voice p{font-size:clamp(1.05rem,1.8vw,1.22rem);line-height:1.8;}
 
-/* 下層ページの見出しも同じ体系に */
+/* 下層ページ見出し */
 .page-head .page-en{
   max-width:none;margin:0 0 .6rem;font-family:var(--serif);font-weight:400;
   font-size:clamp(3.4rem,9vw,7rem);line-height:1;letter-spacing:-.015em;color:var(--ink);
@@ -1299,21 +1173,20 @@ main{counter-reset:sec;}
   .js .page-en{opacity:0;transform:translateY(30px);animation:pageEn 1.2s var(--ease) .15s forwards;}
   @keyframes pageEn{to{opacity:1;transform:none;}}
 }
-/* 長音だけが次の行に落ちないように */
+/* 長音の改行を防ぐ */
 .profile-role{word-break:auto-phrase;}
 
-/* 暗い面の小さい文字は 4.5:1 以上に（paper 50% で 4.95:1） */
+/* 暗い面の小さい文字（4.5:1 以上） */
 .footer-sns small,.footer h4,.copy,.totop{color:rgba(252,251,249,.55);}
-/* タグ内の数字と単位の間に隙間が出ないように */
 .hero-tags li{gap:0;}
 .hero-tags li::before{margin-right:.55rem;}
 .hero-tags .cnt{margin:0 .15em 0 .4em;}
 
-/* フッターのロゴ（通常サイズ） */
+/* フッターのロゴ */
 .footer-logo{height:2.6rem;width:auto;display:block;margin-bottom:1.4rem;}
 .footer .copy{margin-top:clamp(3rem,6vw,4rem);}
 
-/* 閉じたメニューを確実に隠す（画面の縦幅が短いとき、上端にはみ出していた） */
+/* 閉じたメニューを隠す */
 @media (max-width:64rem){
   .gnav{visibility:hidden;transition:transform .4s cubic-bezier(.4,0,.2,1),visibility 0s linear .4s;}
   body.nav-open .gnav{visibility:visible;transition:transform .4s cubic-bezier(.4,0,.2,1),visibility 0s;}
