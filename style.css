@@ -145,13 +145,17 @@ a{color:inherit;}
   max-width:var(--max);margin:0 auto;padding:0 var(--pad);height:100%;
   display:flex;align-items:center;justify-content:space-between;gap:1rem;
 }
-.logo{display:flex;align-items:center;gap:.65rem;text-decoration:none;}
-.logo svg{width:1.6rem;flex:none;}
-.logo b{font-size:.95rem;font-weight:700;letter-spacing:.12em;line-height:1.25;display:block;}
-.logo span{
-  display:block;font-family:var(--mono);font-size:.55rem;font-weight:400;
-  letter-spacing:.24em;color:var(--ink-4);
+/* ロゴ：Kento ◐ Nagaya
+   2つの円の重なり（レンズ）は文字と同じ色。明るい面でも暗い面でも成立する */
+.logo{display:flex;align-items:center;gap:.9rem;text-decoration:none;color:var(--ink);}
+.logo .wordmark{height:1.5rem;width:auto;display:block;flex:none;overflow:visible;}
+.logo-ja{
+  font-size:.68rem;font-weight:500;letter-spacing:.24em;color:var(--ink-3);
+  padding-left:.9rem;border-left:1px solid var(--line);line-height:1.2;white-space:nowrap;
 }
+.wordmark circle{transition:transform .9s var(--ease);transform-box:fill-box;transform-origin:center;}
+.logo:hover .wordmark circle:first-of-type{transform:translateX(9%);}
+.logo:hover .wordmark circle:nth-of-type(2){transform:translateX(-9%);}
 
 .gnav{display:flex;align-items:center;gap:clamp(.9rem,2.2vw,1.8rem);}
 .gnav a{
@@ -169,13 +173,13 @@ a{color:inherit;}
 .gnav a[aria-current="page"]{color:var(--ink);}
 .gnav a[aria-current="page"]::after{transform:scaleX(1);background:var(--rose);}
 
-.gnav .btn-nav{
-  font-family:var(--ja);font-size:.78rem;font-weight:700;letter-spacing:.06em;
+.btn-nav{
+  font-family:var(--ja);font-size:.78rem;font-weight:700;letter-spacing:.06em;white-space:nowrap;
   color:var(--canvas);background:var(--ink);padding:.72rem 1.45rem;border-radius:100px;
-  transition:opacity .25s,transform .25s;
+  text-decoration:none;transition:opacity .25s,transform .25s;
 }
 .gnav .btn-nav::after{display:none;}
-.gnav .btn-nav:hover{opacity:.85;transform:translateY(-1px);color:var(--canvas);}
+.btn-nav:hover{opacity:.85;transform:translateY(-1px);color:var(--canvas);}
 
 .burger{display:none;width:2.6rem;height:2.6rem;border:0;background:none;padding:0;cursor:pointer;}
 .burger i{display:block;height:1.5px;width:1.35rem;margin:.32rem auto;background:var(--ink);transition:transform .3s,opacity .3s;}
@@ -183,7 +187,7 @@ body.nav-open .burger i:nth-child(1){transform:translateY(.47rem) rotate(45deg);
 body.nav-open .burger i:nth-child(2){opacity:0;}
 body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg);}
 
-@media (max-width:56rem){
+@media (max-width:64rem){
   .burger{display:block;}
   .gnav{
     position:fixed;inset:var(--head) 0 auto;flex-direction:column;align-items:stretch;gap:0;
@@ -206,7 +210,7 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
 }
 .hero-in{
   position:relative;width:100%;
-  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.52fr);
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.4fr);
   gap:clamp(2rem,5vw,5rem);align-items:center;
 }
 @media (max-width:60rem){
@@ -673,8 +677,6 @@ body.nav-open .burger i:nth-child(3){transform:translateY(-.47rem) rotate(-45deg
    ============================================================ */
 .footer{background:var(--ink);color:var(--paper);padding:clamp(3rem,6vw,4.5rem) 0 2rem;border-top:1px solid rgba(252,251,249,.1);}
 .footer-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:2.8rem;}
-.footer .logo b{color:var(--paper);}
-.footer .logo span{color:rgba(252,251,249,.45);}
 .footer-tag{margin:1.3rem 0 0;font-size:.83rem;color:rgba(252,251,249,.6);max-width:20rem;}
 .footer h4{
   margin:0 0 1.1rem;font-family:var(--mono);font-size:.62rem;font-weight:400;
@@ -1130,3 +1132,193 @@ html.lenis,html.lenis body{height:auto;}
     70%,100%{box-shadow:0 0 0 16px rgba(252,251,249,0);}
   }
 }
+
+/* ============================================================
+   SNSの導線とロゴまわり（v4）
+   「Instagramとnoteがどこにあるか分かりにくい」への対応。
+   どのページでも、ヘッダーに常に見えている状態にする。
+   ============================================================ */
+
+/* アイコン（Font Awesome Free を SVG スプライトで読み込み） */
+.sprite{position:absolute;width:0;height:0;overflow:hidden;}
+.ic{width:1em;height:1em;fill:currentColor;flex:none;display:inline-block;vertical-align:-.125em;}
+.ic-sm{width:.72em;height:.72em;}
+
+/* ---------- ヘッダーの右側 ---------- */
+.hd-actions{display:flex;align-items:center;gap:.5rem;}
+.sns-btn{
+  width:2.5rem;height:2.5rem;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid var(--line);color:var(--ink);font-size:1.05rem;
+  text-decoration:none;background:rgba(252,251,249,.6);
+  transition:background .35s var(--ease),color .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease);
+}
+.sns-btn:hover{background:var(--ink);border-color:var(--ink);color:var(--paper);transform:translateY(-2px);}
+.hd-actions .btn-nav{margin-left:.5rem;}
+
+/* ナビの位置：ロゴの右に寄せず、アクションの手前に置く */
+.header-in > .gnav{margin-left:auto;margin-right:clamp(1rem,2.4vw,2rem);}
+.gnav-sp{display:none;}
+
+@media (max-width:64rem){
+  .header-in > .gnav{margin:0;}
+  .hd-actions{margin-left:auto;gap:.4rem;}
+  .hd-actions .btn-nav.pc{display:none;}
+  .burger{margin-left:.2rem;}
+  .logo-ja{display:none;}
+  .logo .wordmark{height:1.32rem;}
+  .sns-btn{width:2.35rem;height:2.35rem;font-size:1rem;}
+
+  /* メニュー内：お問い合わせとSNSを大きく */
+  .gnav-sp{display:block;padding-top:1.6rem;}
+  .gnav .gnav-sp .btn-nav{display:block;text-align:center;padding:1rem;font-size:.9rem;border-bottom:0;margin:0;}
+  .gnav-label{
+    margin:2rem 0 .6rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.24em;color:var(--ink-3);
+  }
+  .gnav .sns-row{
+    display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:.8rem;
+    padding:1rem 0;border-bottom:1px solid var(--line-2);
+    font-family:var(--ja);font-size:.95rem;letter-spacing:.02em;color:var(--ink);
+  }
+  .gnav .sns-row .ic{font-size:1.15rem;}
+  .gnav .sns-row b{font-weight:700;}
+  .gnav .sns-row small{font-family:var(--mono);font-size:.72rem;color:var(--ink-3);letter-spacing:.04em;}
+  .gnav .sns-row .ic-sm{font-size:.9rem;color:var(--ink-3);}
+}
+
+/* ---------- 名前つきのSNSボタン（お問い合わせ欄・プロフィール） ---------- */
+.sns-pill{
+  display:inline-flex;align-items:center;gap:.65rem;
+  padding:.8rem 1.3rem .8rem 1.1rem;border-radius:100px;
+  border:1px solid var(--line);color:var(--ink);text-decoration:none;
+  transition:background .4s var(--ease),color .4s var(--ease),border-color .4s var(--ease),transform .4s var(--ease);
+}
+.sns-pill .ic{font-size:1.1rem;}
+.sns-pill b{font-size:.88rem;font-weight:700;letter-spacing:.03em;}
+.sns-pill small{font-family:var(--mono);font-size:.7rem;color:var(--ink-3);letter-spacing:.04em;transition:color .4s var(--ease);}
+.sns-pill:hover{background:var(--ink);border-color:var(--ink);color:var(--paper);transform:translateY(-2px);}
+.sns-pill:hover small{color:rgba(252,251,249,.7);}
+
+/* 暗い面の上 */
+.cta .sns-pill,.sec-ink .sns-pill{border-color:rgba(252,251,249,.24);color:var(--paper);}
+.cta .sns-pill small,.sec-ink .sns-pill small{color:rgba(252,251,249,.6);}
+.cta .sns-pill:hover,.sec-ink .sns-pill:hover{background:var(--paper);border-color:var(--paper);color:var(--ink);}
+.cta .sns-pill:hover small,.sec-ink .sns-pill:hover small{color:var(--ink-3);}
+
+/* お問い合わせ欄 */
+.cta-sns{margin-top:clamp(2.4rem,5vw,3.2rem);padding-top:clamp(2rem,4vw,2.6rem);border-top:1px solid rgba(252,251,249,.12);}
+.cta-sns-label{margin:0 0 1rem!important;font-size:.82rem!important;color:rgba(252,251,249,.6)!important;}
+.cta-sns-list{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;}
+.cta .btn .ic{font-size:1rem;}
+
+/* プロフィール */
+.follow{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem;margin-top:2.2rem;}
+.follow-label{
+  width:100%;margin:0 0 .2rem!important;font-family:var(--mono);font-size:.62rem!important;
+  letter-spacing:.24em;color:var(--ink-3)!important;
+}
+.sec-ink .follow-label{color:rgba(252,251,249,.5)!important;}
+
+/* ---------- ボタンの矢印 ---------- */
+.btn .ic{font-size:.95em;}
+.btn .ic-arrow{transition:transform .5s var(--ease);}
+.btn:hover .ic-arrow{transform:translateX(5px);}
+
+/* ---------- フッター ---------- */
+.footer-name{margin:0;font-size:1.05rem;font-weight:700;letter-spacing:.18em;}
+.footer-sns a{display:inline-flex;align-items:center;gap:.6rem;}
+.footer-sns .ic{font-size:1rem;color:rgba(252,251,249,.85);}
+.footer-sns small{font-family:var(--mono);font-size:.68rem;color:rgba(252,251,249,.45);letter-spacing:.04em;}
+
+/* 締めの大きなロゴ */
+.footer-mark{
+  display:block;margin:clamp(3.5rem,8vw,6rem) 0 0;color:var(--paper);text-decoration:none;
+}
+.footer-mark .wordmark{width:100%;height:auto;display:block;}
+.footer .copy{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;}
+.totop{color:rgba(252,251,249,.55);text-decoration:none;transition:color .25s;}
+.totop:hover{color:var(--paper);}
+
+/* ---- v4 調整 ---- */
+/* note は記号だけでは伝わらないので、文字を添える */
+.sns-btn.is-text{
+  width:auto;padding:0 1rem 0 .85rem;border-radius:100px;
+  display:inline-flex;align-items:center;gap:.45rem;
+  font-family:var(--ja);font-size:.82rem;font-weight:700;letter-spacing:.03em;
+}
+.sns-btn.is-text .ic{font-size:.95rem;}
+
+/* スマホメニュー：画面いっぱいに。お問い合わせボタンの文字色を確実に */
+@media (max-width:64rem){
+  .gnav{height:calc(100svh - var(--head));overflow-y:auto;}
+  .gnav .gnav-sp .btn-nav{color:var(--canvas);letter-spacing:.08em;font-family:var(--ja);font-weight:700;}
+  .sns-btn.is-text{padding:0 .85rem 0 .7rem;font-size:.78rem;}
+}
+
+/* お問い合わせ欄の見出しを中央に */
+.cta .cta-sns-label{margin:0 auto 1rem!important;text-align:center;}
+
+/* ============================================================
+   v4：見出しの体系
+   英字をロゴと同じセリフ体で大きく、日本語を添える。
+   右肩の小さな数字は、ページ内でのセクションの順番。
+   ============================================================ */
+main{counter-reset:sec;}
+.sec-head{counter-increment:sec;}
+.sec-head .sec-en{
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(3rem,7vw,5.6rem);line-height:1.05;letter-spacing:-.01em;
+  color:var(--ink);margin:0 0 .9rem;align-items:flex-start;gap:.5rem;
+}
+.sec-head .sec-en::before{display:none;}
+.sec-head .en-t{padding-bottom:.12em;}
+.sec-head .sec-en::after{
+  content:counter(sec,decimal-leading-zero);
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;color:var(--ink-3);margin-top:.9em;
+}
+.sec-head .sec-ja{font-size:clamp(1.15rem,2.2vw,1.45rem);letter-spacing:.06em;}
+.sec-ink .sec-head .sec-en{color:var(--paper);}
+.sec-ink .sec-head .sec-en::after{color:rgba(252,251,249,.5);}
+
+/* POINT：右の面に大きな番号 */
+#service{counter-reset:pt;}
+.point{counter-increment:pt;}
+.point-visual{place-items:end start;padding:clamp(1.6rem,3vw,2.4rem);}
+.kw{text-align:left;}
+.kw::before{
+  content:counter(pt,decimal-leading-zero);display:block;
+  font-family:var(--serif);font-size:clamp(5rem,11vw,9rem);line-height:.8;letter-spacing:-.02em;
+  margin-bottom:clamp(1.4rem,3vw,2.2rem);color:var(--ink);
+}
+
+/* ヒーローのタグ：枠をやめて、色の点で区切る */
+.hero-tags{gap:.45rem 1.4rem;}
+.hero-tags li{
+  border:0;padding:0;background:none;border-radius:0;
+  display:inline-flex;align-items:center;gap:.55rem;font-size:.72rem;color:var(--ink-3);
+}
+.hero-tags li::before{content:"";width:.34rem;height:.34rem;border-radius:50%;background:var(--rose);flex:none;}
+.hero-tags li:nth-child(even)::before{background:var(--aqua);}
+
+/* いただいた言葉：引用を少し大きく */
+.voice p{font-size:clamp(1.05rem,1.8vw,1.22rem);line-height:1.8;}
+
+/* 下層ページの見出しも同じ体系に */
+.page-head .page-en{
+  max-width:none;margin:0 0 .6rem;font-family:var(--serif);font-weight:400;
+  font-size:clamp(3.4rem,9vw,7rem);line-height:1;letter-spacing:-.015em;color:var(--ink);
+}
+.page-head h1{font-size:clamp(1.3rem,2.8vw,1.8rem);letter-spacing:.08em;}
+@media (prefers-reduced-motion:no-preference){
+  .js .page-en{opacity:0;transform:translateY(30px);animation:pageEn 1.2s var(--ease) .15s forwards;}
+  @keyframes pageEn{to{opacity:1;transform:none;}}
+}
+/* 長音だけが次の行に落ちないように */
+.profile-role{word-break:auto-phrase;}
+
+/* 暗い面の小さい文字は 4.5:1 以上に（paper 50% で 4.95:1） */
+.footer-sns small,.footer h4,.copy,.totop{color:rgba(252,251,249,.55);}
+/* タグ内の数字と単位の間に隙間が出ないように */
+.hero-tags li{gap:0;}
+.hero-tags li::before{margin-right:.55rem;}
+.hero-tags .cnt{margin:0 .15em 0 .4em;}
