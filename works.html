@@ -21,7 +21,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Roboto+Mono:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 <script>
-/* 動きの準備。main.js が読み込めなかった時は、隠した要素をすべて表示に戻す */
+/* main.js 不達時は表示に戻す */
 document.documentElement.classList.add('js');
 addEventListener('load',function(){setTimeout(function(){if(!window.__kn)document.documentElement.classList.remove('js');},1000);});
 </script>
@@ -38,7 +38,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
 <header class="header">
   <div class="header-in">
     <a class="logo" href="/" aria-label="長屋 健斗 ホーム">
-      <img src="/assets/logo.svg" alt="長屋 健斗 Kento Nagaya" width="336" height="100">
+      <img src="/assets/logo.svg" alt="長屋 健斗 Kento Nagaya" width="314" height="100">
     </a>
 
     <nav class="gnav" id="gnav" aria-label="メインメニュー">
@@ -48,7 +48,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
       <a href="/#flow">FLOW</a>
       <a href="/about.html">ABOUT</a>
 
-      <!-- スマートフォンのメニュー内だけに出す -->
+      <!-- スマホメニュー用 -->
       <div class="gnav-sp">
         <a class="btn-nav" href="#contact">お問い合わせ</a>
         <p class="gnav-label">FOLLOW</p>
@@ -84,7 +84,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
 
 <div class="container">
 
-  <!-- ============ 01 ============ -->
+  <!-- 01 -->
   <article class="case rv" id="case01">
     <div class="case-top"><span class="case-no">01</span><span class="case-cat">調香・アロマテラピー ／ Webサイト制作</span></div>
     <h2 class="case-title">Aromatise</h2>
@@ -106,9 +106,8 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
       </div>
       <div>
         <h3>PROCESS</h3>
-        <!-- ▼ 進め方を記入（class="todo" を外すと通常表示） ▼ -->
+        <!-- 進め方：記入後 class="todo" を外す -->
         <p class="todo">（執筆予定）どのように話を聞き、どう形にしたか。ヒアリングの回数、印象に残った質問、途中で方向転換したことなど。</p>
-        <!-- ▲ ここまで ▲ -->
       </div>
     </div>
 
@@ -119,7 +118,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
     </blockquote>
   </article>
 
-  <!-- ============ 02 ============ -->
+  <!-- 02 -->
   <article class="case rv" id="case02">
     <div class="case-top"><span class="case-no">02</span><span class="case-cat">ゲストハウス・カフェ ／ Webサイト制作</span></div>
     <h2 class="case-title">ゲストハウス君彩家</h2>
@@ -141,9 +140,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
       </div>
       <div>
         <h3>PROCESS</h3>
-        <!-- ▼ 進め方を記入 ▼ -->
         <p class="todo">（執筆予定）</p>
-        <!-- ▲ ここまで ▲ -->
       </div>
     </div>
 
@@ -154,7 +151,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
     </blockquote>
   </article>
 
-  <!-- ============ 03 ============ -->
+  <!-- 03 -->
   <article class="case rv" id="case03">
     <div class="case-top"><span class="case-no">03</span><span class="case-cat">イベント ／ Webサイト制作</span></div>
     <h2 class="case-title">がもよんフェス</h2>
@@ -176,9 +173,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
       </div>
       <div>
         <h3>PROCESS</h3>
-        <!-- ▼ 進め方を記入 ▼ -->
         <p class="todo">（執筆予定）</p>
-        <!-- ▲ ここまで ▲ -->
       </div>
       <div>
         <h3>RESULT</h3>
@@ -187,7 +182,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
     </div>
   </article>
 
-  <!-- ============ 04 ============ -->
+  <!-- 04 -->
   <article class="case rv" id="case04">
     <div class="case-top"><span class="case-no">04</span><span class="case-cat">地域メディア ／ Webサイト制作</span></div>
     <h2 class="case-title">まちすく 城東ローカル</h2>
@@ -209,14 +204,12 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
       </div>
       <div>
         <h3>PROCESS</h3>
-        <!-- ▼ 進め方を記入 ▼ -->
         <p class="todo">（執筆予定）</p>
-        <!-- ▲ ここまで ▲ -->
       </div>
     </div>
   </article>
 
-  <!-- ============ 05 ============ -->
+  <!-- 05 -->
   <article class="case rv" id="case05">
     <div class="case-top"><span class="case-no">05</span><span class="case-cat">動画編集者 ／ 名刺デザイン</span></div>
     <h2 class="case-title">ユメノさん 名刺</h2>
@@ -237,9 +230,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
       </div>
       <div>
         <h3>PROCESS</h3>
-        <!-- ▼ 進め方を記入 ▼ -->
         <p class="todo">（執筆予定）</p>
-        <!-- ▲ ここまで ▲ -->
       </div>
       <div>
         <h3>RESULT</h3>
@@ -248,7 +239,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
     </div>
   </article>
 
-  <!-- ============ その他 ============ -->
+  <!-- その他 -->
   <article class="case rv">
     <div class="case-top"><span class="case-no">OTHERS</span><span class="case-cat">掲載していない実績</span></div>
     <h2 class="case-title">このほかに、27件</h2>
@@ -297,7 +288,7 @@ addEventListener('load',function(){setTimeout(function(){if(!window.__kn)documen
   <div class="container">
     <div class="footer-in">
       <div>
-        <img class="footer-logo" src="/assets/logo-white.svg" alt="長屋 健斗 Kento Nagaya" width="336" height="100" loading="lazy">
+        <img class="footer-logo" src="/assets/logo-white.svg" alt="長屋 健斗 Kento Nagaya" width="314" height="100" loading="lazy">
         <p class="footer-tag">言葉になっていないものを、形にする。<br>大阪／Web制作・マーケティング</p>
       </div>
       <div>
