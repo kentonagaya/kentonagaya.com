@@ -1,14 +1,7 @@
-/* ============================================================
-   kentonagaya.com  main.js
-   3ページ共通の動き。
-
-   方針
-   - 動きは「読む順番を案内する」ためだけに使う
-   - JSが動かなくても、全文がそのまま読める（.js クラスが無い時は何も隠さない）
-   - OSの「視差効果を減らす」設定がオンなら、動きは全部止める
-   ============================================================ */
+/* kentonagaya.com 共通スクリプト
+   JS無効・reduced-motion でも全文が読める（.js が無い時は何も隠さない） */
 (function () {
-  window.__kn = 1; // head 内の保険スクリプトに「読み込めた」ことを知らせる
+  window.__kn = 1; // head の保険スクリプト用
 
   var d = document;
   var $$ = function (s, c) { return Array.prototype.slice.call((c || d).querySelectorAll(s)); };
@@ -33,8 +26,7 @@
     if (im.complete && im.naturalWidth === 0) im.style.display = 'none';
   });
 
-  /* ---------- なめらかなスクロール（PCのみ） ----------
-     マウス操作の端末だけ。タッチ端末は OS 標準のスクロールのまま。 */
+  /* ---------- なめらかスクロール（マウス端末のみ） ---------- */
   if (motion && fine && window.Lenis) {
     try {
       var lenis = new window.Lenis({ lerp: 0.12, anchors: { offset: -96 } });
@@ -131,8 +123,7 @@
     targets.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---------- ヒーローの図：マウスに合わせてわずかにずれる ----------
-     にじみと輪郭が逆方向に動き、重なり方が変わる。最大でも十数px。 */
+  /* ---------- ヒーローの図：マウス追従 ---------- */
   var art = d.querySelector('.hero-art');
   var hero = d.querySelector('.hero');
   if (art && hero && motion && fine) {
