@@ -38,7 +38,7 @@
   /* ---------- ヒーロー見出し：文字ごとに下から立ち上がる ---------- */
   var h1 = d.getElementById('h1');
   if (h1) {
-    h1.setAttribute('aria-label', h1.textContent.replace(/\s+/g, ''));
+    h1.setAttribute('aria-label', d.documentElement.lang === 'en' ? h1.textContent.replace(/\s+/g, ' ').trim() : h1.textContent.replace(/\s+/g, ''));
     var i = 0;
     $$('.ph', h1).forEach(function (ph) {
       var text = ph.textContent;
