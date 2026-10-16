@@ -165,6 +165,28 @@
     }).catch(hideNote);
   }
 
+  /* ---------- メールアドレスのコピー ---------- */
+  $$('.copy-btn').forEach(function (b) {
+    var label = b.textContent;
+    var addr = b.parentNode.querySelector('.addr');
+    var done = function () {
+      b.textContent = b.getAttribute('data-done');
+      b.classList.add('done');
+      setTimeout(function () { b.textContent = label; b.classList.remove('done'); }, 2000);
+      (window.dataLayer = window.dataLayer || []).push({ event: 'email_copy', page_language: d.documentElement.lang });
+    };
+    var fallback = function () {
+      var r = d.createRange(), s = window.getSelection();
+      r.selectNodeContents(addr); s.removeAllRanges(); s.addRange(r);
+      try { if (d.execCommand('copy')) done(); } catch (e) {}
+    };
+    b.addEventListener('click', function () {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(b.getAttribute('data-copy')).then(done, fallback);
+      } else { fallback(); }
+    });
+  });
+
   /* ---------- ヘッダーの線と、読み進み具合のバー ---------- */
   var hd = d.querySelector('.header');
   var pg = d.getElementById('progress');
