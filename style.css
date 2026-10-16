@@ -1224,3 +1224,95 @@ html[lang="en"] .svc-grid h3,
 html[lang="en"] .flow h3,
 html[lang="en"] .profile h3{letter-spacing:0;}
 html[lang="en"] .profile-meta{font-size:.78rem;letter-spacing:.02em;}
+
+/* ===== noteアイコン（画像。明るい面は note.svg、暗い面は note_s.svg） ===== */
+.ic-note{display:inline-flex;align-items:center;height:1.05rem;flex:none;}
+.ic-note img{height:100%;width:auto;display:block;}
+.ic-note .nw{display:none;}
+.sns-pill .ic-note{height:1.1rem;}
+.gnav .sns-row .ic-note{height:1.15rem;}
+.footer-sns .ic-note{height:1rem;}
+.cta .ic-note .nb,.sec-ink .ic-note .nb,.footer .ic-note .nb,
+.sns-btn:hover .ic-note .nb,.sns-pill:hover .ic-note .nb,.btn-ghost:hover .ic-note .nb{display:none;}
+.cta .ic-note .nw,.sec-ink .ic-note .nw,.footer .ic-note .nw,
+.sns-btn:hover .ic-note .nw,.sns-pill:hover .ic-note .nw,.btn-ghost:hover .ic-note .nw{display:block;}
+.cta .sns-pill:hover .ic-note .nw,.sec-ink .sns-pill:hover .ic-note .nw{display:none;}
+.cta .sns-pill:hover .ic-note .nb,.sec-ink .sns-pill:hover .ic-note .nb{display:block;}
+
+/* ===== スマホのヘッダー ===== */
+@media (max-width:64rem){
+  .hd-actions{gap:.6rem;}
+  .burger{margin-left:.5rem;}
+}
+@media (max-width:40rem){
+  .logo img{height:1.9rem;}
+  .hd-actions{gap:.45rem;}
+  .burger{margin-left:.3rem;margin-right:-.4rem;}
+  .sns-btn,.lang-sw{width:2.3rem;height:2.3rem;min-width:0;}
+  .lang-sw{padding:0;}
+  .sns-btn.is-text{width:2.3rem;padding:0;justify-content:center;}
+  .sns-btn.is-text > span:not(.ic-note){display:none;}
+}
+
+/* ===== メールアドレスの表示 ===== */
+.cta .cta-mail{margin:1.5rem auto 0;font-size:.78rem;color:rgba(252,251,249,.62);line-height:2;}
+.cta-mail .addr{font-family:var(--mono);font-size:.9rem;color:var(--paper);letter-spacing:.02em;user-select:all;}
+.copy-btn{
+  display:none;margin-left:.7rem;vertical-align:.08em;padding:.32rem .85rem;
+  border:1px solid rgba(252,251,249,.32);border-radius:100px;background:none;color:var(--paper);
+  font:500 .68rem/1 var(--ja);letter-spacing:.06em;cursor:pointer;transition:background .3s,color .3s;
+}
+.js .copy-btn{display:inline-block;}
+.copy-btn:hover,.copy-btn.done{background:var(--paper);color:var(--ink);}
+
+/* ===== プロフィールの補足 ===== */
+.profile-sub{margin:.35rem 0 0;font-size:.86rem;color:var(--ink-3);}
+.sec-ink .profile-sub{color:rgba(252,251,249,.7);}
+
+/* ===== お悩み（6項目） ===== */
+.problems.six{grid-template-columns:repeat(3,1fr);}
+@media (max-width:64rem){.problems.six{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:40rem){.problems.six{grid-template-columns:1fr;}}
+
+/* ===== 32件の内訳 ===== */
+.tally{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin:0 0 clamp(2.2rem,4vw,3rem);
+  background:var(--line);border-block:1px solid var(--line);
+}
+.tally > div{background:var(--canvas);padding:1.2rem clamp(.8rem,2.5vw,1.6rem);}
+.tally dt{margin:0 0 .3rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;color:var(--ink-4);}
+.tally dd{margin:0;font-size:.85rem;}
+.tally dd b{font-family:var(--serif);font-weight:400;font-size:2.4rem;line-height:1;margin-right:.15rem;}
+.tally .t-sub{margin-top:.35rem;font-size:.74rem;color:var(--ink-3);line-height:1.6;}
+@media (max-width:40rem){.tally dd b{font-size:1.9rem;}.tally .t-sub{font-size:.68rem;}}
+
+/* ===== 実績の見出し ===== */
+.case-grid h3 span{margin-left:.8em;font-family:var(--ja);font-size:.72rem;font-weight:500;letter-spacing:.06em;color:var(--ink-3);}
+
+/* ===== 英語ページの追加要素 ===== */
+.hero-note{margin:1.1rem 0 0;font-size:.82rem;color:var(--ink-3);}
+.who{
+  display:grid;grid-template-columns:1.5fr 1fr;gap:1px;
+  background:var(--line);border-block:1px solid var(--line);
+}
+.who > div{background:var(--canvas-2);padding:clamp(1.6rem,3.5vw,2.6rem);}
+.who > .who-main{background:var(--paper);}
+.who-tag{margin:0 0 1rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;color:var(--rose-ink);}
+.who-sub .who-tag{color:var(--ink-4);}
+.who h3{margin:0 0 1rem;font-size:clamp(1.15rem,2.2vw,1.4rem);line-height:1.35;font-weight:700;}
+.who-main > p:not(.who-tag){margin:0 0 1.3rem;color:var(--ink-2);font-size:.95rem;}
+.who ul{margin:0;padding:0;list-style:none;}
+.who-list li{position:relative;padding:.6rem 0 .6rem 1.2rem;border-top:1px solid var(--line-2);font-size:.9rem;}
+.who-list li::before{content:"";position:absolute;left:0;top:1.25em;width:.42rem;height:.42rem;border-radius:50%;background:var(--aqua);}
+.who-sub li{padding:.85rem 0;border-top:1px solid var(--line-2);font-size:.9rem;color:var(--ink-2);}
+.who-sub li:first-child{border-top:0;padding-top:0;}
+.who-sub b{color:var(--ink);}
+@media (max-width:48rem){.who{grid-template-columns:1fr;}}
+
+.price-list{margin:0 0 1.1rem;max-width:44rem;border-top:1px solid var(--line);}
+.price-list > div{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.3rem 1rem;padding:1rem 0;border-bottom:1px solid var(--line);}
+.price-list dt{font-weight:700;font-size:.95rem;}
+.price-list dt small{font-weight:400;font-size:.8rem;color:var(--ink-3);}
+.price-list dd{margin:0;font-family:var(--serif);font-size:1.5rem;line-height:1.1;white-space:nowrap;}
+.price-note{max-width:44rem;margin:0 0 clamp(2.6rem,5vw,3.6rem);font-size:.85rem;color:var(--ink-3);}
+.flow-title{margin:0 0 1.6rem;font-size:1.15rem;font-weight:700;}
