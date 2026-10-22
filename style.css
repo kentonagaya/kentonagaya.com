@@ -118,7 +118,8 @@ a{color:inherit;}
 }
 /* ロゴ（SVG。暗い面は logo-white.svg） */
 .logo{display:flex;align-items:center;text-decoration:none;flex:none;}
-.logo img{height:2.3rem;width:auto;display:block;}
+.logo picture{display:block;}
+.logo img{height:1.8rem;width:auto;display:block;}
 
 .gnav{display:flex;align-items:center;gap:clamp(.9rem,2.2vw,1.8rem);}
 .gnav a{
@@ -1038,7 +1039,7 @@ html.lenis,html.lenis body{height:auto;}
   .hd-actions{margin-left:auto;gap:.4rem;}
   .hd-actions .btn-nav.pc{display:none;}
   .burger{margin-left:.2rem;}
-  .logo img{height:2.05rem;}
+  .logo img{height:1.7rem;}
   .sns-btn{width:2.35rem;height:2.35rem;font-size:1rem;}
 
   /* スマホメニュー内 */
@@ -1183,7 +1184,7 @@ main{counter-reset:sec;}
 .hero-tags .cnt{margin:0 .15em 0 .4em;}
 
 /* フッターのロゴ */
-.footer-logo{height:2.6rem;width:auto;display:block;margin-bottom:1.4rem;}
+.footer-logo{height:2.1rem;width:auto;display:block;margin-bottom:1.4rem;}
 .footer .copy{margin-top:clamp(3rem,6vw,4rem);}
 
 /* 閉じたメニューを隠す */
@@ -1246,6 +1247,7 @@ html[lang="en"] .profile-meta{font-size:.78rem;letter-spacing:.02em;}
 }
 @media (max-width:40rem){
   .logo img{height:1.9rem;}
+  .header-in{gap:.6rem;}
   .hd-actions{gap:.45rem;}
   .burger{margin-left:.3rem;margin-right:-.4rem;}
   .sns-btn,.lang-sw{width:2.3rem;height:2.3rem;min-width:0;}
