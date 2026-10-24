@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 公開するまでは検索エンジンに載せない（公開時はこの行と _headers の該当行を削除） -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正するツール。">
+<meta name="author" content="Kento Nagaya">
+<title>Voixnette | Podcast音声を、ブラウザだけでクリアに</title>
+<link rel="icon" href="/voixnette/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Roboto+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* ===== デザイントークン（kentonagaya.com に準拠：純白・純黒は使わない／ローズ・アクアは差し色） ===== */
+:root {
+  --canvas: #F7F5F2; --canvas-2: #F1EEE9; --paper: #FCFBF9;
+  --ink: #1D1F28; --ink-2: #40434F; --ink-3: #606470; --ink-4: #7E8290;
+  --line: #DDD8D2; --line-2: #E9E5DF;
+  --rose: #E0578F; --rose-ink: #B52E6B; --rose-pale: #F6D9E6;
+  --aqua: #6BBFD9; --aqua-ink: #16708E; --aqua-pale: #D6ECF3;
+  --ja: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --serif: "Instrument Serif", "Zen Kaku Gothic New", serif;
+  --mono: "Roboto Mono", "Zen Kaku Gothic New", monospace;
+  --ease: cubic-bezier(.19, 1, .22, 1);
+  --r: 14px;
+  --head: 60px;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font: 14px/1.7 var(--ja); font-feature-settings: "palt" 1; -webkit-font-smoothing: antialiased; }
+/* 紙の質感（ポートフォリオと同じ） */
+body::after { content: ""; position: fixed; inset: 0; z-index: 99; pointer-events: none; opacity: .35; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E"); }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+::selection { background: var(--rose-pale); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--rose-ink); outline-offset: 2px; }
+a { color: inherit; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ===== トップバー ===== */
+.topbar { height: var(--head); display: flex; align-items: center; gap: 18px; padding: 0 20px; border-bottom: 1px solid var(--line); background: var(--canvas); }
+.brand { display: flex; align-items: baseline; gap: 12px; text-decoration: none; min-width: 0; }
+.brand .word { font-family: var(--serif); font-size: 30px; line-height: 1; letter-spacing: -.01em; color: var(--ink); }
+.brand .word i { color: var(--rose-ink); }
+.brand .sub { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.top-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.pill { display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px; border: 1px solid var(--line); border-radius: 100px; font-size: 12px; color: var(--ink-3); background: var(--paper); white-space: nowrap; }
+.pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-4); }
+.pill[data-state="loading"] .dot { background: var(--aqua); animation: pulse 1s ease-in-out infinite; }
+.pill[data-state="ready"] .dot { background: var(--aqua-ink); }
+.pill[data-state="error"] .dot { background: var(--rose); }
+.pill svg { color: var(--aqua-ink); }
+.icon-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper); display: grid; place-items: center; color: var(--ink-2); font-family: var(--mono); font-size: 13px; }
+.icon-btn:hover { border-color: var(--ink); color: var(--ink); }
+@keyframes pulse { 50% { opacity: .3; } }
+
+/* ===== シェル（1画面に収める） ===== */
+.shell { height: calc(100dvh - var(--head)); min-height: 600px; display: grid; grid-template-columns: 300px minmax(0, 1fr); }
+.side { border-right: 1px solid var(--line); padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; }
+.work { padding: 18px 20px 20px; display: grid; grid-template-rows: auto auto minmax(170px, 1fr) minmax(150px, .8fr); gap: 14px; min-height: 0; }
+
+.sec-h { display: flex; align-items: baseline; gap: 8px; margin: 0 0 10px; font-size: 13px; font-weight: 700; }
+.sec-h .n { font-family: var(--mono); font-size: 11px; color: var(--rose-ink); font-weight: 500; }
+.sec-h .hint { margin-left: auto; font-weight: 400; font-size: 11.5px; color: var(--ink-4); }
+
+/* ドロップ */
+.drop { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; height: 128px; border: 1px dashed var(--ink-4); border-radius: var(--r); background: var(--paper); text-align: center; transition: background .2s, border-color .2s; }
+.drop.over { border-color: var(--rose-ink); background: var(--rose-pale); }
+.drop svg { color: var(--rose-ink); margin-bottom: 2px; }
+.drop strong { font-size: 13.5px; }
+.drop span { font-size: 11.5px; color: var(--ink-3); }
+.drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+/* プリセット */
+.presets { display: flex; flex-direction: column; gap: 8px; }
+.preset { position: relative; display: block; padding: 10px 12px 10px 38px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); cursor: pointer; transition: border-color .2s; }
+.preset:hover { border-color: var(--ink-4); }
+.preset input { position: absolute; opacity: 0; }
+.preset .radio { position: absolute; left: 12px; top: 13px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--ink-4); }
+.preset b { font-size: 13.5px; }
+.preset .d { display: block; font-size: 11.5px; color: var(--ink-3); line-height: 1.6; }
+.preset .rec { margin-left: 6px; font-family: var(--mono); font-size: 10px; color: var(--rose-ink); border: 1px solid var(--rose-ink); border-radius: 100px; padding: 0 6px; vertical-align: 1px; }
+.preset:has(input:checked) { border-color: var(--ink); }
+.preset:has(input:checked) .radio { border-color: var(--ink); background: radial-gradient(circle, var(--rose-ink) 0 4px, transparent 4.5px); }
+.preset:has(input:focus-visible) { outline: 2px solid var(--rose-ink); outline-offset: 2px; }
+
+/* ボタン（ポートフォリオのピル型） */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 16px; border-radius: 100px; border: 1px solid var(--ink); background: transparent; color: var(--ink); font-size: 12.5px; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background .3s var(--ease), color .3s var(--ease), transform .3s var(--ease); }
+.btn:hover { background: var(--ink); color: var(--canvas); }
+.btn.solid { background: var(--ink); color: var(--canvas); }
+.btn.solid:hover { background: var(--rose-ink); border-color: var(--rose-ink); }
+.btn[aria-disabled="true"] { opacity: .35; pointer-events: none; }
+.run-btn { width: 100%; height: 50px; border: 0; border-radius: 100px; background: var(--ink); color: var(--canvas); font-size: 14.5px; font-weight: 700; letter-spacing: .02em; transition: background .3s var(--ease), transform .3s var(--ease); }
+.run-btn:hover:not(:disabled) { background: var(--rose-ink); transform: translateY(-1px); }
+.run-btn:disabled { background: var(--line); color: var(--ink-4); }
+.run-meta { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11.5px; color: var(--ink-3); }
+.notice { margin: 8px 0 0; font-size: 12px; color: var(--rose-ink); }
+
+.side-foot { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line-2); font-size: 11.5px; color: var(--ink-3); line-height: 1.7; }
+.side-foot .lock { display: flex; gap: 7px; margin-bottom: 8px; color: var(--ink-2); }
+.side-foot .lock svg { flex-shrink: 0; margin-top: 3px; color: var(--aqua-ink); }
+.side-foot a { color: var(--ink-3); }
+
+/* ===== カード ===== */
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); min-width: 0; min-height: 0; }
+.card-h { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line-2); min-width: 0; }
+.card-h h2 { margin: 0; font-size: 13px; font-weight: 700; white-space: nowrap; }
+.card-h .meta { font-size: 12px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.card-h .right { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+/* KPI */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.kpi { padding: 12px 16px 13px; }
+.kpi .k { font-size: 11.5px; color: var(--ink-3); display: flex; justify-content: space-between; gap: 6px; }
+.kpi .k .u { font-family: var(--mono); font-size: 10.5px; color: var(--ink-4); }
+.kpi .v { margin-top: 2px; font-family: var(--mono); font-size: 22px; font-weight: 500; letter-spacing: -.02em; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi .v .from { color: var(--ink-4); font-size: 15px; }
+.kpi .v .arr { color: var(--rose-ink); font-size: 14px; margin: 0 2px; }
+.kpi .s { font-size: 11px; color: var(--ink-4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* 工程 */
+.pipe { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); padding: 12px 10px; }
+.stage { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0 4px; text-align: center; }
+.stage::before { content: ""; position: absolute; top: 11px; left: calc(-50% + 14px); right: calc(50% + 14px); height: 1px; background: var(--line); }
+.stage:first-child::before { display: none; }
+.stage .c { position: relative; width: 23px; height: 23px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper); display: grid; place-items: center; font-family: var(--mono); font-size: 10.5px; color: var(--ink-4); overflow: hidden; }
+.stage .t { font-size: 11.5px; color: var(--ink-4); line-height: 1.35; }
+.stage.done .c { background: var(--ink); border-color: var(--ink); color: var(--canvas); }
+.stage.done .t { color: var(--ink-2); }
+.stage.done::before, .stage.now::before { background: var(--ink); }
+.stage.now .c { border-color: var(--rose-ink); color: var(--rose-ink); }
+.stage.now .c::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--p, 0%); background: var(--rose-pale); z-index: -1; transition: height .2s; }
+.stage.now .t { color: var(--rose-ink); font-weight: 700; }
+
+/* 波形 */
+.wave { display: flex; flex-direction: column; }
+.ab { display: inline-grid; grid-auto-flow: column; padding: 3px; gap: 2px; border: 1px solid var(--line); border-radius: 100px; background: var(--canvas); }
+.ab button { white-space: nowrap; height: 26px; padding: 0 12px; border: 0; border-radius: 100px; background: transparent; font-size: 12px; color: var(--ink-3); }
+.ab button[aria-pressed="true"] { background: var(--ink); color: var(--canvas); }
+.play { width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--rose-ink); color: var(--paper); display: grid; place-items: center; flex-shrink: 0; transition: transform .2s; }
+.play:hover:not(:disabled) { transform: scale(1.06); }
+.play:disabled { background: var(--line); color: var(--ink-4); }
+.time { font-family: var(--mono); font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.wave-body { position: relative; flex: 1; min-height: 0; display: grid; grid-template-rows: 1fr 1fr; }
+.lane { position: relative; border-top: 1px solid var(--line-2); min-height: 0; }
+.lane:first-child { border-top: 0; }
+.lane .lbl { position: absolute; left: 14px; top: 8px; z-index: 2; font-size: 11px; color: var(--ink-3); background: color-mix(in srgb, var(--paper) 85%, transparent); padding: 0 6px; border-radius: 4px; }
+.lane .lbl b { font-family: var(--mono); font-weight: 500; color: var(--ink-2); margin-left: 4px; }
+.lane:last-child .lbl { color: var(--aqua-ink); }
+canvas.wv { position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; }
+.empty { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: calc(100% - 32px); padding: 6px 14px; border-radius: 100px; background: var(--paper); border: 1px solid var(--line-2); text-align: center; color: var(--ink-3); font-size: 12.5px; z-index: 3; pointer-events: none; }
+
+/* ファイル一覧 */
+.files { display: flex; flex-direction: column; }
+.tbl-wrap { flex: 1; min-height: 0; overflow-y: auto; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+th { position: sticky; top: 0; z-index: 1; background: var(--paper); text-align: left; font-weight: 500; font-size: 11px; color: var(--ink-4); padding: 8px 12px; border-bottom: 1px solid var(--line-2); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--line-2); font-size: 12.5px; vertical-align: middle; }
+tr.row { cursor: pointer; }
+tr.row:hover td { background: var(--canvas); }
+tr.row.sel td { background: var(--canvas-2); }
+tr.row.sel td:first-child { box-shadow: inset 2px 0 0 var(--rose-ink); }
+.c-name { width: 34%; } .c-len { width: 10%; } .c-st { width: 34%; } .c-dl { width: 22%; text-align: right; }
+td.name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+td.len { font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+.st { display: flex; align-items: center; gap: 10px; }
+.st .txt { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; }
+.st .bar { width: 72px; height: 4px; border-radius: 100px; background: var(--line-2); overflow: hidden; flex-shrink: 0; }
+.st .bar i { display: block; height: 100%; width: 0; background: var(--rose); transition: width .2s; }
+.st .pc { font-family: var(--mono); font-size: 11px; color: var(--ink-4); width: 32px; text-align: right; flex-shrink: 0; }
+tr[data-state="done"] .st .txt { color: var(--aqua-ink); }
+tr[data-state="done"] .st .bar i { background: var(--aqua-ink); }
+tr[data-state="error"] .st .txt { color: var(--rose-ink); white-space: normal; }
+td.dl { text-align: right; white-space: nowrap; }
+td.dl a { display: inline-flex; align-items: center; height: 26px; padding: 0 10px; margin-left: 4px; border: 1px solid var(--line); border-radius: 100px; font-family: var(--mono); font-size: 11px; text-decoration: none; color: var(--ink-2); }
+td.dl a:hover { border-color: var(--ink); color: var(--ink); }
+td.dl .x { width: 26px; height: 26px; border: 0; background: none; color: var(--ink-4); border-radius: 50%; vertical-align: middle; }
+td.dl .x:hover { background: var(--canvas-2); color: var(--ink); }
+.tbl-empty { padding: 26px 16px; text-align: center; color: var(--ink-4); font-size: 12.5px; }
+
+/* ヘルプ */
+dialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); border: 1px solid var(--line); border-radius: 18px; padding: 0; background: var(--paper); color: var(--ink); box-shadow: 0 24px 60px rgba(29,31,40,.18); }
+dialog::backdrop { background: rgba(29,31,40,.28); }
+.dlg-h { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--line-2); }
+.dlg-h h2 { margin: 0; font-size: 15px; }
+.dlg-h .icon-btn { margin-left: auto; }
+.dlg-b { padding: 6px 22px 20px; font-size: 13px; color: var(--ink-2); overflow-y: auto; }
+.dlg-b h3 { font-size: 13px; color: var(--ink); margin: 16px 0 6px; }
+.dlg-b ul, .dlg-b ol { margin: 0; padding-left: 1.3em; }
+.dlg-b li { margin: 3px 0; }
+.dlg-b .credit { margin-top: 16px; font-size: 11.5px; color: var(--ink-3); }
+
+/* ===== 画面が狭いとき（縦に並べてスクロール） ===== */
+@media (max-width: 960px) {
+  .shell { display: block; height: auto; min-height: 0; }
+  .side { border-right: 0; border-bottom: 1px solid var(--line); overflow: visible; padding: 16px; }
+  .side-foot { margin-top: 0; }
+  .work { display: flex; flex-direction: column; padding: 16px; }
+  .wave { height: 260px; }
+  .files { min-height: 180px; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .brand .sub { display: none; }
+}
+@media (max-width: 560px) {
+  .topbar { padding: 0 16px; gap: 10px; }
+  .pill.priv { display: none; }
+  .pill .long { display: none; }
+  .pipe { grid-template-columns: repeat(7, minmax(0, 1fr)); padding: 10px 2px; }
+  .stage .t { font-size: 9.5px; letter-spacing: -.02em; }
+  .card-h { flex-wrap: wrap; }
+  .card-h .right { margin-left: 0; width: 100%; justify-content: space-between; }
+  table { table-layout: auto; } colgroup { display: none; }
+  th.len-h, td.len { display: none; }
+  td.name { max-width: 34vw; }
+  .st .bar, .st .pc { display: none; }
+  td.dl a.wav { display: none; }
+}
+@media (max-height: 700px) and (min-width: 961px) {
+  .kpi { padding: 9px 14px 10px; } .kpi .v { font-size: 19px; }
+  .pipe { padding: 9px 10px; }
+  .drop { height: 104px; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/voixnette/" aria-label="Voixnette">
+    <span class="word">Voix<i>nette</i></span>
+    <span class="sub">Podcast音声を、ブラウザだけでクリアに</span>
+  </a>
+  <div class="top-right">
+    <span class="pill priv" title="音声はどこにもアップロードされません">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>ブラウザ内で処理
+    </span>
+    <span class="pill" id="engine" data-state="idle" role="status" aria-live="polite"><span class="dot"></span><span id="engineText"><span class="long">AIエンジン：</span>待機中</span></span>
+    <button class="icon-btn" id="helpBtn" type="button" aria-label="使い方とコツ" title="使い方とコツ">?</button>
+  </div>
+</header>
+
+<div class="shell">
+  <!-- ===== 左：操作パネル ===== -->
+  <aside class="side" aria-label="操作">
+    <section>
+      <h2 class="sec-h"><span class="n">01</span>音声ファイル<span class="hint">複数可</span></h2>
+      <label class="drop" id="drop">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"/><path d="m7 9 5-5 5 5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+        <strong>ドロップ または クリック</strong>
+        <span>m4a・wav・mp3 など（収録したままでOK）</span>
+        <input id="file" type="file" multiple accept="audio/*,.m4a,.wav,.mp3,.aac,.flac,.ogg,.opus,.caf,.aif,.aiff,.mp4,.mov">
+      </label>
+    </section>
+
+    <section>
+      <h2 class="sec-h" id="h-preset"><span class="n">02</span>仕上がり</h2>
+      <div class="presets" role="radiogroup" aria-labelledby="h-preset">
+        <label class="preset">
+          <input type="radio" name="preset" value="clear" checked><span class="radio"></span>
+          <b>クリア</b><span class="rec">おすすめ</span>
+          <span class="d">ノイズをしっかり消して、声をはっきりさせる</span>
+        </label>
+        <label class="preset">
+          <input type="radio" name="preset" value="natural"><span class="radio"></span>
+          <b>ナチュラル</b>
+          <span class="d">部屋の空気感を少し残して、自然に仕上げる</span>
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="sec-h"><span class="n">03</span>処理</h2>
+      <button class="run-btn" id="start" disabled>ファイルを選んでください</button>
+      <div class="run-meta"><span id="queueInfo">0件</span><span id="estimate"></span></div>
+      <p class="notice" id="globalNotice" hidden></p>
+    </section>
+
+    <div class="side-foot">
+      <div class="lock">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        <span>音声はアップロードされず、このブラウザの中だけで処理されます。</span>
+      </div>
+      <a href="/">Kento Nagaya</a> ・ <a href="/voixnette/THIRD_PARTY_NOTICES.txt">ライセンス表記</a>
+    </div>
+  </aside>
+
+  <!-- ===== 右：作業エリア ===== -->
+  <main class="work">
+    <div class="kpis" aria-label="選択中のファイルの結果">
+      <div class="card kpi"><div class="k">音量<span class="u">LUFS</span></div><div class="v" id="kLufs">—</div><div class="s">目標 -16.0（Podcast標準）</div></div>
+      <div class="card kpi"><div class="k">ピーク<span class="u">dBTP</span></div><div class="v" id="kPeak">—</div><div class="s">上限 -1.5</div></div>
+      <div class="card kpi"><div class="k">音割れ修復<span class="u">samples</span></div><div class="v" id="kClip">—</div><div class="s" id="kClipS">頭が切れた波形を補間</div></div>
+      <div class="card kpi"><div class="k">処理時間<span class="u">min:sec</span></div><div class="v" id="kTime">—</div><div class="s" id="kTimeS">音声の長さ —</div></div>
+    </div>
+
+    <section class="card pipe" id="pipe" aria-label="処理の工程">
+      <div class="stage" title="m4a・wav などを 48kHz・モノラルに揃えます"><span class="c">1</span><span class="t">読み込み</span></div>
+      <div class="stage" title="6dB 下げてから、波形の頭が切れた部分を補間して作り直します"><span class="c">2</span><span class="t">音割れ修復</span></div>
+      <div class="stage" title="音声専用AI（DeepFilterNet3）で、声と雑音を分けて雑音だけを除去します"><span class="c">3</span><span class="t">AIノイズ除去</span></div>
+      <div class="stage" title="話している部分だけを見て、話し手ごとの音量差を揃えます（無音は持ち上げない）"><span class="c">4</span><span class="t">音量の均一化</span></div>
+      <div class="stage" title="80Hz以下カット・250Hz -3dB・3kHz +7dB・5kHz以上 +9dB、軽いコンプレッサー"><span class="c">5</span><span class="t">こもり補正</span></div>
+      <div class="stage" title="-16 LUFS に合わせ、ピークを -1.5dBTP 以下に抑えます"><span class="c">6</span><span class="t">ラウドネス</span></div>
+      <div class="stage" title="配信用MP3（44.1kHz・128kbps）と編集用WAV（48kHz・16bit）を作ります"><span class="c">7</span><span class="t">書き出し</span></div>
+    </section>
+
+    <section class="card wave" aria-label="波形と試聴">
+      <div class="card-h">
+        <button class="play" id="play" type="button" aria-label="再生" disabled>
+          <svg id="icPlay" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4v16l14-8z"/></svg>
+          <svg id="icPause" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" hidden><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+        </button>
+        <h2>波形と試聴</h2>
+        <span class="meta" id="selName">ファイル未選択</span>
+        <div class="right">
+          <span class="time" id="time">0:00 / 0:00</span>
+          <div class="ab" role="group" aria-label="聴き比べ">
+            <button type="button" data-v="after" aria-pressed="true">処理後</button>
+            <button type="button" data-v="before" aria-pressed="false">処理前</button>
+          </div>
+          <a class="btn solid" id="dlMp3" aria-disabled="true" download>MP3</a>
+          <a class="btn" id="dlWav" aria-disabled="true" download>WAV</a>
+        </div>
+      </div>
+      <div class="wave-body" id="waveBody">
+        <div class="lane"><span class="lbl">処理前<b id="lbBefore"></b></span><canvas class="wv" id="cvBefore" aria-label="処理前の波形（クリックでその位置へ移動）"></canvas></div>
+        <div class="lane"><span class="lbl">処理後<b id="lbAfter"></b></span><canvas class="wv" id="cvAfter" aria-label="処理後の波形（クリックでその位置へ移動）"></canvas></div>
+        <div class="empty" id="waveEmpty">音声を追加して処理すると、ここに処理前と処理後の波形が並びます</div>
+      </div>
+      <audio id="audio" preload="metadata"></audio>
+    </section>
+
+    <section class="card files" aria-label="ファイル一覧">
+      <div class="card-h"><h2>ファイル</h2><span class="meta" id="filesMeta">クリックで波形と結果を表示</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <colgroup><col class="c-name"><col class="c-len"><col class="c-st"><col class="c-dl"></colgroup>
+          <thead><tr><th>ファイル名</th><th class="len-h">長さ</th><th>状態</th><th style="text-align:right">ダウンロード</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="tbl-empty" id="rowsEmpty">まだファイルがありません。左の「01 音声ファイル」から追加してください。</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<dialog id="help" aria-labelledby="helpTitle">
+  <div class="dlg-h"><h2 id="helpTitle">使い方とコツ</h2><button class="icon-btn" type="button" id="helpClose" aria-label="閉じる">×</button></div>
+  <div class="dlg-b">
+    <h3>うまく使うコツ</h3>
+    <ul>
+      <li><b>ノイズ除去や音量調整をする前の、収録したままのファイル</b>を入れてください。処理済みのファイルだと、声の高音がすでに削られていて、こもりを直しきれません。</li>
+      <li>m4aをWAVに変換してから入れる必要はありません（変換しても音質は上がりません）。</li>
+      <li>処理時間の目安は、30分の音声で3〜5分です。処理中はこのタブを閉じないでください。</li>
+      <li>長い音声はパソコン（Chrome・Edge・Safari）での利用がおすすめです。スマートフォンではメモリ不足で止まることがあります。</li>
+      <li>書き出したWAVをAudacityなどで編集するときは、ノイズ除去やノーマライズを重ねてかけないでください。</li>
+      <li>初回だけAIエンジン（約34MB）をダウンロードします。2回目以降はブラウザに保存されたものを使います。</li>
+    </ul>
+    <h3>処理の中身</h3>
+    <ol>
+      <li><b>読み込み</b>：48kHz・モノラルに揃えます。</li>
+      <li><b>音割れ修復</b>：6dB下げてから、波形の頭が切れた部分を補間して作り直します。</li>
+      <li><b>AIノイズ除去</b>：音声専用AI（DeepFilterNet3）で雑音だけを取り除きます。</li>
+      <li><b>音量の均一化</b>：話している部分だけを見て、話し手ごとの音量差を揃えます。</li>
+      <li><b>こもり補正</b>：80Hz以下カット・250Hz -3dB・3kHz +7dB・5kHz以上 +9dB、軽いコンプレッサー（ナチュラルは控えめ）。</li>
+      <li><b>ラウドネス</b>：-16 LUFS に合わせ、ピークを -1.5dBTP 以下に抑えます。</li>
+      <li><b>書き出し</b>：配信用MP3（44.1kHz・128kbps）と編集用WAV（48kHz・16bit）。</li>
+    </ol>
+    <p class="credit">使用しているオープンソース：DeepFilterNet3（MIT / Apache-2.0）、lamejs（LGPL-3.0, LAME）。詳細は<a href="/voixnette/THIRD_PARTY_NOTICES.txt">ライセンス表記</a>へ。</p>
+  </div>
+</dialog>
+
+<script type="module">
+const $ = (s, r = document) => r.querySelector(s);
+const rowsEl = $('#rows'), startBtn = $('#start'), dropEl = $('#drop'), fileInput = $('#file');
+const engineEl = $('#engine'), engineText = $('#engineText'), notice = $('#globalNotice');
+const audio = $('#audio');
+const items = []; // { id, file, row, state, duration, stage, pct, overall, envBefore, envAfter, result, t0, t1 }
+let seq = 0, running = false, engineState = 'idle', selectedId = null, view = 'after';
+
+// ---- 動作環境のチェック
+const simdOk = (() => { try { return WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11])); } catch { return false; } })();
+const envOk = simdOk && 'Worker' in window && 'OfflineAudioContext' in window;
+if (!envOk) showNotice('このブラウザでは動作しません。最新のChrome・Edge・Safari・Firefoxでお試しください。');
+
+const worker = new Worker('/voixnette/app/worker.js', { type: 'module' });
+const mp3Worker = new Worker('/voixnette/app/mp3-worker.js');
+const pending = new Map(), mp3Pending = new Map();
+worker.onmessage = (e) => {
+  const m = e.data;
+  if (m.type === 'engine') return setEngine(m.ready ? 'ready' : 'loading', m);
+  const p = pending.get(m.id);
+  if (m.type === 'progress') p?.onProgress(m);
+  else if (m.type === 'done') { pending.delete(m.id); p?.resolve(m); }
+  else if (m.type === 'error') { if (m.id == null) { setEngine('error'); return; } pending.delete(m.id); p?.reject(new Error(m.message)); }
+};
+worker.onerror = () => { setEngine('error'); showNotice('処理モジュールを読み込めませんでした。ページを再読み込みしてください。'); };
+mp3Worker.onmessage = (e) => {
+  const m = e.data, p = mp3Pending.get(m.id); if (!p) return;
+  if (m.type === 'progress') p.onProgress(m.pct);
+  else { mp3Pending.delete(m.id); m.type === 'done' ? p.resolve(m.blob) : p.reject(new Error(m.message)); }
+};
+
+function setEngine(state, m = {}) {
+  engineState = state; engineEl.dataset.state = state;
+  const L = '<span class="long">AIエンジン：</span>';
+  engineText.innerHTML = state === 'loading' ? `${L}読み込み中${m.total ? ` <span class="mono">${Math.round(m.loaded / m.total * 100)}%</span>` : ''}`
+    : state === 'ready' ? `${L}準備完了` : state === 'error' ? `${L}読み込み失敗` : `${L}待機中`;
+}
+function preloadEngine() { if (engineState !== 'idle' || !envOk) return; setEngine('loading'); worker.postMessage({ type: 'preload' }); }
+function showNotice(t) { notice.textContent = t; notice.hidden = !t; }
+
+// ---- 表示用の小道具
+const fmtDur = (s) => { if (!isFinite(s)) return '—'; s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60; return h ? `${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}` : `${m}:${String(ss).padStart(2,'0')}`; };
+const fmtMB = (b) => b >= 1e6 ? `${(b / 1048576).toFixed(1)}MB` : `${Math.max(1, Math.round(b / 1024))}KB`;
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// ---- ファイル追加
+function addFiles(list) {
+  let added = null;
+  for (const file of list) {
+    if (!/^(audio|video)\//.test(file.type) && !/\.(m4a|wav|mp3|aac|flac|ogg|opus|caf|aiff?|mp4|mov)$/i.test(file.name)) continue;
+    const it = { id: ++seq, file, state: 'waiting', stage: -1, pct: 0, overall: 0, urls: [] };
+    const tr = document.createElement('tr'); tr.className = 'row'; tr.dataset.state = 'waiting';
+    tr.innerHTML = `<td class="name" title="${esc(file.name)}">${esc(file.name)}</td><td class="len">—</td>
+      <td><div class="st"><span class="txt">待機中</span><span class="bar"><i></i></span><span class="pc"></span></div></td>
+      <td class="dl"><button class="x" type="button" aria-label="一覧から外す" title="一覧から外す">×</button></td>`;
+    tr.onclick = (e) => { if (!e.target.closest('a,button')) select(it.id); };
+    tr.querySelector('.x').onclick = () => removeItem(it);
+    it.row = tr; items.push(it); rowsEl.append(tr); added = added || it;
+    // 長さだけ先に調べる
+    const a = new Audio(), u = URL.createObjectURL(file);
+    a.preload = 'metadata'; a.src = u;
+    a.onloadedmetadata = () => { if (isFinite(a.duration)) { it.duration = a.duration; tr.querySelector('.len').textContent = fmtDur(a.duration); refresh(); if (selectedId === it.id) renderSelected(); } URL.revokeObjectURL(u); };
+    a.onerror = () => URL.revokeObjectURL(u);
+  }
+  if (added && (selectedId == null || !running)) select(added.id);
+  refresh(); preloadEngine();
+}
+function removeItem(it) {
+  if (it.state === 'running') return;
+  it.urls.forEach(URL.revokeObjectURL);
+  it.row.remove(); items.splice(items.indexOf(it), 1);
+  if (selectedId === it.id) { selectedId = null; const n = items[items.length - 1]; n ? select(n.id) : renderSelected(); }
+  refresh();
+}
+
+function refresh() {
+  const waiting = items.filter((i) => i.state === 'waiting');
+  startBtn.disabled = running || !waiting.length || !envOk;
+  startBtn.textContent = running ? '処理しています…' : waiting.length ? `${waiting.length}件を処理する` : (items.length ? 'すべて処理しました' : 'ファイルを選んでください');
+  const done = items.filter((i) => i.state === 'done').length;
+  $('#queueInfo').textContent = items.length ? `${items.length}件（完了 ${done}）` : '0件';
+  const total = waiting.reduce((s, i) => s + (i.duration || 0), 0);
+  $('#estimate').textContent = total ? `目安 約${Math.max(1, Math.round(total / 60 * 0.14))}分` : '';
+  $('#rowsEmpty').hidden = items.length > 0;
+}
+
+fileInput.addEventListener('change', () => { addFiles(fileInput.files); fileInput.value = ''; });
+['dragenter', 'dragover'].forEach((t) => dropEl.addEventListener(t, (e) => { e.preventDefault(); dropEl.classList.add('over'); }));
+['dragleave', 'drop'].forEach((t) => dropEl.addEventListener(t, () => dropEl.classList.remove('over')));
+dropEl.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); addFiles(e.dataTransfer.files); });
+window.addEventListener('dragover', (e) => e.preventDefault());
+window.addEventListener('drop', (e) => { e.preventDefault(); if (e.dataTransfer?.files?.length) addFiles(e.dataTransfer.files); });
+
+// ---- 処理
+startBtn.onclick = async () => {
+  if (running) return;
+  running = true; refresh(); showNotice('');
+  const lock = await navigator.wakeLock?.request('screen').catch(() => null);
+  for (const it of items.filter((i) => i.state === 'waiting')) await runItem(it);
+  lock?.release?.();
+  running = false; refresh();
+};
+window.addEventListener('beforeunload', (e) => { if (running) { e.preventDefault(); e.returnValue = ''; } });
+
+// 工程（0〜6）と全体進捗の重み
+const STAGE_OF = { decode: 0, 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, mp3: 6 };
+const WEIGHT = [[0, 8], [8, 10], [10, 78], [78, 80], [80, 83], [83, 88], [88, 100]];
+function setProgress(it, text, key, pct = 0) {
+  it.stage = STAGE_OF[key]; it.pct = Math.min(1, pct);
+  const [a, b] = WEIGHT[it.stage]; it.overall = a + (b - a) * it.pct;
+  const r = it.row;
+  r.querySelector('.txt').textContent = text;
+  r.querySelector('.bar i').style.width = `${it.overall}%`;
+  r.querySelector('.pc').textContent = `${Math.floor(it.overall)}%`;
+  if (selectedId === it.id) renderPipe(it);
+}
+
+async function runItem(it) {
+  it.state = 'running'; it.row.dataset.state = 'running'; it.t0 = performance.now();
+  select(it.id);
+  it.row.scrollIntoView({ block: 'nearest' });
+  const preset = $('input[name=preset]:checked').value;
+  it.preset = preset;
+  const base = it.file.name.replace(/\.[^.]+$/, '');
+  try {
+    setProgress(it, '音声を読み込んでいます', 'decode', 0.3);
+    const { mono, duration, channels } = await decodeToMono(it.file);
+    it.duration = duration; it.channels = channels;
+    it.row.querySelector('.len').textContent = fmtDur(duration);
+    it.envBefore = envelope(mono);
+    if (selectedId === it.id) renderSelected();
+
+    const res = await new Promise((resolve, reject) => {
+      pending.set(it.id, { resolve, reject, onProgress: (m) => setProgress(it, m.label, m.step, m.pct) });
+      worker.postMessage({ type: 'process', id: it.id, samples: mono, preset }, [mono.buffer]);
+    });
+    it.envAfter = envelope(res.samples);
+
+    setProgress(it, 'MP3に書き出しています', 'mp3', 0);
+    const pcm44 = await resampleTo16bit(res.samples, 44100);
+    const mp3 = await new Promise((resolve, reject) => {
+      mp3Pending.set(it.id, { resolve, reject, onProgress: (p) => setProgress(it, 'MP3に書き出しています', 'mp3', p) });
+      mp3Worker.postMessage({ id: it.id, pcm: pcm44, sampleRate: 44100, kbps: 128 }, [pcm44.buffer]);
+    });
+
+    const wavBlob = new Blob([res.wav], { type: 'audio/wav' });
+    const mp3Url = URL.createObjectURL(mp3), wavUrl = URL.createObjectURL(wavBlob), srcUrl = URL.createObjectURL(it.file);
+    it.urls.push(mp3Url, wavUrl, srcUrl);
+    it.t1 = performance.now();
+    it.result = { mp3Url, wavUrl, srcUrl, base, mp3Size: mp3.size, wavSize: wavBlob.size, stats: res.stats };
+    it.state = 'done'; it.row.dataset.state = 'done'; it.stage = 7;
+    setRowDone(it);
+  } catch (err) {
+    console.error(err);
+    it.state = 'error'; it.row.dataset.state = 'error';
+    it.row.querySelector('.txt').textContent = friendlyError(err);
+    it.row.querySelector('.bar').hidden = true; it.row.querySelector('.pc').textContent = '';
+  }
+  if (selectedId === it.id) renderSelected();
+  refresh();
+}
+
+function setRowDone(it) {
+  const r = it.row, R = it.result;
+  r.querySelector('.txt').textContent = `完了（${it.preset === 'natural' ? 'ナチュラル' : 'クリア'}）`;
+  r.querySelector('.bar i').style.width = '100%'; r.querySelector('.pc').textContent = '100%';
+  const dl = r.querySelector('.dl');
+  dl.innerHTML = `<a href="${R.mp3Url}" download="${esc(R.base)}_clean.mp3" title="配信用 ${fmtMB(R.mp3Size)}">MP3</a><a class="wav" href="${R.wavUrl}" download="${esc(R.base)}_clean.wav" title="編集用 ${fmtMB(R.wavSize)}">WAV</a><button class="x" type="button" aria-label="一覧から外す" title="一覧から外す">×</button>`;
+  dl.querySelector('.x').onclick = () => removeItem(it);
+}
+
+function friendlyError(err) {
+  const msg = String(err?.message || err);
+  if (/decode|EncodingError|Unable to decode|ファイルを読み込めません/i.test(msg)) return '読み込めない形式です。Chrome・Safariで試すか、別の形式にしてください。';
+  if (/memory|allocation|Array buffer|RangeError/i.test(msg)) return 'メモリ不足で止まりました。パソコンで試すか、音声を短く分けてください。';
+  return `エラー：${msg}`;
+}
+
+// ---- 音声の変換
+async function decodeToMono(file) {
+  const buf = await file.arrayBuffer();
+  const ctx = new OfflineAudioContext(1, 1, 48000);
+  let ab;
+  try { ab = await ctx.decodeAudioData(buf); } catch (e) { throw new Error('ファイルを読み込めません: ' + (e?.message || e)); }
+  const n = ab.length, ch = ab.numberOfChannels, mono = new Float32Array(n);
+  for (let c = 0; c < ch; c++) { const d = ab.getChannelData(c); for (let i = 0; i < n; i++) mono[i] += d[i] / ch; }
+  return { mono, duration: ab.duration, channels: ch };
+}
+async function resampleTo16bit(samples, rate) {
+  const ctx = new OfflineAudioContext(1, Math.ceil(samples.length * rate / 48000), rate);
+  const b = ctx.createBuffer(1, samples.length, 48000); b.copyToChannel(samples, 0);
+  const src = ctx.createBufferSource(); src.buffer = b; src.connect(ctx.destination); src.start();
+  const out = (await ctx.startRendering()).getChannelData(0);
+  const pcm = new Int16Array(out.length);
+  for (let i = 0; i < out.length; i++) { const s = Math.max(-1, Math.min(1, out[i])); pcm[i] = s < 0 ? s * 32768 : s * 32767; }
+  return pcm;
+}
+// 波形表示用：区間ごとの最大振幅
+function envelope(x, bins = 1600) {
+  const env = new Float32Array(bins), step = x.length / bins;
+  for (let b = 0; b < bins; b++) {
+    let m = 0; const st = Math.floor(b * step), en = Math.min(x.length, Math.floor((b + 1) * step));
+    for (let i = st; i < en; i += 2) { const a = x[i] < 0 ? -x[i] : x[i]; if (a > m) m = a; }
+    env[b] = m;
+  }
+  return env;
+}
+
+// ---- 選択中のファイルの表示
+function select(id) {
+  if (selectedId === id) return;
+  selectedId = id;
+  items.forEach((i) => i.row.classList.toggle('sel', i.id === id));
+  audio.pause(); audio.removeAttribute('src'); audio.load();
+  view = 'after'; setAB();
+  renderSelected();
+}
+const sel = () => items.find((i) => i.id === selectedId);
+
+function renderSelected() {
+  const it = sel();
+  $('#selName').textContent = it ? it.file.name : 'ファイル未選択';
+  renderPipe(it); renderKpis(it); drawWaves();
+  const R = it?.result;
+  $('#play').disabled = !R;
+  for (const [id, url, name] of [['#dlMp3', R?.mp3Url, R && `${R.base}_clean.mp3`], ['#dlWav', R?.wavUrl, R && `${R.base}_clean.wav`]]) {
+    const a = $(id);
+    if (url) { a.href = url; a.download = name; a.removeAttribute('aria-disabled'); }
+    else { a.removeAttribute('href'); a.setAttribute('aria-disabled', 'true'); }
+  }
+  if (R && !audio.src) { audio.src = view === 'after' ? R.mp3Url : R.srcUrl; }
+  updateTime();
+}
+
+function renderPipe(it) {
+  const stages = [...document.querySelectorAll('.stage')];
+  stages.forEach((s, i) => {
+    const st = !it || it.stage < 0 ? '' : it.state === 'done' || i < it.stage ? 'done' : i === it.stage && it.state === 'running' ? 'now' : '';
+    s.className = 'stage' + (st ? ' ' + st : '');
+    s.querySelector('.c').textContent = st === 'done' ? '✓' : String(i + 1);
+    if (st === 'now') s.style.setProperty('--p', `${Math.round(it.pct * 100)}%`); else s.style.removeProperty('--p');
+  });
+}
+
+function renderKpis(it) {
+  const s = it?.result?.stats;
+  $('#kLufs').innerHTML = s ? `<span class="from">${isFinite(s.lufsBefore) ? s.lufsBefore.toFixed(1) : '—'}</span><span class="arr">→</span>${s.lufsAfter.toFixed(1)}` : '—';
+  $('#kPeak').textContent = s ? s.peakDb.toFixed(1) : '—';
+  $('#kClip').textContent = s ? s.repaired.toLocaleString() : '—';
+  $('#kClipS').textContent = s ? (s.repaired ? '頭が切れた波形を補間しました' : '音割れはありませんでした') : '頭が切れた波形を補間';
+  $('#kTime').textContent = it?.t1 ? fmtDur((it.t1 - it.t0) / 1000) : '—';
+  $('#kTimeS').textContent = `音声の長さ ${it?.duration ? fmtDur(it.duration) : '—'}${it?.channels ? `・${it.channels}ch` : ''}`;
+  $('#lbBefore').textContent = s && isFinite(s.lufsBefore) ? `${s.lufsBefore.toFixed(1)} LUFS` : '';
+  $('#lbAfter').textContent = s ? `${s.lufsAfter.toFixed(1)} LUFS` : '';
+}
+
+// ---- 波形
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function drawLane(cv, env, color, progress) {
+  const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+  if (!w || !h) return;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+  const pad = 14, mid = h / 2 + 6, amp = (h - 34) / 2;
+  g.strokeStyle = css('--line-2'); g.lineWidth = 1; g.beginPath(); g.moveTo(pad, mid); g.lineTo(w - pad, mid); g.stroke();
+  // -1.5dB と -6dB のガイド
+  g.setLineDash([2, 4]); g.strokeStyle = css('--line');
+  for (const db of [-6]) { const y = amp * Math.pow(10, db / 20); g.beginPath(); g.moveTo(pad, mid - y); g.lineTo(w - pad, mid - y); g.moveTo(pad, mid + y); g.lineTo(w - pad, mid + y); g.stroke(); }
+  g.setLineDash([]);
+  if (!env) return;
+  const W = w - pad * 2, n = env.length, bar = 2, gap = 1, cols = Math.max(1, Math.floor(W / (bar + gap)));
+  for (let c = 0; c < cols; c++) {
+    const a = Math.floor(c / cols * n), b = Math.max(a + 1, Math.floor((c + 1) / cols * n));
+    let m = 0; for (let i = a; i < b; i++) if (env[i] > m) m = env[i];
+    const y = Math.max(0.5, Math.min(1, m) * amp);
+    const played = progress != null && c / cols <= progress;
+    g.fillStyle = played ? color.played : color.base;
+    g.fillRect(pad + c * (bar + gap), mid - y, bar, y * 2);
+  }
+  if (progress != null) { const x = pad + W * progress; g.fillStyle = css('--rose-ink'); g.fillRect(x - 0.75, 8, 1.5, h - 16); }
+}
+function drawWaves() {
+  const it = sel();
+  const p = audio.duration && it?.result ? audio.currentTime / audio.duration : null;
+  const before = { base: css('--ink-4') + '66', played: css('--ink-2') };
+  const after = { base: css('--aqua') + 'AA', played: css('--aqua-ink') };
+  drawLane($('#cvBefore'), it?.envBefore, before, view === 'before' ? p : null);
+  drawLane($('#cvAfter'), it?.envAfter, after, view === 'after' ? p : null);
+  $('#waveEmpty').hidden = !!it?.envBefore;
+  if (it && !it.envBefore) $('#waveEmpty').hidden = false;
+  $('#waveEmpty').textContent = !it ? '音声を追加して処理すると、ここに処理前と処理後の波形が並びます'
+    : it.state === 'waiting' ? '「処理する」を押すと、波形が表示されます'
+    : it.state === 'error' ? 'このファイルは処理できませんでした' : '';
+  if (it && it.envBefore) $('#waveEmpty').hidden = true;
+}
+new ResizeObserver(() => drawWaves()).observe($('#waveBody'));
+
+// ---- 試聴
+function setAB() { document.querySelectorAll('.ab button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === view))); }
+document.querySelectorAll('.ab button').forEach((b) => b.onclick = () => {
+  const R = sel()?.result; view = b.dataset.v; setAB();
+  if (!R) return drawWaves();
+  const t = audio.currentTime, playing = !audio.paused;
+  audio.src = view === 'after' ? R.mp3Url : R.srcUrl;
+  audio.addEventListener('loadedmetadata', () => { audio.currentTime = Math.min(t, audio.duration || t); if (playing) audio.play(); drawWaves(); }, { once: true });
+});
+$('#play').onclick = () => { if (!sel()?.result) return; audio.paused ? audio.play() : audio.pause(); };
+audio.addEventListener('play', () => { $('#icPlay').hidden = true; $('#icPause').hidden = false; tick(); });
+audio.addEventListener('pause', () => { $('#icPlay').hidden = false; $('#icPause').hidden = true; });
+audio.addEventListener('ended', () => { $('#icPlay').hidden = false; $('#icPause').hidden = true; });
+audio.addEventListener('timeupdate', updateTime);
+function updateTime() { const it = sel(); $('#time').textContent = `${fmtDur(audio.currentTime || 0)} / ${fmtDur(audio.duration || it?.duration || 0)}`; }
+function tick() { drawWaves(); updateTime(); if (!audio.paused) requestAnimationFrame(tick); }
+for (const cv of [$('#cvBefore'), $('#cvAfter')]) cv.addEventListener('click', (e) => {
+  if (!sel()?.result || !audio.duration) return;
+  const r = cv.getBoundingClientRect(), x = (e.clientX - r.left - 14) / (r.width - 28);
+  audio.currentTime = Math.max(0, Math.min(1, x)) * audio.duration; drawWaves(); updateTime();
+});
+document.addEventListener('keydown', (e) => { if (e.code === 'Space' && !/INPUT|BUTTON|A/.test(document.activeElement.tagName) && sel()?.result) { e.preventDefault(); $('#play').click(); } });
+
+// ---- ヘルプ
+$('#helpBtn').onclick = () => $('#help').showModal();
+$('#helpClose').onclick = () => $('#help').close();
+$('#help').addEventListener('click', (e) => { if (e.target === $('#help')) $('#help').close(); });
+
+refresh(); renderSelected();
+</script>
+</body>
+</html>
