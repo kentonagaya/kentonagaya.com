@@ -713,9 +713,9 @@ const I18N = {
       <h3>中で行っていること</h3><ol>
       <li>読み込み：48kHz・モノラルに揃えます。</li>
       <li>音割れ修復：波形の頭が切れた部分を補間して作り直します。</li>
-      <li>雑音の除去：音声専用AI（DeepFilterNet3）で、声と雑音を分けて雑音だけを取り除きます。</li>
+      <li>雑音の除去：音声専用AI（DeepFilterNet3）で、声と雑音を分けて雑音だけを取り除きます。言葉の合間が不自然に途切れないよう、取り除く量には上限を設けています（クリア 24dB・ナチュラル 15dB）。</li>
       <li>音量の均一化：話している部分だけを見て、話し手ごとの音量差を揃えます。</li>
-      <li>こもり補正：80Hz以下をカットし、250Hzを下げ、3kHzと5kHz以上を持ち上げ、軽くコンプレッサーをかけます。</li>
+      <li>こもり補正：80Hz以下をカットし、250Hzを下げ、3kHzと5kHz以上を持ち上げ、軽くコンプレッサーをかけます。雑音が残りやすい帯域は、持ち上げを自動で控えめにします。</li>
       <li>仕上げ：Podcast標準の -16 LUFS に合わせ、ピークを -1.5dBTP 以下に抑えます。</li>
       <li>書き出し：配信用MP3（44.1kHz・128kbps）と編集用WAV（48kHz・16bit）。</li></ol>
       <p class="credit">使用しているオープンソース：DeepFilterNet3（MIT / Apache-2.0）、lamejs（LGPL-3.0, LAME）。<a href="/voixnette/THIRD_PARTY_NOTICES.txt">ライセンス表記</a>　・　制作：<a href="https://kentonagaya.com/">Kento Nagaya</a></p>`,
@@ -775,9 +775,9 @@ const I18N = {
       <h3>What happens inside</h3><ol>
       <li>Load: converts to 48 kHz mono.</li>
       <li>Clipping repair: rebuilds flattened waveform peaks by interpolation.</li>
-      <li>Noise removal: a speech-specific AI (DeepFilterNet3) separates voice from noise and removes only the noise.</li>
+      <li>Noise removal: a speech-specific AI (DeepFilterNet3) separates voice from noise and removes only the noise. Reduction is capped (Clear 24 dB, Natural 15 dB) so pauses don’t sound chopped.</li>
       <li>Leveling: evens out differences between speakers, looking only at speech (silence isn’t boosted).</li>
-      <li>Clarity: high-pass at 80 Hz, −3 dB at 250 Hz, +7 dB at 3 kHz, +9 dB shelf above 5 kHz, plus gentle compression.</li>
+      <li>Clarity: high-pass at 80 Hz, −3 dB at 250 Hz, +7 dB at 3 kHz, +9 dB shelf above 5 kHz, plus gentle compression. Boosts are automatically reduced in bands where noise remains.</li>
       <li>Loudness: targets −16 LUFS (podcast standard) with peaks kept below −1.5 dBTP.</li>
       <li>Export: MP3 for publishing (44.1 kHz, 128 kbps) and WAV for editing (48 kHz, 16-bit).</li></ol>
       <p class="credit">Open source used: DeepFilterNet3 (MIT / Apache-2.0), lamejs (LGPL-3.0, LAME). <a href="/voixnette/THIRD_PARTY_NOTICES.txt">Licenses</a> · Made by <a href="https://kentonagaya.com/">Kento Nagaya</a></p>`,

@@ -80,14 +80,16 @@ async function process({ id, samples, preset }) {
   stage(4, '話し手ごとの音量差を揃えています'); await tick();
   D.level(y);
   stage(5, 'こもりを取るEQとコンプレッサーをかけています'); await tick();
-  D.eqChain(y, P.eq);
+  // 雑音が残りやすい帯域は持ち上げを控えめにする（静かな録音では設定どおり）
+  const { eq, report: eqReport } = D.adaptEq(y, P.eq);
+  D.eqChain(y, eq);
   D.compress(y);
   stage(6, '音量をPodcast標準（-16 LUFS）に合わせています'); await tick();
   const loud = D.normalizeLoudness(y, -16, -1.5);
   let peak = 0; for (let i = 0; i < y.length; i++) { const a = Math.abs(y[i]); if (a > peak) peak = a; }
   const wav = D.toWav16(y);
   post({ type: 'done', id, wav, samples: y, stats: {
-    lufsBefore: lufsIn, lufsAfter: loud.after, peakDb: 20 * Math.log10(peak || 1e-9), repaired,
+    lufsBefore: lufsIn, lufsAfter: loud.after, peakDb: 20 * Math.log10(peak || 1e-9), repaired, eq: eqReport,
   } }, [wav, y.buffer]);
 }
 

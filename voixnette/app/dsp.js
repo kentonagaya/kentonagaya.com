@@ -6,7 +6,9 @@ export const SR = 48000;
 
 export const PRESETS = {
   clear: { // 設定B（おすすめ）
-    attenLimit: 100,
+    // AIの除去量の上限。100（無制限）だと言葉の合間が完全な無音に切り落とされ、
+    // 雑音の多い録音では「ぶつ切り」に聞こえる。24dB に抑えて、合間はごく静かな背景音として残す。
+    attenLimit: 24,
     eq: [
       { type: 'peaking', f: 250, q: 1.0, g: -3 },
       { type: 'peaking', f: 3000, q: 0.8, g: 7 },
@@ -14,7 +16,7 @@ export const PRESETS = {
     ],
   },
   natural: { // 設定A相当：ルームトーンを少し残す
-    attenLimit: 30,
+    attenLimit: 15,
     eq: [
       { type: 'peaking', f: 250, q: 1.0, g: -2 },
       { type: 'peaking', f: 3000, q: 0.8, g: 5 },
@@ -158,6 +160,45 @@ export function biquad(x, type, f, q, gainDb = 0) {
     const y = b0 * xi + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
     x2 = x1; x1 = xi; y2 = y1; y1 = y; x[i] = y;
   }
+}
+
+// ---------------------------------------------------------------- 4'. 雑音に合わせて EQ の持ち上げ量を決める
+// 雑音の多い帯域を持ち上げると、残った雑音まで大きくなる。そこで帯域ごとに
+// 「話している区間」と「合間」の音量差（帯域SNR）を測り、差が小さい帯域ほど持ち上げを控えめにする。
+// 静かな録音（帯域SNRが十分）では、設定どおりに持ち上げる。
+function bandLevels(x, lo, hi) {
+  const y = Float32Array.from(x);
+  if (lo) { biquad(y, 'highpass', lo, Math.SQRT1_2); biquad(y, 'highpass', lo, Math.SQRT1_2); }
+  if (hi) { biquadLow(y, hi); biquadLow(y, hi); }
+  const hop = Math.round(0.05 * SR), n = Math.floor(y.length / hop), d = new Float64Array(n);
+  for (let f = 0; f < n; f++) { let s = 0; for (let i = f * hop; i < (f + 1) * hop; i++) s += y[i] * y[i]; d[f] = 10 * Math.log10(s / hop + 1e-14); }
+  return d;
+}
+function biquadLow(x, f) {
+  const w0 = 2 * Math.PI * f / SR, cs = Math.cos(w0), al = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + al;
+  const b0 = (1 - cs) / 2 / a0, b1 = (1 - cs) / a0, b2 = b0, a1 = -2 * cs / a0, a2 = (1 - al) / a0;
+  let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+  for (let i = 0; i < x.length; i++) { const xi = x[i]; const y = b0 * xi + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2; x2 = x1; x1 = xi; y2 = y1; y1 = y; x[i] = y; }
+}
+const pct = (a, q) => { const s = Float64Array.from(a).sort(); return s[Math.min(s.length - 1, Math.floor(q * (s.length - 1)))]; };
+export function adaptEq(x, eq, { fullAt = 26, zeroAt = 12 } = {}) {
+  const broad = bandLevels(x, 100, 0);
+  const hiTh = pct(broad, 0.8), loTh = pct(broad, 0.2);
+  const snrOf = (lo, hi) => {
+    const b = bandLevels(x, lo, hi); const sp = [], gp = [];
+    for (let i = 0; i < b.length; i++) { if (broad[i] >= hiTh) sp.push(b[i]); else if (broad[i] <= loTh) gp.push(b[i]); }
+    return sp.length && gp.length ? pct(sp, 0.5) - pct(gp, 0.5) : 99;
+  };
+  const report = {};
+  const out = eq.map((b) => {
+    if (b.g <= 0) return b;                       // 下げる EQ はそのまま
+    const lo = b.type === 'highshelf' ? b.f : b.f / 1.6, hi = b.type === 'highshelf' ? 12000 : b.f * 1.6;
+    const snr = snrOf(lo, hi);
+    const k = Math.max(0, Math.min(1, (snr - zeroAt) / (fullAt - zeroAt)));
+    report[`${b.type}@${b.f}`] = { snr: +snr.toFixed(1), gain: +(b.g * k).toFixed(1) };
+    return { ...b, g: b.g * k };
+  });
+  return { eq: out, report };
 }
 
 export function eqChain(x, eq) {
