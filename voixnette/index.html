@@ -38,8 +38,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="twitter:description" content="Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正するツール。">
 <meta name="twitter:image" content="https://kentonagaya.com/voixnette/ogp.png">
 <!-- アイコン -->
-<link rel="icon" href="/voixnette/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="/voixnette/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" id="favicon" href="/voixnette/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/voixnette/apple-touch-icon.png">
 <link rel="manifest" href="/voixnette/site.webmanifest">
 <!-- 構造化データ -->
@@ -170,6 +169,71 @@ a { color: inherit; }
 .seg label:has(input:focus-visible) { outline: 2px solid var(--rose-ink); outline-offset: 1px; border-radius: 100px; }
 .seg-d { margin: 8px 4px 0; font-size: 12px; color: var(--ink-3); min-height: 1.8em; }
 
+/* 左下：処理の状況（ボタンではなく、状態の表示） */
+.runstat { margin-top: 16px; padding: 14px 2px 0; border-top: 1px solid var(--line-2); }
+.rs-top { display: flex; align-items: center; gap: 10px; min-height: 26px; }
+.rs-ic { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; color: var(--ink-3); background: var(--canvas-2); }
+.rs-top b { font-size: 13.5px; font-weight: 700; line-height: 1.5; }
+.rs-top .rs-left { margin-left: auto; font-family: var(--mono); font-size: 12px; color: var(--rose-ink); white-space: nowrap; }
+.rs-bar { height: 3px; margin: 12px 0 0; border-radius: 3px; background: var(--line-2); overflow: hidden; }
+.rs-bar i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--aqua), var(--rose)); transition: width .4s var(--ease); }
+.rs-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; font-size: 11.5px; color: var(--ink-3); }
+.runstat[data-state="idle"] .rs-top b { font-weight: 500; color: var(--ink-2); font-size: 12.5px; }
+.runstat[data-state="idle"] .rs-bar, .runstat[data-state="idle"] .rs-meta { display: none; }
+.runstat[data-state="running"] .rs-ic { background: var(--rose-pale); color: var(--rose-ink); }
+.runstat[data-state="running"] .rs-ic svg { animation: spin 1.6s linear infinite; }
+.runstat[data-state="done"] .rs-ic { background: var(--aqua-pale); color: var(--aqua-ink); }
+.runstat[data-state="done"] .rs-bar i { background: var(--aqua-ink); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.notify { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; color: var(--ink-3); position: relative; transition: border-color .3s, color .3s; }
+.notify:hover { border-color: var(--ink); color: var(--ink); }
+.notify[data-on="true"] { color: var(--rose-ink); border-color: color-mix(in srgb, var(--rose-ink) 45%, transparent); }
+.notify[data-on="true"]::after { content: ""; position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--rose); box-shadow: 0 0 0 2px var(--canvas); }
+.notify .slash { display: none; }
+.notify[data-blocked="true"] .slash { display: block; }
+.toast { position: fixed; left: 50%; bottom: 28px; z-index: 95; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; padding: 12px 18px; border-radius: 100px; background: var(--ink); color: var(--canvas); font-size: 13px; box-shadow: 0 18px 40px -16px rgba(29,31,40,.5); transition: opacity .4s var(--ease), transform .6s var(--ease); max-width: calc(100vw - 32px); }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* 右上：処理中は「掃除」、完了は「キラッ」 */
+.f-side { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.fx { width: 210px; height: 110px; margin: -14px -12px -4px 0; }
+.fx svg { width: 100%; height: 100%; overflow: visible; }
+.fx .sweep, .fx .burst, .fx .rest { display: none; }
+.v-run .fx .sweep, .v-done .fx .burst, .v-waiting .fx .rest { display: block; }
+.fx .broom { transform-box: view-box; transform-origin: 104px 6px; }
+.fx .dust circle { transform-box: fill-box; transform-origin: center; }
+.fx .spark { transform-box: fill-box; transform-origin: center; }
+@media (prefers-reduced-motion: no-preference) {
+  .v-run .fx .broom { animation: sweep 1.1s cubic-bezier(.45,.05,.55,.95) infinite alternate; }
+  .v-run .fx .dust circle { animation: dust 1.1s ease-out infinite; }
+  .v-run .fx .dust circle:nth-child(2) { animation-delay: .25s; }
+  .v-run .fx .dust circle:nth-child(3) { animation-delay: .5s; }
+  .v-run .fx .dust circle:nth-child(4) { animation-delay: .8s; }
+  .v-run .fx .sweep .spark { animation: twinkle 2.2s ease-in-out infinite; }
+  .v-run .fx .sweep .spark:nth-of-type(2) { animation-delay: .7s; }
+  .v-run .fx .sweep .spark:nth-of-type(3) { animation-delay: 1.4s; }
+  .v-done .fx .burst .ring { animation: draw .9s var(--ease) both; }
+  .v-done .fx .burst .chk { animation: draw .6s .35s var(--ease) both; }
+  .v-done .fx .burst .spark { animation: pop .9s var(--ease) both; }
+  .v-done .fx .burst .spark:nth-of-type(2) { animation-delay: .15s; }
+  .v-done .fx .burst .spark:nth-of-type(3) { animation-delay: .3s; }
+  .v-done .fx .burst .spark:nth-of-type(4) { animation-delay: .45s; }
+}
+@keyframes sweep { from { transform: rotate(-16deg); } to { transform: rotate(14deg); } }
+@keyframes dust { 0% { transform: translate(0, 0) scale(1); opacity: .8; } 100% { transform: translate(-26px, -14px) scale(.3); opacity: 0; } }
+@keyframes twinkle { 0%, 100% { transform: scale(.2) rotate(0); opacity: 0; } 45% { transform: scale(1) rotate(45deg); opacity: 1; } }
+@keyframes pop { 0% { transform: scale(0) rotate(-30deg); opacity: 0; } 60% { transform: scale(1.25) rotate(10deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+@keyframes draw { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
+
+/* 完了までの時間（大きく表示） */
+.run-top { grid-template-columns: auto minmax(0, 1fr) auto !important; }
+.eta { text-align: right; padding-bottom: 2px; }
+.eta .k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .2em; color: var(--ink-3); text-transform: uppercase; }
+.eta .v { font-family: var(--serif); font-size: clamp(48px, 4.6vw, 68px); line-height: .95; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--rose-ink); }
+.eta .v.calc { color: var(--ink-4); font-size: clamp(30px, 2.8vw, 40px); font-style: italic; }
+.eta .at { font-size: 12.5px; color: var(--ink-2); margin-top: 4px; }
+.redo { font-size: 12px; color: var(--ink-3); text-decoration: underline; text-underline-offset: 3px; margin-left: 14px; }
+.redo:hover { color: var(--ink); }
 .go { position: relative; overflow: hidden; width: 100%; height: 58px; margin-top: 14px; border-radius: 100px; background: var(--ink); color: var(--canvas); font-size: 15px; font-weight: 700; letter-spacing: .06em; display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform .5s var(--ease), box-shadow .5s var(--ease), background .3s, color .3s; isolation: isolate; }
 .go::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--rose-ink); transform: translateY(101%); transition: transform .6s var(--ease); border-radius: inherit; }
 .go:hover:not(:disabled)::before { transform: translateY(0); }
@@ -260,7 +324,7 @@ a { color: inherit; }
 .steps4 li.done, .steps4 li.cur { color: var(--ink); }
 .steps4 li.cur { font-weight: 700; }
 .steps4 li .n { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; color: var(--ink-4); margin-right: 6px; }
-.wait-top { grid-template-columns: auto minmax(0, 1fr) auto; }
+.wait-top { grid-template-columns: auto minmax(0, 1fr) !important; }
 .wait-top .pct { color: var(--ink-2); }
 .go-inline { width: auto; height: 54px; margin: 0 0 4px; padding: 0 28px 0 32px; }
 .steps4 li small { display: block; margin-top: 2px; font-size: 11.5px; font-weight: 400; color: var(--ink-3); }
@@ -329,6 +393,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
 .dlg h3 { margin: 24px 0 8px; font-size: 14px; }
 .dlg ul, .dlg ol { margin: 0; padding-left: 1.3em; color: var(--ink-2); font-size: 13.5px; }
 .dlg li { margin: 4px 0; }
+.dlg .about { margin: 0; font-size: 14px; line-height: 1.95; color: var(--ink); }
 .dlg .credit { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line-2); font-size: 11.5px; color: var(--ink-3); }
 
 /* ===== 画面が狭いとき ===== */
@@ -350,7 +415,10 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
   .top-r { gap: 10px; }
   .status #engineText { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .status { padding: 8px; }
-  .run-top { grid-template-columns: 1fr; gap: 10px; }
+  .run-top { grid-template-columns: 1fr 1fr !important; gap: 10px 16px; }
+  .run-top .now { grid-column: 1 / -1; order: 3; }
+  .eta { text-align: left; }
+  .fx { width: 120px; height: 64px; }
   .steps4 { grid-template-columns: repeat(2, 1fr); row-gap: 14px; }
   .player { flex-wrap: wrap; }
   .ab { margin-left: 0; }
@@ -388,6 +456,9 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
       <button type="button" data-lang="ja" aria-pressed="true" lang="ja" title="日本語">JA</button>
       <button type="button" data-lang="en" aria-pressed="false" lang="en" title="English">EN</button>
     </div>
+    <button class="notify" id="notifyBtn" type="button" data-on="false" hidden>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path class="slash" d="M3 3l18 18"/></svg>
+    </button>
     <button class="help" id="helpBtn" type="button" data-i18n-aria="help" data-i18n-title="help">?</button>
   </div>
 </header>
@@ -410,12 +481,15 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
         <label><input type="radio" name="preset" value="natural"><span data-i18n="natural"></span></label>
       </div>
       <p class="seg-d" id="presetDesc"></p>
-      <button class="go" id="start" disabled><span id="startText"></span><svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-      <div class="go-meta"><span id="goInfo">&nbsp;</span><span id="estimate"></span></div>
+      <div class="runstat" id="runstat" data-state="idle">
+        <div class="rs-top"><span class="rs-ic" id="rsIc"></span><b id="rsTitle"></b><span class="rs-left" id="rsLeft"></span></div>
+        <div class="rs-bar"><i id="rsBar"></i></div>
+        <div class="rs-meta"><span id="goInfo"></span><span id="estimate"></span></div>
+      </div>
       <div class="priv">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
         <span data-i18n="privacy"></span>
-        <a href="https://kentonagaya.com/?utm_source=voixnette&amp;utm_medium=referral&amp;utm_campaign=voixnette_app&amp;utm_content=footer">Kento Nagaya</a>
+        <a href="https://kentonagaya.com/">Kento Nagaya</a>
       </div>
     </div>
   </aside>
@@ -450,14 +524,50 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
           <h2 class="f-name" id="fName"></h2>
           <div class="f-meta" id="fMeta"></div>
         </div>
-        <span class="badge" id="fBadge"></span>
+        <div class="f-side">
+          <div class="fx" aria-hidden="true">
+            <svg viewBox="0 0 168 88">
+              <!-- 処理中：ほうきで掃く -->
+              <g class="sweep">
+                <line x1="18" y1="80" x2="150" y2="80" stroke="var(--line)" stroke-width="1.5" stroke-linecap="round"/>
+                <g class="dust" fill="var(--ink-4)"><circle cx="70" cy="74" r="3"/><circle cx="62" cy="77" r="2.2"/><circle cx="76" cy="77" r="2.6"/><circle cx="66" cy="71" r="1.8"/></g>
+                <g class="broom">
+                  <line x1="104" y1="6" x2="92" y2="54" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+                  <path d="M80 52 L104 58 L98 80 L70 74 Z" fill="var(--ink)"/>
+                  <path d="M81.5 56 L103 61.4" stroke="var(--rose)" stroke-width="3.2" stroke-linecap="round"/>
+                  <path d="M76 73 L80 64 M83 75 L86 65 M90 77 L92 67" stroke="var(--canvas)" stroke-width="1.4" stroke-linecap="round" opacity=".55"/>
+                </g>
+                <path class="spark" d="M134 30 l2.6 7.4 7.4 2.6 -7.4 2.6 -2.6 7.4 -2.6 -7.4 -7.4 -2.6 7.4 -2.6z" fill="var(--rose)"/>
+                <path class="spark" d="M150 56 l1.8 5 5 1.8 -5 1.8 -1.8 5 -1.8 -5 -5 -1.8 5 -1.8z" fill="var(--aqua)"/>
+                <path class="spark" d="M122 58 l1.4 3.8 3.8 1.4 -3.8 1.4 -1.4 3.8 -1.4 -3.8 -3.8 -1.4 3.8 -1.4z" fill="var(--rose)"/>
+              </g>
+              <!-- 完了：チェックとキラキラ -->
+              <g class="burst">
+                <circle class="ring" cx="128" cy="44" r="26" fill="none" stroke="var(--aqua-ink)" stroke-width="3" stroke-dasharray="164" style="--len:164" transform="rotate(-90 128 44)"/>
+                <path class="chk" d="M116 45 l8 8 l16 -18" fill="none" stroke="var(--aqua-ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="40" style="--len:40"/>
+                <path class="spark" d="M88 18 l2.6 7.4 7.4 2.6 -7.4 2.6 -2.6 7.4 -2.6 -7.4 -7.4 -2.6 7.4 -2.6z" fill="var(--rose)"/>
+                <path class="spark" d="M162 14 l1.8 5 5 1.8 -5 1.8 -1.8 5 -1.8 -5 -5 -1.8 5 -1.8z" fill="var(--aqua)"/>
+                <path class="spark" d="M96 66 l1.6 4.4 4.4 1.6 -4.4 1.6 -1.6 4.4 -1.6 -4.4 -4.4 -1.6 4.4 -1.6z" fill="var(--aqua)"/>
+                <path class="spark" d="M160 70 l2 5.6 5.6 2 -5.6 2 -2 5.6 -2 -5.6 -5.6 -2 5.6 -2z" fill="var(--rose)"/>
+              </g>
+              <!-- 順番待ち：立てかけたほうき -->
+              <g class="rest" opacity=".45">
+                <line x1="18" y1="80" x2="150" y2="80" stroke="var(--line)" stroke-width="1.5" stroke-linecap="round"/>
+                <g transform="rotate(8 104 6)">
+                  <line x1="104" y1="6" x2="104" y2="54" stroke="var(--ink-3)" stroke-width="4" stroke-linecap="round"/>
+                  <path d="M90 54 L118 54 L116 80 L92 80 Z" fill="var(--ink-3)"/>
+                </g>
+              </g>
+            </svg>
+          </div>
+          <span class="badge" id="fBadge"></span>
+        </div>
       </div>
 
       <div id="blkWait">
         <div class="run-top wait-top">
           <div class="pct" id="durBig">0:00</div>
-          <div class="now"><b data-i18n="readyT"></b><span data-i18n="readyD"></span></div>
-          <button class="go go-inline" id="startInline" type="button"><span></span><svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <div class="now"><b data-i18n="queuedT"></b><span id="queuedD"></span></div>
         </div>
         <ol class="steps4 pre">
           <li><span class="n">01</span><span data-i18n="st1"></span><small data-i18n="st1d"></small></li>
@@ -471,6 +581,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
         <div class="run-top">
           <div class="pct" id="pct">0<small>%</small></div>
           <div class="now"><b id="nowText"></b><span id="nowSub"></span></div>
+          <div class="eta" aria-live="off"><div class="k" data-i18n="etaK"></div><div class="v" id="etaV"></div><div class="at" id="etaAt"></div></div>
         </div>
         <ol class="steps4" id="steps4">
           <li><span class="n">01</span><span data-i18n="st1"></span></li>
@@ -529,10 +640,11 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
     <div id="helpBody"></div>
   </div>
 </dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script type="module">
 const $ = (s, r = document) => r.querySelector(s);
-const queueEl = $('#queue'), startBtn = $('#start'), stage = $('#stage'), audio = $('#audio');
+const queueEl = $('#queue'), stage = $('#stage'), audio = $('#audio');
 const items = [];
 let seq = 0, running = false, engineState = 'idle', selectedId = null, view = 'after', revealT = 1, revealStart = 0;
 const announce = (t) => { const a = document.getElementById('announce'); a.textContent = ''; setTimeout(() => { a.textContent = t; }, 50); };
@@ -569,8 +681,18 @@ const I18N = {
     eMemory: 'メモリが足りず、途中で止まりました。パソコンで試すか、音声を短く分けてから入れてください。',
     eOther: '処理中にエラーが発生しました（{m}）。ページを再読み込みして、もう一度お試しください。',
     aStart: '{f} の処理を始めました', aDone: '{f} の処理が完了しました。MP3とWAVをダウンロードできます',
+
+    queuedT: '順番待ち', queuedD: '前の音声が終わると、自動で始まります（目安 約{m}分）',
+    etaK: '完了まで', etaCalc: '計測中', etaAt: '{t}ごろ完了',
+    rsIdle: '音声を追加すると、すぐに処理が始まります', rsRunning: '処理中　{i} / {n}', rsDone: 'すべて完了しました', rsDoneSome: '完了 {d} 件・エラー {e} 件', rsLeft: '残り {t}',
+    presetNote: '次に追加する音声に使われます',
+    redo: '{p}で作り直す', suffixNatural: '（ナチュラル）',
+    nfOn: '完了したら通知する（オン）', nfOff: '完了したら通知する', nfBlocked: '通知がブラウザでブロックされています', nfToastOn: '処理が終わったら通知でお知らせします', nfToastBlocked: '通知はブラウザの設定でブロックされています',
+    nfTitle: '処理が完了しました', nfBody: '{f} をダウンロードできます',
+    titleRun: '({p}%) Voixnette', titleDone: '✓ 完了 | Voixnette',
     helpTitle: '使い方とコツ',
-    helpBody: `<h3>うまく使うコツ</h3><ul>
+    helpBody: `<h3>Voixnetteとは</h3><p class="about">Podcastの録音を、聴きやすい音に整えるためのツールです。収録した音声を入れるだけで、雑音の除去、こもりの補正、話し手ごとの音量合わせ、Podcast標準の音量への調整までを自動で行います。処理はすべてこのブラウザの中で行われ、音声がどこかに送られることはありません。登録や料金も不要です。</p>
+      <h3>うまく使うコツ</h3><ul>
       <li><b>ノイズ除去や音量調整をする前の、収録したままのファイル</b>を入れてください。処理済みのファイルだと、声の高い音がすでに削られていて、こもりを直しきれません。</li>
       <li>m4aをWAVに変換してから入れる必要はありません（変換しても音質は上がりません）。</li>
       <li>30分の音声で3〜5分ほどかかります。処理中はこのタブを開いたままにしてください。</li>
@@ -588,7 +710,7 @@ const I18N = {
       <li>こもり補正：80Hz以下をカットし、250Hzを下げ、3kHzと5kHz以上を持ち上げ、軽くコンプレッサーをかけます。</li>
       <li>仕上げ：Podcast標準の -16 LUFS に合わせ、ピークを -1.5dBTP 以下に抑えます。</li>
       <li>書き出し：配信用MP3（44.1kHz・128kbps）と編集用WAV（48kHz・16bit）。</li></ol>
-      <p class="credit">使用しているオープンソース：DeepFilterNet3（MIT / Apache-2.0）、lamejs（LGPL-3.0, LAME）。<a href="/voixnette/THIRD_PARTY_NOTICES.txt">ライセンス表記</a>　・　制作：<a href="https://kentonagaya.com/?utm_source=voixnette&utm_medium=referral&utm_campaign=voixnette_app&utm_content=help">Kento Nagaya</a></p>`,
+      <p class="credit">使用しているオープンソース：DeepFilterNet3（MIT / Apache-2.0）、lamejs（LGPL-3.0, LAME）。<a href="/voixnette/THIRD_PARTY_NOTICES.txt">ライセンス表記</a>　・　制作：<a href="https://kentonagaya.com/">Kento Nagaya</a></p>`,
   },
   en: {
     title: 'Voixnette | Your voice, crystal clear.',
@@ -620,8 +742,18 @@ const I18N = {
     eMemory: 'Ran out of memory. Try on a computer, or split the audio into shorter parts.',
     eOther: 'Something went wrong ({m}). Please reload the page and try again.',
     aStart: 'Started processing {f}', aDone: '{f} is done. MP3 and WAV are ready to download',
+
+    queuedT: 'In queue', queuedD: 'Starts automatically when the previous file finishes (about {m} min)',
+    etaK: 'Time left', etaCalc: 'estimating', etaAt: 'done around {t}',
+    rsIdle: 'Add audio and processing starts right away', rsRunning: 'Processing  {i} / {n}', rsDone: 'All done', rsDoneSome: '{d} done · {e} failed', rsLeft: '{t} left',
+    presetNote: 'Applies to the next files you add',
+    redo: 'Redo as {p}', suffixNatural: ' (Natural)',
+    nfOn: 'Notify me when done (on)', nfOff: 'Notify me when done', nfBlocked: 'Notifications are blocked in your browser', nfToastOn: 'You’ll get a notification when processing finishes', nfToastBlocked: 'Notifications are blocked in your browser settings',
+    nfTitle: 'Processing complete', nfBody: '{f} is ready to download',
+    titleRun: '({p}%) Voixnette', titleDone: '✓ Done | Voixnette',
     helpTitle: 'Tips & how it works',
-    helpBody: `<h3>Tips</h3><ul>
+    helpBody: `<h3>About Voixnette</h3><p class="about">Voixnette makes podcast recordings easier to listen to. Just add your recording and it automatically removes background noise, clears up muffled speech, evens out speaker levels and sets podcast-standard loudness. Everything runs inside this browser — your audio is never sent anywhere. No sign-up, no fees.</p>
+      <h3>Tips</h3><ul>
       <li>Use <b>the original recording, before any noise reduction or loudness changes</b>. Files that have already been processed have lost their high frequencies, so muffled speech can’t be fully restored.</li>
       <li>No need to convert m4a to WAV first — converting doesn’t improve quality.</li>
       <li>30 minutes of audio takes about 3–5 minutes. Please keep this tab open while it runs.</li>
@@ -639,7 +771,7 @@ const I18N = {
       <li>Clarity: high-pass at 80 Hz, −3 dB at 250 Hz, +7 dB at 3 kHz, +9 dB shelf above 5 kHz, plus gentle compression.</li>
       <li>Loudness: targets −16 LUFS (podcast standard) with peaks kept below −1.5 dBTP.</li>
       <li>Export: MP3 for publishing (44.1 kHz, 128 kbps) and WAV for editing (48 kHz, 16-bit).</li></ol>
-      <p class="credit">Open source used: DeepFilterNet3 (MIT / Apache-2.0), lamejs (LGPL-3.0, LAME). <a href="/voixnette/THIRD_PARTY_NOTICES.txt">Licenses</a> · Made by <a href="https://kentonagaya.com/?utm_source=voixnette&utm_medium=referral&utm_campaign=voixnette_app&utm_content=help">Kento Nagaya</a></p>`,
+      <p class="credit">Open source used: DeepFilterNet3 (MIT / Apache-2.0), lamejs (LGPL-3.0, LAME). <a href="/voixnette/THIRD_PARTY_NOTICES.txt">Licenses</a> · Made by <a href="https://kentonagaya.com/">Kento Nagaya</a></p>`,
   },
 };
 let lang = document.documentElement.lang === 'en' ? 'en' : 'ja';
@@ -715,7 +847,7 @@ function addFiles(list) {
   let first = null;
   for (const file of list) {
     if (!isAudio(file)) continue;
-    const it = { id: ++seq, file, state: 'waiting', stage: -1, pct: 0, overall: 0, urls: [] };
+    const it = { id: ++seq, file, state: 'waiting', stage: -1, pct: 0, overall: 0, urls: [], preset: currentPreset() };
     const li = document.createElement('li');
     li.className = 'q'; li.dataset.state = 'waiting'; li.tabIndex = 0;
     li.innerHTML = `<span class="ring"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bg" cx="18" cy="18" r="15"/><circle class="fg" cx="18" cy="18" r="15"/></svg><span class="ic">${ICON.wait}</span></span>
@@ -733,19 +865,19 @@ function addFiles(list) {
     a.onerror = () => URL.revokeObjectURL(u);
   }
   if (first && !running) select(first.id);
-  refresh(); preloadEngine();
+  refresh(); presetDesc(); preloadEngine(); pump();
 }
 function removeItem(it) {
   if (it.state === 'running') return;
   it.urls.forEach(URL.revokeObjectURL);
   it.li.remove(); items.splice(items.indexOf(it), 1);
   if (selectedId === it.id) { selectedId = null; const n = items[items.length - 1]; if (n) select(n.id); else render(); }
-  refresh();
+  refresh(); presetDesc();
 }
 function qText(it) {
   const s = it.li.querySelector('small'), d = it.duration ? fmtDur(it.duration) : '';
   s.textContent = it.state === 'waiting' ? [d, t('qWaiting')].filter(Boolean).join(t('sep'))
-    : it.state === 'running' ? `${Math.floor(it.overall)}%${t('sep')}${t('st' + (Math.min(3, stepOf(it)) + 1))}`
+    : it.state === 'running' ? `${Math.floor(it.overall)}%${t('sep')}${it.etaReady ? t('rsLeft', { t: fmtDur(etaOf(it)) }) : t('st' + (Math.min(3, stepOf(it)) + 1))}`
     : it.state === 'done' ? `${d}${t('sep')}${t('qDone')}` : t('qError');
   it.li.querySelector('.x').setAttribute('aria-label', t('remove')); it.li.querySelector('.x').title = t('remove');
   const fg = it.li.querySelector('.fg');
@@ -754,18 +886,26 @@ function qText(it) {
 }
 function refresh() {
   const waiting = items.filter((i) => i.state === 'waiting');
-  startBtn.disabled = running || !waiting.length || !envOk;
-  const idx = items.filter((i) => i.state === 'done' || i.state === 'error').length;
-  $('#startText').textContent = !envOk ? t('startUnsupported')
-    : running ? t('startRunning', { i: Math.min(idx + 1, items.length), n: items.length })
-    : waiting.length ? (waiting.length > 1 ? t('startMany', { n: waiting.length }) : t('startOne'))
-    : items.length ? t('startDone') : t('startNone');
-  const total = waiting.reduce((s, i) => s + (i.duration || 0), 0);
-  $('#estimate').textContent = total && !running ? t('estimate', { m: Math.max(1, Math.round(total / 60 * 0.14)) }) : '';
-  $('#goInfo').textContent = items.length ? t('goInfo', { n: items.length, d: items.filter((i) => i.state === 'done').length, files: items.length === 1 ? 'file' : 'files' }) : ' ';
+  const done = items.filter((i) => i.state === 'done').length, err = items.filter((i) => i.state === 'error').length;
+  const cur = items.find((i) => i.state === 'running');
+  const rs = $('#runstat');
+  const state = !envOk ? 'error' : running ? 'running' : items.length ? 'done' : 'idle';
+  rs.dataset.state = state;
+  const IC = { idle: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    running: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg>',
+    done: ICON.done, error: ICON.err };
+  $('#rsIc').innerHTML = IC[state];
+  $('#rsTitle').textContent = !envOk ? t('stUnsupported') : running ? t('rsRunning', { i: done + err + 1, n: items.length })
+    : items.length ? (err ? t('rsDoneSome', { d: done, e: err }) : t('rsDone')) : t('rsIdle');
+  const totalLeft = running ? (cur ? etaOf(cur) : 0) + waiting.reduce((s, i) => s + estimateSec(i), 0) : 0;
+  $('#rsLeft').textContent = running && totalLeft > 0 ? t('rsLeft', { t: fmtDur(totalLeft) }) : '';
+  const all = items.filter((i) => i.state !== 'error');
+  const sum = all.reduce((s, i) => s + (i.state === 'done' ? 100 : i.state === 'running' ? i.overall : 0), 0);
+  $('#rsBar').style.width = `${all.length ? sum / all.length : 0}%`;
+  $('#goInfo').textContent = items.length ? t('goInfo', { n: items.length, d: done, files: items.length === 1 ? 'file' : 'files' }) : '';
+  $('#estimate').textContent = '';
   $('#count').textContent = items.length ? String(items.length).padStart(2, '0') : '';
-  $('#startInline').disabled = startBtn.disabled;
-  $('#startInline span').textContent = waiting.length > 1 ? t('startMany', { n: waiting.length }) : t('startOne');
+  updateTab();
 }
 
 // 入力：ボタン・ドロップ・どこにでもドロップ
@@ -778,7 +918,8 @@ window.addEventListener('dragover', (e) => e.preventDefault());
 window.addEventListener('drop', (e) => { e.preventDefault(); dragDepth = 0; stage.classList.remove('drag'); $('#add').classList.remove('over'); if (e.dataTransfer?.files?.length) addFiles(e.dataTransfer.files); });
 
 // 仕上がりの説明
-const presetDesc = () => { $('#presetDesc').textContent = t(document.querySelector('input[name=preset]:checked').value === 'natural' ? 'descNatural' : 'descClear'); };
+const currentPreset = () => document.querySelector('input[name=preset]:checked').value;
+const presetDesc = () => { $('#presetDesc').textContent = [t(currentPreset() === 'natural' ? 'descNatural' : 'descClear'), items.length ? t('presetNote') + (lang === 'ja' ? '。' : '.') : ''].join(lang === 'ja' ? '' : ' ').trim(); };
 document.querySelectorAll('input[name=preset]').forEach((r) => r.addEventListener('change', presetDesc));
 presetDesc();
 
@@ -789,23 +930,43 @@ const STEP_OF_STAGE = [0, 1, 1, 2, 2, 2, 3];
 const STEP_RANGE = [[0, 8], [8, 78], [78, 88], [88, 100]];
 const stepOf = (it) => it.state === 'done' ? 4 : Math.max(0, STEP_OF_STAGE[Math.max(0, it.stage)]);
 
-$('#startInline').onclick = () => startBtn.click();
-startBtn.onclick = async () => {
-  if (running) return;
+// 追加されたら自動で処理を始め、待っているファイルがなくなるまで順番に処理する
+async function pump() {
+  if (running || !envOk || !items.some((i) => i.state === 'waiting')) return;
   running = true; refresh();
   $('#topline').classList.add('on');
   const lock = await navigator.wakeLock?.request('screen').catch(() => null);
-  for (const it of items.filter((i) => i.state === 'waiting')) await runItem(it);
+  let it;
+  while ((it = items.find((i) => i.state === 'waiting'))) await runItem(it);
   lock?.release?.();
   running = false; refresh();
   $('#topline').classList.remove('on');
-};
+}
 window.addEventListener('beforeunload', (e) => { if (running) { e.preventDefault(); e.returnValue = ''; } });
 
+const RATE = 0.14; // 音声1秒あたりの処理時間の目安（秒）。実測値で置き換えていく
+const estimateSec = (it) => (it.duration || 0) * RATE + 4;
+function etaOf(it) {
+  if (it.state !== 'running' || it.etaSec == null) return it.state === 'running' ? estimateSec(it) : 0;
+  return Math.max(0, it.etaSec - (performance.now() - it.etaAt) / 1000);
+}
+function updateEta(it) {
+  const el = (performance.now() - it.t0) / 1000, p = it.overall;
+  const prior = Math.max(0, estimateSec(it) - el);
+  let est = prior;
+  if (p > 12) { const raw = el * (100 - p) / p; const w = Math.min(1, (p - 12) / 25); est = prior * (1 - w) + raw * w; }
+  const now = performance.now();
+  if (it.etaSec == null) it.etaSec = est;
+  else { const shown = etaOf(it); it.etaSec = shown * 0.8 + est * 0.2; }
+  it.etaAt = now;
+  it.etaReady = p > 12;
+}
 function setProgress(it, key, pct = 0) {
   it.stage = STAGE_OF[key]; it.pct = Math.min(1, pct);
   const [a, b] = WEIGHT[it.stage]; it.overall = a + (b - a) * it.pct;
+  if (!it._etaT || performance.now() - it._etaT > 900) { it._etaT = performance.now(); updateEta(it); }
   qText(it);
+  refresh();
   const all = items.filter((i) => i.state !== 'error');
   const sum = all.reduce((s, i) => s + (i.state === 'done' ? 100 : i.state === 'running' ? i.overall : 0), 0);
   $('#topline').style.setProperty('--p', all.length ? sum / (all.length * 100) : 0);
@@ -814,11 +975,10 @@ function setProgress(it, key, pct = 0) {
 
 async function runItem(it) {
   it.state = 'running'; it.li.dataset.state = 'running'; it.t0 = performance.now();
-  it.preset = document.querySelector('input[name=preset]:checked').value;
   select(it.id); render();
   announce(t('aStart', { f: it.file.name }));
   it.li.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
-  const base = it.file.name.replace(/\.[^.]+$/, '');
+  const base = it.file.name.replace(/\.[^.]+$/, '') + (it.preset === 'natural' ? '_natural' : '');
   try {
     setProgress(it, 'decode', 0.3);
     const { mono, duration, channels } = await decodeToMono(it.file);
@@ -844,10 +1004,12 @@ async function runItem(it) {
     it.state = 'done'; it.li.dataset.state = 'done'; it.overall = 100;
     if (selectedId === it.id) { revealStart = performance.now(); revealT = 0; }
     announce(t('aDone', { f: it.file.name }));
+    onFinished(it);
   } catch (err) {
     console.error(err);
     it.state = 'error'; it.li.dataset.state = 'error'; it.errorRaw = err;
     announce(`${it.file.name}: ${friendlyError(err)}`);
+    onFinished(it);
   }
   qText(it);
   if (selectedId === it.id) render();
@@ -904,8 +1066,9 @@ function render() {
   const it = sel();
   $('#vEmpty').classList.toggle('on', !it);
   $('#vFile').classList.toggle('on', !!it);
-  if (!it) { startBtn.classList.remove('quiet'); drawWave(); return; }
-  $('#vFile').className = `view v-file on v-${it.state === 'running' ? 'run' : it.state}`;
+  if (!it) { drawWave(); return; }
+  const vc = `view v-file on v-${it.state === 'running' ? 'run' : it.state}`;
+  if ($('#vFile').className !== vc) $('#vFile').className = vc;
   $('#fName').textContent = it.file.name;
   $('#fName').title = it.file.name;
   $('#fMeta').textContent = [it.duration ? fmtDur(it.duration) : null, it.channels ? t(it.channels > 1 ? 'stereo' : 'mono') : null, fmtMB(it.file.size), it.preset ? t(it.preset === 'natural' ? 'finishNatural' : 'finishClear') : null].filter(Boolean).join(t('metaSep'));
@@ -920,17 +1083,29 @@ function render() {
   $('#blkErr').hidden = it.state !== 'error';
   $('#waveWrap').hidden = it.state === 'error';
   if (it.state === 'error') $('#errMsg').textContent = friendlyError(it.errorRaw);
-  startBtn.classList.toggle('quiet', it.state === 'waiting');
+  if (it.state === 'waiting') $('#queuedD').textContent = t('queuedD', { m: Math.max(1, Math.round(estimateSec(it) / 60)) });
   if (it.state === 'running') renderRun(it);
   if (it.state === 'done') renderDone(it);
   drawWave();
 }
 
+function renderEta(it) {
+  const v = $('#etaV'), at = $('#etaAt');
+  if (!it || it.state !== 'running') return;
+  const left = etaOf(it);
+  if (!it.etaReady && it.overall < 12) { v.textContent = t('etaCalc'); v.classList.add('calc'); }
+  else { v.textContent = fmtDur(left); v.classList.remove('calc'); }
+  const end = new Date(Date.now() + left * 1000);
+  at.textContent = t('etaAt', { t: end.toLocaleTimeString(lang === 'en' ? 'en-US' : 'ja-JP', { hour: '2-digit', minute: '2-digit' }) });
+}
+// 1秒ごとにカウントダウン
+setInterval(() => { const it = sel(); if (it?.state === 'running') renderEta(it); if (running) { items.forEach((i) => { if (i.state === 'running') qText(i); }); refresh(); } }, 1000);
 function renderRun(it) {
   $('#pct').innerHTML = `${Math.floor(it.overall)}<small>%</small>`;
   $('#nowText').textContent = t('now')[Math.max(0, it.stage)] || t('nowPrep');
   const el = (performance.now() - it.t0) / 1000;
-  $('#nowSub').textContent = it.overall > 12 ? `${fmtLeft(el * (100 - it.overall) / it.overall)}${t('sep')}${t('keepOpen')}` : t('keepOpen');
+  $('#nowSub').textContent = t('keepOpen');
+  renderEta(it);
   const cur = stepOf(it);
   [...$('#steps4').children].forEach((li, i) => {
     const [a, b] = STEP_RANGE[i];
@@ -947,7 +1122,8 @@ function renderDone(it) {
   $('#dlWav').href = R.wavUrl; $('#dlWav').download = `${R.base}_clean.wav`; $('#wavSub').textContent = t('wavSub', { s: fmtMB(R.wavSize) });
   $('#results').innerHTML = [
     t('rNoise'), t('rLoud'), s.repaired ? t('rClip') : t('rNoClip'),
-  ].map((x) => `<li>${ICON.check}${x}</li>`).join('') + `<li style="margin-left:auto"><button class="more" type="button" id="moreBtn" aria-expanded="${!$('#nums').hidden}">${$('#nums').hidden ? t('more') : t('less')}</button></li>`;
+  ].map((x) => `<li>${ICON.check}${x}</li>`).join('') + `<li style="margin-left:auto"><button class="more" type="button" id="moreBtn" aria-expanded="${!$('#nums').hidden}">${$('#nums').hidden ? t('more') : t('less')}</button><button class="redo" type="button" id="redoBtn">${t('redo', { p: t(it.preset === 'natural' ? 'clear' : 'natural') })}</button></li>`;
+  $('#redoBtn').onclick = () => redo(it);
   $('#moreBtn').onclick = () => { const n = $('#nums'); n.hidden = !n.hidden; $('#moreBtn').setAttribute('aria-expanded', String(!n.hidden)); $('#moreBtn').textContent = n.hidden ? t('more') : t('less'); };
   $('#nums').innerHTML = `
     <div><dt>${t('nLoud')}</dt><dd>${isFinite(s.lufsBefore) ? s.lufsBefore.toFixed(1) : '—'} → ${s.lufsAfter.toFixed(1)} <small>${t('nTarget')}</small></dd></div>
@@ -1055,7 +1231,7 @@ document.querySelectorAll('#ab button').forEach((b) => b.onclick = () => {
   drawWave();
 });
 $('#play').onclick = () => { if (!sel()?.result) return; audio.paused ? audio.play() : audio.pause(); };
-const setIcon = () => { $('#icPlay').hidden = !audio.paused; $('#icPause').hidden = audio.paused; $('#play').setAttribute('aria-label', audio.paused ? t('play') : t('pause')); };
+const setIcon = () => { $('#icPlay').toggleAttribute('hidden', !audio.paused); $('#icPause').toggleAttribute('hidden', audio.paused); $('#play').setAttribute('aria-label', audio.paused ? t('play') : t('pause')); };
 ['play', 'pause', 'ended'].forEach((ev) => audio.addEventListener(ev, () => { setIcon(); drawWave(); }));
 audio.addEventListener('timeupdate', updateTime);
 audio.addEventListener('loadedmetadata', updateTime);
@@ -1065,6 +1241,79 @@ document.addEventListener('keydown', (e) => {
   if (e.code === 'Space' && !/BUTTON|A|LI/.test(document.activeElement.tagName)) { e.preventDefault(); $('#play').click(); }
   if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { if (!audio.duration) return; audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + (e.key === 'ArrowRight' ? 5 : -5))); drawWave(); }
 });
+
+// ---------- 完了の知らせ（ファビコン・タブのタイトル・通知）
+const favLink = document.getElementById('favicon');
+const favBase = new Image(); favBase.src = '/voixnette/favicon.svg';
+let favState = 'none', favBlink = false, unseenDone = false;
+function drawFavicon() {
+  const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
+  if (favBase.complete && favBase.naturalWidth) g.drawImage(favBase, 0, 0, 64, 64);
+  if (favState !== 'none') {
+    const col = favState === 'running' ? (favBlink ? '#7E8290' : '#C9CCD3') : favState === 'done' ? '#2F7FD8' : '#E0578F';
+    g.beginPath(); g.arc(50, 50, 15, 0, Math.PI * 2); g.fillStyle = '#F7F5F2'; g.fill();
+    g.beginPath(); g.arc(50, 50, 11, 0, Math.PI * 2); g.fillStyle = col; g.fill();
+  }
+  favLink.type = 'image/png'; favLink.href = favState === 'none' ? '/voixnette/favicon.svg' : c.toDataURL('image/png');
+  if (favState === 'none') favLink.type = 'image/svg+xml';
+}
+setInterval(() => { if (favState === 'running') { favBlink = !favBlink; drawFavicon(); } }, 700);
+function updateTab() {
+  const cur = items.find((i) => i.state === 'running');
+  const hasErr = items.some((i) => i.state === 'error' && i.unseen);
+  const next = running ? 'running' : unseenDone ? (hasErr ? 'error' : 'done') : 'none';
+  if (next !== favState) { favState = next; drawFavicon(); }
+  document.title = running && cur ? t('titleRun', { p: Math.floor(cur.overall) }) : unseenDone ? t('titleDone') : t('title');
+}
+function onFinished(it) {
+  it.unseen = true;
+  if (items.some((i) => i.state === 'waiting')) return; // まだ続きがあるときは、全部終わってから知らせる
+  unseenDone = true; updateTab();
+  if (!document.hidden) setTimeout(markSeen, 6000);
+  const ok = items.filter((i) => i.unseen && i.state === 'done');
+  if (notifyOn() && document.hidden && ok.length) {
+    try {
+      const n = new Notification(t('nfTitle'), { body: ok.map((i) => t('nfBody', { f: i.file.name })).join('\n'), icon: '/voixnette/icon-192.png', tag: 'voixnette-done' });
+      n.onclick = () => { window.focus(); select(ok[ok.length - 1].id); n.close(); };
+    } catch {}
+  }
+}
+function markSeen() { if (document.hidden) return; unseenDone = false; items.forEach((i) => { i.unseen = false; }); updateTab(); }
+document.addEventListener('visibilitychange', () => { if (!document.hidden && unseenDone) setTimeout(markSeen, 2500); });
+window.addEventListener('focus', () => { if (unseenDone) setTimeout(markSeen, 2500); });
+
+// 通知のオン・オフ（ブラウザの許可が必要）
+const nfBtn = $('#notifyBtn');
+const notifyOn = () => 'Notification' in window && Notification.permission === 'granted' && (() => { try { return localStorage.getItem('voixnette-notify') !== 'off'; } catch { return true; } })();
+function renderNotify() {
+  if (!('Notification' in window)) { nfBtn.hidden = true; return; }
+  nfBtn.hidden = false;
+  const blocked = Notification.permission === 'denied', on = notifyOn();
+  nfBtn.dataset.on = String(on); nfBtn.dataset.blocked = String(blocked);
+  const label = blocked ? t('nfBlocked') : on ? t('nfOn') : t('nfOff');
+  nfBtn.title = label; nfBtn.setAttribute('aria-label', label); nfBtn.setAttribute('aria-pressed', String(on));
+}
+function toast(msg) { const el = $('#toast'); el.textContent = msg; el.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove('on'), 3200); }
+nfBtn.onclick = async () => {
+  if (Notification.permission === 'denied') { toast(t('nfToastBlocked')); return; }
+  if (Notification.permission === 'default') { await Notification.requestPermission().catch(() => {}); }
+  if (Notification.permission === 'granted') {
+    const was = notifyOn();
+    try { localStorage.setItem('voixnette-notify', was ? 'off' : 'on'); } catch {}
+    if (!was) toast(t('nfToastOn'));
+  } else if (Notification.permission === 'denied') toast(t('nfToastBlocked'));
+  renderNotify();
+};
+renderNotify();
+
+// 仕上がりを変えて作り直す
+function redo(src) {
+  const preset = src.preset === 'natural' ? 'clear' : 'natural';
+  const before = items.length;
+  const r = document.querySelector(`input[name=preset][value=${preset}]`); r.checked = true; presetDesc();
+  addFiles([src.file]);
+  const it = items[before]; if (it) { it.preset = preset; select(it.id); render(); }
+}
 
 // ---------- ヘルプ
 $('#helpBtn').onclick = () => $('#help').showModal();
@@ -1076,7 +1325,7 @@ if (!envOk) { $('#engineText').textContent = t('stUnsupported'); $('#engine').da
 document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => {
   if (b.dataset.lang === lang) return;
   applyLang(b.dataset.lang, true);
-  setEngine(engineState); presetDesc(); items.forEach(qText); refresh(); render(); setIcon();
+  setEngine(engineState); presetDesc(); items.forEach(qText); refresh(); render(); setIcon(); renderNotify();
 });
 setEngine(engineState); refresh(); render();
 </script>
