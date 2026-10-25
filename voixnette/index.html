@@ -5,11 +5,61 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- 公開するまでは検索エンジンに載せない（公開時はこの行と _headers の該当行を削除） -->
 <meta name="robots" content="noindex, nofollow">
-<meta name="description" content="Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正するツール。">
+<!-- Google Tag Manager（kentonagaya.com 共通） -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NCGNCN3D');</script>
+<!-- End Google Tag Manager -->
+<!-- 表示言語を先に決める（ちらつき防止）：?lang= → 保存した設定 → ブラウザの言語 -->
+<script>(function(){var q=new URLSearchParams(location.search).get('lang'),v=null;try{v=localStorage.getItem('voixnette-lang')}catch(e){}var l=(q==='en'||q==='ja')?q:(v==='en'||v==='ja')?v:((navigator.language||'').toLowerCase().indexOf('ja')===0?'ja':'en');document.documentElement.lang=l;})();</script>
+<meta name="description" content="Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正するツール。雑音を消し、こもりを取り、Podcast標準の音量に整えます。音声はアップロードされません。">
 <meta name="author" content="Kento Nagaya">
 <meta name="theme-color" content="#F7F5F2">
+<meta name="color-scheme" content="light">
 <title>Voixnette | 声を、くっきり。</title>
+<link rel="canonical" href="https://kentonagaya.com/voixnette/">
+<!-- OGP（SNSやチャットで共有したときの表示） -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kento Nagaya">
+<meta property="og:title" content="Voixnette | 声を、くっきり。">
+<meta property="og:description" content="Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正。雑音を消し、こもりを取り、Podcast標準の音量に整えます。音声はアップロードされません。">
+<meta property="og:url" content="https://kentonagaya.com/voixnette/">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://kentonagaya.com/voixnette/ogp.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Voixnette — 声を、くっきり。Your voice, crystal clear.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Voixnette | 声を、くっきり。">
+<meta name="twitter:description" content="Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正するツール。">
+<meta name="twitter:image" content="https://kentonagaya.com/voixnette/ogp.png">
+<!-- アイコン -->
 <link rel="icon" href="/voixnette/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/voixnette/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/voixnette/apple-touch-icon.png">
+<link rel="manifest" href="/voixnette/site.webmanifest">
+<!-- 構造化データ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Voixnette",
+  "url": "https://kentonagaya.com/voixnette/",
+  "description": "Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正するツール。",
+  "applicationCategory": "MultimediaApplication",
+  "operatingSystem": "Any (modern web browser)",
+  "browserRequirements": "Requires WebAssembly SIMD and Web Workers",
+  "inLanguage": ["ja", "en"],
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "image": "https://kentonagaya.com/voixnette/ogp.png",
+  "author": { "@type": "Person", "name": "Kento Nagaya", "url": "https://kentonagaya.com/" }
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Roboto+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap">
@@ -82,7 +132,7 @@ a { color: inherit; }
 .add small { display: block; font-size: 11px; color: var(--ink-3); line-height: 1.4; }
 .add input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
 .queue { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; min-height: 0; flex: 1; scrollbar-width: thin; }
-.queue:empty::before { content: "追加した音声が、ここに並びます"; display: grid; place-items: center; height: 100%; max-height: 260px; min-height: 120px; border-radius: 16px; font-size: 12px; color: var(--ink-3); background: repeating-linear-gradient(90deg, transparent 0 6px, color-mix(in srgb, var(--line) 35%, transparent) 6px 7px); }
+.queue:empty::before { content: attr(data-empty); display: grid; place-items: center; height: 100%; max-height: 260px; min-height: 120px; border-radius: 16px; font-size: 12px; color: var(--ink-3); background: repeating-linear-gradient(90deg, transparent 0 6px, color-mix(in srgb, var(--line) 35%, transparent) 6px 7px); }
 .q { position: relative; display: grid; grid-template-columns: 36px minmax(0, 1fr) 28px; align-items: center; gap: 12px; padding: 10px 8px 10px 10px; border-radius: 14px; cursor: pointer; transition: background .3s; animation: rise .6s var(--ease) both; }
 .q:hover { background: color-mix(in srgb, var(--paper) 70%, transparent); }
 .q.sel { background: var(--paper); box-shadow: 0 1px 0 var(--line-2), 0 10px 24px -18px rgba(29,31,40,.35); }
@@ -156,6 +206,16 @@ a { color: inherit; }
 .v-empty .label::after { content: ""; width: 40px; height: 1px; background: var(--ink-4); }
 .hero-t { margin: 18px 0 0; font-size: clamp(40px, 5.4vw, 76px); font-weight: 900; line-height: 1.22; letter-spacing: .01em; }
 .hero-t .s { color: var(--rose-ink); }
+:lang(en) .hero-t { letter-spacing: -.015em; line-height: 1.08; }
+:lang(en) .hero-t .s { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 1.12em; letter-spacing: -.02em; }
+:lang(en) body { font-feature-settings: normal; }
+/* 言語切り替え */
+.lang { display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 100px; border: 1px solid var(--line); position: relative; }
+.lang::before { content: ""; position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 100px; background: var(--ink); transition: transform .5s var(--ease); }
+:lang(en) .lang::before { transform: translateX(100%); }
+.lang button { position: relative; z-index: 1; height: 26px; padding: 0 10px; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--ink-3); transition: color .3s; }
+.lang button[aria-pressed="true"] { color: var(--canvas); }
+.noscript { position: fixed; inset: auto 16px 16px; z-index: 100; padding: 14px 18px; border-radius: 14px; background: var(--ink); color: var(--canvas); font-size: 13px; }
 .hero-l { margin: 18px 0 0; max-width: 29em; font-size: 15px; color: var(--ink-2); line-height: 1.95; }
 .hero-cta { display: flex; align-items: center; gap: 18px; margin-top: 30px; flex-wrap: wrap; }
 .pick { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 30px; border-radius: 100px; background: var(--ink); color: var(--canvas); font-size: 14.5px; font-weight: 700; letter-spacing: .06em; cursor: pointer; isolation: isolate; transition: transform .5s var(--ease), box-shadow .5s var(--ease); }
@@ -287,6 +347,9 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
 }
 @media (max-width: 560px) {
   .status .long { display: none; }
+  .top-r { gap: 10px; }
+  .status #engineText { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .status { padding: 8px; }
   .run-top { grid-template-columns: 1fr; gap: 10px; }
   .steps4 { grid-template-columns: repeat(2, 1fr); row-gap: 14px; }
   .player { flex-wrap: wrap; }
@@ -309,43 +372,50 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
 </style>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NCGNCN3D" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<noscript><p class="noscript">Voixnette を使うには JavaScript を有効にしてください。 / Please enable JavaScript to use Voixnette.</p></noscript>
 <div class="topline" id="topline" aria-hidden="true"></div>
 
 <header class="top">
-  <a class="brand" href="/voixnette/" aria-label="Voixnette ホーム">
+  <a class="brand" href="/voixnette/" aria-label="Voixnette">
     <span class="word">Voix<i>nette</i></span>
     <span class="label">Podcast voice cleaner</span>
   </a>
   <div class="top-r">
     <span class="status" id="engine" data-state="idle"><span class="dot"></span><span id="engineText">ブラウザ内で処理</span></span>
-    <button class="help" id="helpBtn" type="button" aria-label="使い方とコツ" title="使い方とコツ">?</button>
+    <div class="lang" role="group" aria-label="Language / 言語">
+      <button type="button" data-lang="ja" aria-pressed="true" lang="ja" title="日本語">JA</button>
+      <button type="button" data-lang="en" aria-pressed="false" lang="en" title="English">EN</button>
+    </div>
+    <button class="help" id="helpBtn" type="button" data-i18n-aria="help" data-i18n-title="help">?</button>
   </div>
 </header>
 
 <div class="app">
   <!-- ===== 左：キュー ===== -->
-  <aside class="rail" aria-label="ファイルと設定">
+  <aside class="rail" data-i18n-aria="railAria">
     <div class="rail-h"><span class="label">01 — Files</span><span class="label" id="count"></span></div>
     <label class="add" id="add">
       <span class="plus" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
-      <span><b>音声を追加</b><small>m4a・wav・mp3 など<span class="drop-hint">／ドロップでもOK</span></small></span>
+      <span><b data-i18n="add"></b><small><span data-i18n="addFormats"></span><span class="drop-hint" data-i18n="addDrop"></span></small></span>
       <input id="file" type="file" multiple accept="audio/*,.m4a,.wav,.mp3,.aac,.flac,.ogg,.opus,.caf,.aif,.aiff,.mp4,.mov">
     </label>
-    <ul class="queue" id="queue" aria-label="追加したファイル"></ul>
+    <ul class="queue" id="queue" data-i18n-aria="queueAria"></ul>
 
     <div class="rail-foot">
       <div class="rail-h"><span class="label">02 — Finish</span></div>
-      <div class="seg" role="radiogroup" aria-label="仕上がり">
-        <label><input type="radio" name="preset" value="clear" checked>クリア</label>
-        <label><input type="radio" name="preset" value="natural">ナチュラル</label>
+      <div class="seg" role="radiogroup" data-i18n-aria="finishAria">
+        <label><input type="radio" name="preset" value="clear" checked><span data-i18n="clear"></span></label>
+        <label><input type="radio" name="preset" value="natural"><span data-i18n="natural"></span></label>
       </div>
-      <p class="seg-d" id="presetDesc">ノイズをしっかり消して、声をはっきりさせます。迷ったらこちら。</p>
-      <button class="go" id="start" disabled><span id="startText">音声を追加してください</span><svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <p class="seg-d" id="presetDesc"></p>
+      <button class="go" id="start" disabled><span id="startText"></span><svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       <div class="go-meta"><span id="goInfo">&nbsp;</span><span id="estimate"></span></div>
       <div class="priv">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-        <span>音声はアップロードされません</span>
-        <a href="/">Kento Nagaya</a>
+        <span data-i18n="privacy"></span>
+        <a href="https://kentonagaya.com/?utm_source=voixnette&amp;utm_medium=referral&amp;utm_campaign=voixnette_app&amp;utm_content=footer">Kento Nagaya</a>
       </div>
     </div>
   </aside>
@@ -358,16 +428,16 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
     <!-- 空 -->
     <section class="view v-empty on" id="vEmpty">
       <span class="label">Voixnette</span>
-      <h1 class="hero-t">声を、<br><span class="s">くっきり。</span></h1>
-      <p class="hero-l">収録した音声を入れるだけ。雑音を消して、こもりを取り、Podcastにちょうどいい音量に整えます。すべてこのブラウザの中で完結します。</p>
+      <h1 class="hero-t" data-i18n-html="heroTitle"></h1>
+      <p class="hero-l" data-i18n="heroLead"></p>
       <div class="hero-cta">
-        <label class="pick">音声ファイルを選ぶ<input type="file" multiple accept="audio/*,.m4a,.wav,.mp3,.aac,.flac,.ogg,.opus,.caf,.aif,.aiff,.mp4,.mov" data-picker></label>
-        <span class="or">または、ここにドロップ</span>
+        <label class="pick"><span data-i18n="pick"></span><input type="file" multiple accept="audio/*,.m4a,.wav,.mp3,.aac,.flac,.ogg,.opus,.caf,.aif,.aiff,.mp4,.mov" data-picker></label>
+        <span class="or" data-i18n="orDrop"></span>
       </div>
       <ol class="steps3">
-        <li><span class="n">01</span><b>入れる</b><span>収録したままのm4aやwavを</span></li>
-        <li><span class="n">02</span><b>待つ</b><span>30分の音声で、約3〜5分</span></li>
-        <li><span class="n">03</span><b>聴いて保存</b><span>処理前と聴き比べて、MP3・WAVで</span></li>
+        <li><span class="n">01</span><b data-i18n="s1"></b><span data-i18n="s1d"></span></li>
+        <li><span class="n">02</span><b data-i18n="s2"></b><span data-i18n="s2d"></span></li>
+        <li><span class="n">03</span><b data-i18n="s3"></b><span data-i18n="s3d"></span></li>
       </ol>
       <div class="ornament" aria-hidden="true"></div>
     </section>
@@ -386,48 +456,48 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
       <div id="blkWait">
         <div class="run-top wait-top">
           <div class="pct" id="durBig">0:00</div>
-          <div class="now"><b>準備ができました</b><span>ボタンを押すと、下の4つを自動で行います</span></div>
-          <button class="go go-inline" id="startInline" type="button"><span>処理をはじめる</span><svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <div class="now"><b data-i18n="readyT"></b><span data-i18n="readyD"></span></div>
+          <button class="go go-inline" id="startInline" type="button"><span></span><svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </div>
         <ol class="steps4 pre">
-          <li><span class="n">01</span>読み込み<small>ファイルを開いて準備</small></li>
-          <li><span class="n">02</span>雑音を除去<small>AIが声と雑音を聞き分ける</small></li>
-          <li><span class="n">03</span>音を整える<small>音量とこもりを調整</small></li>
-          <li><span class="n">04</span>書き出し<small>MP3とWAVを作成</small></li>
+          <li><span class="n">01</span><span data-i18n="st1"></span><small data-i18n="st1d"></small></li>
+          <li><span class="n">02</span><span data-i18n="st2"></span><small data-i18n="st2d"></small></li>
+          <li><span class="n">03</span><span data-i18n="st3"></span><small data-i18n="st3d"></small></li>
+          <li><span class="n">04</span><span data-i18n="st4"></span><small data-i18n="st4d"></small></li>
         </ol>
       </div>
 
       <div id="blkRun" hidden>
         <div class="run-top">
           <div class="pct" id="pct">0<small>%</small></div>
-          <div class="now"><b id="nowText">準備しています</b><span id="nowSub">このタブは開いたままにしてください</span></div>
+          <div class="now"><b id="nowText"></b><span id="nowSub"></span></div>
         </div>
         <ol class="steps4" id="steps4">
-          <li><span class="n">01</span>読み込み</li>
-          <li><span class="n">02</span>雑音を除去</li>
-          <li><span class="n">03</span>音を整える</li>
-          <li><span class="n">04</span>書き出し</li>
+          <li><span class="n">01</span><span data-i18n="st1"></span></li>
+          <li><span class="n">02</span><span data-i18n="st2"></span></li>
+          <li><span class="n">03</span><span data-i18n="st3"></span></li>
+          <li><span class="n">04</span><span data-i18n="st4"></span></li>
         </ol>
       </div>
 
       <div id="blkErr" hidden><p class="err-msg" id="errMsg"></p></div>
 
       <div class="wave-wrap" id="waveWrap">
-        <canvas id="wave" aria-label="波形"></canvas>
+        <canvas id="wave" data-i18n-aria="wave"></canvas>
         <span class="hover-t" id="hoverT"></span>
       </div>
 
       <div id="blkDone" hidden>
         <div class="player">
-          <button class="play" id="play" type="button" aria-label="再生">
+          <button class="play" id="play" type="button" data-i18n-aria="play">
             <svg id="icPlay" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
             <svg id="icPause" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" hidden><path d="M6 4h4.5v16H6zM13.5 4H18v16h-4.5z"/></svg>
           </button>
           <span class="time"><b id="tCur">0:00</b> / <span id="tDur">0:00</span></span>
-          <div class="legend"><span class="la"><i></i>処理後</span><span class="lb"><i></i>処理前</span></div>
-          <div class="ab" id="ab" data-v="after" role="group" aria-label="聴き比べ">
-            <button type="button" data-v="after" aria-pressed="true">処理後を聴く</button>
-            <button type="button" data-v="before" aria-pressed="false">処理前を聴く</button>
+          <div class="legend"><span class="la"><i></i><span data-i18n="after"></span></span><span class="lb"><i></i><span data-i18n="before"></span></span></div>
+          <div class="ab" id="ab" data-v="after" role="group" data-i18n-aria="abAria">
+            <button type="button" data-v="after" aria-pressed="true" data-i18n="hearAfter"></button>
+            <button type="button" data-v="before" aria-pressed="false" data-i18n="hearBefore"></button>
           </div>
         </div>
         <ul class="results" id="results"></ul>
@@ -435,12 +505,12 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
         <div class="dls">
           <a class="dl main" id="dlMp3" download>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-            <span><b>MP3 をダウンロード</b><small id="mp3Sub">配信用</small></span>
+            <span><b data-i18n="dlMp3"></b><small id="mp3Sub"></small></span>
             <svg class="ar" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v14M6 12l6 6 6-6"/></svg>
           </a>
           <a class="dl sub" id="dlWav" download>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 10v4M8 6v12M12 9v6M16 4v16M20 10v4"/></svg>
-            <span><b>WAV</b><small id="wavSub">編集用</small></span>
+            <span><b>WAV</b><small id="wavSub"></small></span>
             <svg class="ar" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v14M6 12l6 6 6-6"/></svg>
           </a>
         </div>
@@ -453,34 +523,10 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
 <dialog id="help" aria-labelledby="helpTitle">
   <div class="dlg">
     <div class="dlg-h">
-      <div><span class="label">How to use</span><h2 id="helpTitle">使い方とコツ</h2></div>
-      <button class="help" type="button" id="helpClose" aria-label="閉じる" style="font-style:normal;font-family:var(--ja);font-size:16px">×</button>
+      <div><span class="label">How to use</span><h2 id="helpTitle" data-i18n="helpTitle"></h2></div>
+      <button class="help" type="button" id="helpClose" data-i18n-aria="close" style="font-style:normal;font-family:var(--ja);font-size:16px">×</button>
     </div>
-    <h3>うまく使うコツ</h3>
-    <ul>
-      <li><b>ノイズ除去や音量調整をする前の、収録したままのファイル</b>を入れてください。処理済みのファイルだと、声の高い音がすでに削られていて、こもりを直しきれません。</li>
-      <li>m4aをWAVに変換してから入れる必要はありません（変換しても音質は上がりません）。</li>
-      <li>30分の音声で3〜5分ほどかかります。処理中はこのタブを開いたままにしてください。</li>
-      <li>長い音声はパソコン（Chrome・Edge・Safari）がおすすめです。スマートフォンではメモリ不足で止まることがあります。</li>
-      <li>書き出したWAVをAudacityなどで編集するときは、ノイズ除去やノーマライズを重ねてかけないでください。</li>
-      <li>初回だけAIエンジン（約34MB）を読み込みます。2回目からはブラウザに保存されたものを使います。</li>
-    </ul>
-    <h3>「クリア」と「ナチュラル」</h3>
-    <ul>
-      <li><b>クリア</b>：雑音をしっかり消し、声の輪郭をはっきりさせます。迷ったらこちら。</li>
-      <li><b>ナチュラル</b>：部屋の空気感を少し残し、強調も控えめにします。</li>
-    </ul>
-    <h3>中で行っていること</h3>
-    <ol>
-      <li>読み込み：48kHz・モノラルに揃えます。</li>
-      <li>音割れ修復：波形の頭が切れた部分を補間して作り直します。</li>
-      <li>雑音の除去：音声専用AI（DeepFilterNet3）で、声と雑音を分けて雑音だけを取り除きます。</li>
-      <li>音量の均一化：話している部分だけを見て、話し手ごとの音量差を揃えます。</li>
-      <li>こもり補正：80Hz以下をカットし、250Hzを下げ、3kHzと5kHz以上を持ち上げ、軽くコンプレッサーをかけます。</li>
-      <li>仕上げ：Podcast標準の -16 LUFS に合わせ、ピークを -1.5dBTP 以下に抑えます。</li>
-      <li>書き出し：配信用MP3（44.1kHz・128kbps）と編集用WAV（48kHz・16bit）。</li>
-    </ol>
-    <p class="credit">使用しているオープンソース：DeepFilterNet3（MIT / Apache-2.0）、lamejs（LGPL-3.0, LAME）。<a href="/voixnette/THIRD_PARTY_NOTICES.txt">ライセンス表記</a></p>
+    <div id="helpBody"></div>
   </div>
 </dialog>
 
@@ -490,6 +536,129 @@ const queueEl = $('#queue'), startBtn = $('#start'), stage = $('#stage'), audio 
 const items = [];
 let seq = 0, running = false, engineState = 'idle', selectedId = null, view = 'after', revealT = 1, revealStart = 0;
 const announce = (t) => { const a = document.getElementById('announce'); a.textContent = ''; setTimeout(() => { a.textContent = t; }, 50); };
+
+// ---------- 表示言語（日本語 / English）
+const I18N = {
+  ja: {
+    title: 'Voixnette | 声を、くっきり。',
+    desc: 'Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正するツール。雑音を消し、こもりを取り、Podcast標準の音量に整えます。音声はアップロードされません。',
+    help: '使い方とコツ', close: '閉じる', railAria: 'ファイルと設定',
+    stIdle: 'ブラウザ内で処理', stLoading: 'AIを準備中', stReady: '<span class="long">準備OK・</span>ブラウザ内で処理', stError: 'AIを読み込めませんでした', stUnsupported: 'このブラウザには対応していません',
+    add: '音声を追加', addFormats: 'm4a・wav・mp3 など', addDrop: '／ドロップでもOK',
+    queueAria: '追加したファイル', queueEmpty: '追加した音声が、ここに並びます', remove: '一覧から外す',
+    finishAria: '仕上がり', clear: 'クリア', natural: 'ナチュラル',
+    descClear: 'ノイズをしっかり消して、声をはっきりさせます。迷ったらこちら。', descNatural: '部屋の空気感を少し残して、自然な仕上がりにします。',
+    startNone: '音声を追加してください', startOne: '処理をはじめる', startMany: '{n}件の処理をはじめる', startRunning: '処理中…（{i} / {n}）', startDone: 'すべて完了しました', startUnsupported: 'このブラウザでは使えません',
+    estimate: '目安 約{m}分', goInfo: '{n}件・完了 {d}', privacy: '音声はアップロードされません',
+    heroTitle: '声を、<br><span class="s">くっきり。</span>',
+    heroLead: '収録した音声を入れるだけ。雑音を消して、こもりを取り、Podcastにちょうどいい音量に整えます。すべてこのブラウザの中で完結します。',
+    pick: '音声ファイルを選ぶ', orDrop: 'または、ここにドロップ',
+    s1: '入れる', s1d: '収録したままのm4aやwavを', s2: '待つ', s2d: '30分の音声で、約3〜5分', s3: '聴いて保存', s3d: '処理前と聴き比べて、MP3・WAVで',
+    bWaiting: '待機中', bRunning: '処理中', bDone: '完了', bError: 'エラー',
+    stereo: 'ステレオ', mono: 'モノラル', finishClear: '仕上がり：クリア', finishNatural: '仕上がり：ナチュラル', metaSep: '　・　',
+    readyT: '準備ができました', readyD: 'ボタンを押すと、下の4つを自動で行います',
+    st1: '読み込み', st1d: 'ファイルを開いて準備', st2: '雑音を除去', st2d: 'AIが声と雑音を聞き分ける', st3: '音を整える', st3d: '音量とこもりを調整', st4: '書き出し', st4d: 'MP3とWAVを作成',
+    now: ['音声を読み込んでいます', '音割れを直しています', 'AIで雑音を取り除いています', '話し手の音量を揃えています', 'こもりを取っています', '音量をPodcast標準に整えています', 'ファイルに書き出しています'],
+    nowPrep: '準備しています', keepOpen: 'このタブは開いたままにしてください', almost: 'まもなく完了', left: '残り 約{m}分', sep: '・',
+    qWaiting: '待機中', qDone: '完了', qError: '処理できませんでした',
+    wave: '波形（クリックでその位置から再生）', play: '再生', pause: '一時停止', after: '処理後', before: '処理前', abAria: '聴き比べ', hearAfter: '処理後を聴く', hearBefore: '処理前を聴く',
+    rNoise: '雑音を取り除きました', rLoud: '音量をPodcast標準に揃えました', rClip: '音割れを修復しました', rNoClip: '音割れはありませんでした', more: '詳しい数値', less: '数値を閉じる',
+    nLoud: '音量（LUFS）', nTarget: '目標 -16', nPeak: 'ピーク（dBTP）', nLimit: '上限 -1.5', nClip: '音割れ修復', nTime: '処理時間', nAudio: '音声 {d}',
+    dlMp3: 'MP3 をダウンロード', mp3Sub: '配信用・{s}', wavSub: '編集用・{s}',
+    eDecode: 'このファイルは読み込めませんでした。Chrome・Safari・Edgeで試すか、別の形式（wav・mp3など）にしてから入れてください。',
+    eMemory: 'メモリが足りず、途中で止まりました。パソコンで試すか、音声を短く分けてから入れてください。',
+    eOther: '処理中にエラーが発生しました（{m}）。ページを再読み込みして、もう一度お試しください。',
+    aStart: '{f} の処理を始めました', aDone: '{f} の処理が完了しました。MP3とWAVをダウンロードできます',
+    helpTitle: '使い方とコツ',
+    helpBody: `<h3>うまく使うコツ</h3><ul>
+      <li><b>ノイズ除去や音量調整をする前の、収録したままのファイル</b>を入れてください。処理済みのファイルだと、声の高い音がすでに削られていて、こもりを直しきれません。</li>
+      <li>m4aをWAVに変換してから入れる必要はありません（変換しても音質は上がりません）。</li>
+      <li>30分の音声で3〜5分ほどかかります。処理中はこのタブを開いたままにしてください。</li>
+      <li>長い音声はパソコン（Chrome・Edge・Safari）がおすすめです。スマートフォンではメモリ不足で止まることがあります。</li>
+      <li>書き出したWAVをAudacityなどで編集するときは、ノイズ除去やノーマライズを重ねてかけないでください。</li>
+      <li>初回だけAIエンジン（約34MB）を読み込みます。2回目からはブラウザに保存されたものを使います。</li></ul>
+      <h3>「クリア」と「ナチュラル」</h3><ul>
+      <li><b>クリア</b>：雑音をしっかり消し、声の輪郭をはっきりさせます。迷ったらこちら。</li>
+      <li><b>ナチュラル</b>：部屋の空気感を少し残し、強調も控えめにします。</li></ul>
+      <h3>中で行っていること</h3><ol>
+      <li>読み込み：48kHz・モノラルに揃えます。</li>
+      <li>音割れ修復：波形の頭が切れた部分を補間して作り直します。</li>
+      <li>雑音の除去：音声専用AI（DeepFilterNet3）で、声と雑音を分けて雑音だけを取り除きます。</li>
+      <li>音量の均一化：話している部分だけを見て、話し手ごとの音量差を揃えます。</li>
+      <li>こもり補正：80Hz以下をカットし、250Hzを下げ、3kHzと5kHz以上を持ち上げ、軽くコンプレッサーをかけます。</li>
+      <li>仕上げ：Podcast標準の -16 LUFS に合わせ、ピークを -1.5dBTP 以下に抑えます。</li>
+      <li>書き出し：配信用MP3（44.1kHz・128kbps）と編集用WAV（48kHz・16bit）。</li></ol>
+      <p class="credit">使用しているオープンソース：DeepFilterNet3（MIT / Apache-2.0）、lamejs（LGPL-3.0, LAME）。<a href="/voixnette/THIRD_PARTY_NOTICES.txt">ライセンス表記</a>　・　制作：<a href="https://kentonagaya.com/?utm_source=voixnette&utm_medium=referral&utm_campaign=voixnette_app&utm_content=help">Kento Nagaya</a></p>`,
+  },
+  en: {
+    title: 'Voixnette | Your voice, crystal clear.',
+    desc: 'Clean up podcast recordings right in your browser: remove background noise, clear up muffled speech and set podcast-standard loudness. Nothing is uploaded.',
+    help: 'How to use', close: 'Close', railAria: 'Files and settings',
+    stIdle: 'Runs in your browser', stLoading: 'Loading AI', stReady: '<span class="long">Ready · </span>runs in your browser', stError: 'Couldn’t load the AI', stUnsupported: 'This browser isn’t supported',
+    add: 'Add audio', addFormats: 'm4a, wav, mp3 and more', addDrop: ' — or drop here',
+    queueAria: 'Added files', queueEmpty: 'Your audio files will appear here', remove: 'Remove from list',
+    finishAria: 'Finish', clear: 'Clear', natural: 'Natural',
+    descClear: 'Removes noise thoroughly for a crisp, present voice. Start here if unsure.', descNatural: 'Keeps a little room tone for a softer, more natural sound.',
+    startNone: 'Add audio to begin', startOne: 'Start processing', startMany: 'Process {n} files', startRunning: 'Processing… ({i} / {n})', startDone: 'All done', startUnsupported: 'Not supported in this browser',
+    estimate: 'About {m} min', goInfo: '{n} {files} · {d} done', privacy: 'Your audio never leaves this device',
+    heroTitle: 'Your voice,<br><span class="s">crystal clear.</span>',
+    heroLead: 'Drop in your recording. Voixnette removes background noise, lifts muffled speech and sets podcast-ready loudness — all inside this browser.',
+    pick: 'Choose audio files', orDrop: 'or drop them here',
+    s1: 'Add', s1d: 'Straight from the recorder — m4a or wav', s2: 'Wait', s2d: 'About 3–5 min for 30 min of audio', s3: 'Listen & save', s3d: 'Compare before and after, export MP3 or WAV',
+    bWaiting: 'Waiting', bRunning: 'Processing', bDone: 'Done', bError: 'Error',
+    stereo: 'Stereo', mono: 'Mono', finishClear: 'Finish: Clear', finishNatural: 'Finish: Natural', metaSep: '  ·  ',
+    readyT: 'Ready to go', readyD: 'Press the button and these four steps run automatically',
+    st1: 'Load', st1d: 'Opens and prepares the file', st2: 'Remove noise', st2d: 'AI separates voice from noise', st3: 'Polish', st3d: 'Balances loudness and clarity', st4: 'Export', st4d: 'Creates MP3 and WAV',
+    now: ['Reading the audio', 'Repairing clipping', 'Removing noise with AI', 'Evening out speaker levels', 'Clearing up muffled tones', 'Setting podcast-standard loudness', 'Writing your files'],
+    nowPrep: 'Getting ready', keepOpen: 'Please keep this tab open', almost: 'Almost done', left: 'About {m} min left', sep: ' · ',
+    qWaiting: 'Waiting', qDone: 'Done', qError: 'Couldn’t process',
+    wave: 'Waveform (click to play from that point)', play: 'Play', pause: 'Pause', after: 'After', before: 'Before', abAria: 'Compare', hearAfter: 'Hear after', hearBefore: 'Hear before',
+    rNoise: 'Noise removed', rLoud: 'Loudness set to podcast standard', rClip: 'Clipping repaired', rNoClip: 'No clipping found', more: 'Show details', less: 'Hide details',
+    nLoud: 'Loudness (LUFS)', nTarget: 'target -16', nPeak: 'Peak (dBTP)', nLimit: 'limit -1.5', nClip: 'Clipping repaired', nTime: 'Processing time', nAudio: 'audio {d}',
+    dlMp3: 'Download MP3', mp3Sub: 'For publishing · {s}', wavSub: 'For editing · {s}',
+    eDecode: 'This file couldn’t be read. Try Chrome, Safari or Edge, or convert it to wav or mp3 first.',
+    eMemory: 'Ran out of memory. Try on a computer, or split the audio into shorter parts.',
+    eOther: 'Something went wrong ({m}). Please reload the page and try again.',
+    aStart: 'Started processing {f}', aDone: '{f} is done. MP3 and WAV are ready to download',
+    helpTitle: 'Tips & how it works',
+    helpBody: `<h3>Tips</h3><ul>
+      <li>Use <b>the original recording, before any noise reduction or loudness changes</b>. Files that have already been processed have lost their high frequencies, so muffled speech can’t be fully restored.</li>
+      <li>No need to convert m4a to WAV first — converting doesn’t improve quality.</li>
+      <li>30 minutes of audio takes about 3–5 minutes. Please keep this tab open while it runs.</li>
+      <li>For long recordings, use a computer (Chrome, Edge or Safari). Phones may run out of memory.</li>
+      <li>If you edit the WAV in Audacity or similar, don’t apply noise reduction or normalization again.</li>
+      <li>The AI engine (about 34 MB) loads the first time only; after that your browser keeps a copy.</li></ul>
+      <h3>Clear vs. Natural</h3><ul>
+      <li><b>Clear</b>: removes noise thoroughly and sharpens the voice. Start here if unsure.</li>
+      <li><b>Natural</b>: keeps a little room tone with gentler enhancement.</li></ul>
+      <h3>What happens inside</h3><ol>
+      <li>Load: converts to 48 kHz mono.</li>
+      <li>Clipping repair: rebuilds flattened waveform peaks by interpolation.</li>
+      <li>Noise removal: a speech-specific AI (DeepFilterNet3) separates voice from noise and removes only the noise.</li>
+      <li>Leveling: evens out differences between speakers, looking only at speech (silence isn’t boosted).</li>
+      <li>Clarity: high-pass at 80 Hz, −3 dB at 250 Hz, +7 dB at 3 kHz, +9 dB shelf above 5 kHz, plus gentle compression.</li>
+      <li>Loudness: targets −16 LUFS (podcast standard) with peaks kept below −1.5 dBTP.</li>
+      <li>Export: MP3 for publishing (44.1 kHz, 128 kbps) and WAV for editing (48 kHz, 16-bit).</li></ol>
+      <p class="credit">Open source used: DeepFilterNet3 (MIT / Apache-2.0), lamejs (LGPL-3.0, LAME). <a href="/voixnette/THIRD_PARTY_NOTICES.txt">Licenses</a> · Made by <a href="https://kentonagaya.com/?utm_source=voixnette&utm_medium=referral&utm_campaign=voixnette_app&utm_content=help">Kento Nagaya</a></p>`,
+  },
+};
+let lang = document.documentElement.lang === 'en' ? 'en' : 'ja';
+const t = (k, v = {}) => { let x = I18N[lang][k] ?? I18N.ja[k] ?? k; if (typeof x === 'string') x = x.replace(/\{(\w+)\}/g, (_, n) => v[n] ?? ''); return x; };
+function applyLang(l, save) {
+  lang = l === 'en' ? 'en' : 'ja';
+  document.documentElement.lang = lang;
+  if (save) { try { localStorage.setItem('voixnette-lang', lang); } catch {} }
+  document.title = t('title');
+  document.querySelector('meta[name=description]').content = t('desc');
+  document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-html]').forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
+  document.querySelectorAll('[data-i18n-aria]').forEach((el) => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
+  document.querySelectorAll('[data-i18n-title]').forEach((el) => el.setAttribute('title', t(el.dataset.i18nTitle)));
+  document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  document.getElementById('queue').dataset.empty = t('queueEmpty');
+  document.getElementById('helpBody').innerHTML = t('helpBody');
+}
+applyLang(lang);
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---------- 動作環境
@@ -514,17 +683,21 @@ mp3Worker.onmessage = (e) => {
   if (m.type === 'progress') p.onProgress(m.pct);
   else { mp3Pending.delete(m.id); m.type === 'done' ? p.resolve(m.blob) : p.reject(new Error(m.message)); }
 };
+let engineState_m = {};
 function setEngine(state, m = {}) {
-  engineState = state; $('#engine').dataset.state = state;
-  $('#engineText').innerHTML = state === 'loading' ? `AIを準備中${m.total ? ` <span class="mono">${Math.round(m.loaded / m.total * 100)}%</span>` : ''}`
-    : state === 'ready' ? '<span class="long">準備OK・</span>ブラウザ内で処理' : state === 'error' ? 'AIを読み込めませんでした' : 'ブラウザ内で処理';
+  engineState = state; $('#engine').dataset.state = envOk ? state : 'error';
+  if (m.total) engineState_m = m;
+  const mm = m.total ? m : engineState_m;
+  setTimeout(() => { $('#engine').title = $('#engineText').textContent; });
+  $('#engineText').innerHTML = !envOk ? t('stUnsupported') : state === 'loading' ? `${t('stLoading')}${mm.total ? ` <span class="mono">${Math.round(mm.loaded / mm.total * 100)}%</span>` : ''}`
+    : state === 'ready' ? t('stReady') : state === 'error' ? t('stError') : t('stIdle');
 }
 const preloadEngine = () => { if (engineState === 'idle' && envOk) { setEngine('loading'); worker.postMessage({ type: 'preload' }); } };
 
 // ---------- 小道具
 const fmtDur = (s) => { if (!isFinite(s) || s == null) return '—'; s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60; return h ? `${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}` : `${m}:${String(ss).padStart(2,'0')}`; };
 const fmtMB = (b) => b >= 1e6 ? `${(b / 1048576).toFixed(1)}MB` : `${Math.max(1, Math.round(b / 1024))}KB`;
-const fmtLeft = (s) => s < 60 ? 'まもなく完了' : `残り 約${Math.round(s / 60)}分`;
+const fmtLeft = (s) => s < 60 ? t('almost') : t('left', { m: Math.round(s / 60) });
 const cssCache = {}; const css = (v) => cssCache[v] ??= getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const ICON = {
   wait: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 10v4M8 7v10M12 9v6M16 5v14M20 10v4"/></svg>',
@@ -546,13 +719,14 @@ function addFiles(list) {
     const li = document.createElement('li');
     li.className = 'q'; li.dataset.state = 'waiting'; li.tabIndex = 0;
     li.innerHTML = `<span class="ring"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bg" cx="18" cy="18" r="15"/><circle class="fg" cx="18" cy="18" r="15"/></svg><span class="ic">${ICON.wait}</span></span>
-      <span class="q-t"><b></b><small>待機中</small></span>
-      <button class="x" type="button" aria-label="一覧から外す" title="一覧から外す"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`;
+      <span class="q-t"><b></b><small></small></span>
+      <button class="x" type="button"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`;
     li.querySelector('b').textContent = file.name; li.title = file.name;
     li.onclick = (e) => { if (!e.target.closest('.x')) select(it.id); };
     li.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(it.id); } };
     li.querySelector('.x').onclick = () => removeItem(it);
     it.li = li; items.push(it); queueEl.append(li); first = first || it;
+    qText(it);
     const a = new Audio(), u = URL.createObjectURL(file);
     a.preload = 'metadata'; a.src = u;
     a.onloadedmetadata = () => { if (isFinite(a.duration)) { it.duration = a.duration; qText(it); refresh(); if (selectedId === it.id) render(); } URL.revokeObjectURL(u); };
@@ -570,9 +744,10 @@ function removeItem(it) {
 }
 function qText(it) {
   const s = it.li.querySelector('small'), d = it.duration ? fmtDur(it.duration) : '';
-  s.textContent = it.state === 'waiting' ? [d, '待機中'].filter(Boolean).join('・')
-    : it.state === 'running' ? `${Math.floor(it.overall)}%・${STEPS[stepOf(it)]}`
-    : it.state === 'done' ? `${d}・完了` : '処理できませんでした';
+  s.textContent = it.state === 'waiting' ? [d, t('qWaiting')].filter(Boolean).join(t('sep'))
+    : it.state === 'running' ? `${Math.floor(it.overall)}%${t('sep')}${t('st' + (Math.min(3, stepOf(it)) + 1))}`
+    : it.state === 'done' ? `${d}${t('sep')}${t('qDone')}` : t('qError');
+  it.li.querySelector('.x').setAttribute('aria-label', t('remove')); it.li.querySelector('.x').title = t('remove');
   const fg = it.li.querySelector('.fg');
   fg.style.strokeDashoffset = String(94.25 * (1 - (it.state === 'done' ? 1 : it.overall / 100)));
   it.li.querySelector('.ic').innerHTML = it.state === 'done' ? ICON.done : it.state === 'error' ? ICON.err : it.state === 'running' ? `<span class="mono" style="font-size:9.5px">${Math.floor(it.overall)}</span>` : ICON.wait;
@@ -581,16 +756,16 @@ function refresh() {
   const waiting = items.filter((i) => i.state === 'waiting');
   startBtn.disabled = running || !waiting.length || !envOk;
   const idx = items.filter((i) => i.state === 'done' || i.state === 'error').length;
-  $('#startText').textContent = !envOk ? 'このブラウザでは使えません'
-    : running ? `処理中…（${Math.min(idx + 1, items.length)} / ${items.length}）`
-    : waiting.length ? (waiting.length > 1 ? `${waiting.length}件の処理をはじめる` : '処理をはじめる')
-    : items.length ? 'すべて完了しました' : '音声を追加してください';
+  $('#startText').textContent = !envOk ? t('startUnsupported')
+    : running ? t('startRunning', { i: Math.min(idx + 1, items.length), n: items.length })
+    : waiting.length ? (waiting.length > 1 ? t('startMany', { n: waiting.length }) : t('startOne'))
+    : items.length ? t('startDone') : t('startNone');
   const total = waiting.reduce((s, i) => s + (i.duration || 0), 0);
-  $('#estimate').textContent = total && !running ? `目安 約${Math.max(1, Math.round(total / 60 * 0.14))}分` : '';
-  $('#goInfo').textContent = items.length ? `${items.length}件・完了 ${items.filter((i) => i.state === 'done').length}` : ' ';
+  $('#estimate').textContent = total && !running ? t('estimate', { m: Math.max(1, Math.round(total / 60 * 0.14)) }) : '';
+  $('#goInfo').textContent = items.length ? t('goInfo', { n: items.length, d: items.filter((i) => i.state === 'done').length, files: items.length === 1 ? 'file' : 'files' }) : ' ';
   $('#count').textContent = items.length ? String(items.length).padStart(2, '0') : '';
   $('#startInline').disabled = startBtn.disabled;
-  $('#startInline span').textContent = waiting.length > 1 ? `${waiting.length}件の処理をはじめる` : '処理をはじめる';
+  $('#startInline span').textContent = waiting.length > 1 ? t('startMany', { n: waiting.length }) : t('startOne');
 }
 
 // 入力：ボタン・ドロップ・どこにでもドロップ
@@ -603,16 +778,15 @@ window.addEventListener('dragover', (e) => e.preventDefault());
 window.addEventListener('drop', (e) => { e.preventDefault(); dragDepth = 0; stage.classList.remove('drag'); $('#add').classList.remove('over'); if (e.dataTransfer?.files?.length) addFiles(e.dataTransfer.files); });
 
 // 仕上がりの説明
-const PRESET_DESC = { clear: 'ノイズをしっかり消して、声をはっきりさせます。迷ったらこちら。', natural: '部屋の空気感を少し残して、自然な仕上がりにします。' };
-document.querySelectorAll('input[name=preset]').forEach((r) => r.addEventListener('change', () => { $('#presetDesc').textContent = PRESET_DESC[r.value]; }));
+const presetDesc = () => { $('#presetDesc').textContent = t(document.querySelector('input[name=preset]:checked').value === 'natural' ? 'descNatural' : 'descClear'); };
+document.querySelectorAll('input[name=preset]').forEach((r) => r.addEventListener('change', presetDesc));
+presetDesc();
 
 // ---------- 処理
-const STEPS = ['読み込み', '雑音を除去', '音を整える', '書き出し'];
 const STAGE_OF = { decode: 0, 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, mp3: 6 };
 const WEIGHT = [[0, 8], [8, 10], [10, 78], [78, 80], [80, 83], [83, 88], [88, 100]];
 const STEP_OF_STAGE = [0, 1, 1, 2, 2, 2, 3];
 const STEP_RANGE = [[0, 8], [8, 78], [78, 88], [88, 100]];
-const NOW_TEXT = ['音声を読み込んでいます', '音割れを直しています', 'AIで雑音を取り除いています', '話し手の音量を揃えています', 'こもりを取っています', '音量をPodcast標準に整えています', 'ファイルに書き出しています'];
 const stepOf = (it) => it.state === 'done' ? 4 : Math.max(0, STEP_OF_STAGE[Math.max(0, it.stage)]);
 
 $('#startInline').onclick = () => startBtn.click();
@@ -642,7 +816,7 @@ async function runItem(it) {
   it.state = 'running'; it.li.dataset.state = 'running'; it.t0 = performance.now();
   it.preset = document.querySelector('input[name=preset]:checked').value;
   select(it.id); render();
-  announce(`${it.file.name} の処理を始めました`);
+  announce(t('aStart', { f: it.file.name }));
   it.li.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
   const base = it.file.name.replace(/\.[^.]+$/, '');
   try {
@@ -669,11 +843,11 @@ async function runItem(it) {
     it.result = { mp3Url, wavUrl, srcUrl, base, mp3Size: mp3.size, wavSize: wavBlob.size, stats: res.stats };
     it.state = 'done'; it.li.dataset.state = 'done'; it.overall = 100;
     if (selectedId === it.id) { revealStart = performance.now(); revealT = 0; }
-    announce(`${it.file.name} の処理が完了しました。MP3とWAVをダウンロードできます`);
+    announce(t('aDone', { f: it.file.name }));
   } catch (err) {
     console.error(err);
-    it.state = 'error'; it.li.dataset.state = 'error'; it.error = friendlyError(err);
-    announce(`${it.file.name}：${it.error}`);
+    it.state = 'error'; it.li.dataset.state = 'error'; it.errorRaw = err;
+    announce(`${it.file.name}: ${friendlyError(err)}`);
   }
   qText(it);
   if (selectedId === it.id) render();
@@ -681,9 +855,9 @@ async function runItem(it) {
 }
 function friendlyError(err) {
   const msg = String(err?.message || err);
-  if (/decode|EncodingError|Unable to decode|ファイルを読み込めません/i.test(msg)) return 'このファイルは読み込めませんでした。Chrome・Safari・Edgeで試すか、別の形式（wav・mp3など）にしてから入れてください。';
-  if (/memory|allocation|Array buffer|RangeError/i.test(msg)) return 'メモリが足りず、途中で止まりました。パソコンで試すか、音声を短く分けてから入れてください。';
-  return `処理中にエラーが発生しました（${msg}）。ページを再読み込みして、もう一度お試しください。`;
+  if (/decode|EncodingError|Unable to decode|ファイルを読み込めません/i.test(msg)) return t('eDecode');
+  if (/memory|allocation|Array buffer|RangeError/i.test(msg)) return t('eMemory');
+  return t('eOther', { m: msg });
 }
 
 // ---------- 音声の変換（変更なし）
@@ -734,9 +908,9 @@ function render() {
   $('#vFile').className = `view v-file on v-${it.state === 'running' ? 'run' : it.state}`;
   $('#fName').textContent = it.file.name;
   $('#fName').title = it.file.name;
-  $('#fMeta').textContent = [it.duration ? fmtDur(it.duration) : null, it.channels ? (it.channels > 1 ? 'ステレオ' : 'モノラル') : null, fmtMB(it.file.size), it.preset ? (it.preset === 'natural' ? '仕上がり：ナチュラル' : '仕上がり：クリア') : null].filter(Boolean).join('　・　');
+  $('#fMeta').textContent = [it.duration ? fmtDur(it.duration) : null, it.channels ? t(it.channels > 1 ? 'stereo' : 'mono') : null, fmtMB(it.file.size), it.preset ? t(it.preset === 'natural' ? 'finishNatural' : 'finishClear') : null].filter(Boolean).join(t('metaSep'));
   const B = $('#fBadge');
-  const map = { waiting: ['', '待機中', 'Ready'], running: ['run', '処理中', 'Processing'], done: ['done', '完了', 'Done'], error: ['err', 'エラー', 'Error'] }[it.state];
+  const map = { waiting: ['', t('bWaiting')], running: ['run', t('bRunning')], done: ['done', t('bDone')], error: ['err', t('bError')] }[it.state];
   B.className = 'badge ' + map[0]; B.innerHTML = (it.state === 'done' ? ICON.done : '') + map[1];
   $('#fLabel').textContent = `File ${String(items.indexOf(it) + 1).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`;
   $('#durBig').textContent = it.duration ? fmtDur(it.duration) : '—';
@@ -745,7 +919,7 @@ function render() {
   $('#blkDone').hidden = it.state !== 'done';
   $('#blkErr').hidden = it.state !== 'error';
   $('#waveWrap').hidden = it.state === 'error';
-  if (it.state === 'error') $('#errMsg').textContent = it.error;
+  if (it.state === 'error') $('#errMsg').textContent = friendlyError(it.errorRaw);
   startBtn.classList.toggle('quiet', it.state === 'waiting');
   if (it.state === 'running') renderRun(it);
   if (it.state === 'done') renderDone(it);
@@ -754,9 +928,9 @@ function render() {
 
 function renderRun(it) {
   $('#pct').innerHTML = `${Math.floor(it.overall)}<small>%</small>`;
-  $('#nowText').textContent = NOW_TEXT[Math.max(0, it.stage)] || '準備しています';
+  $('#nowText').textContent = t('now')[Math.max(0, it.stage)] || t('nowPrep');
   const el = (performance.now() - it.t0) / 1000;
-  $('#nowSub').textContent = it.overall > 12 ? `${fmtLeft(el * (100 - it.overall) / it.overall)}・このタブは開いたままにしてください` : 'このタブは開いたままにしてください';
+  $('#nowSub').textContent = it.overall > 12 ? `${fmtLeft(el * (100 - it.overall) / it.overall)}${t('sep')}${t('keepOpen')}` : t('keepOpen');
   const cur = stepOf(it);
   [...$('#steps4').children].forEach((li, i) => {
     const [a, b] = STEP_RANGE[i];
@@ -769,19 +943,17 @@ function renderRun(it) {
 
 function renderDone(it) {
   const R = it.result, s = R.stats;
-  $('#dlMp3').href = R.mp3Url; $('#dlMp3').download = `${R.base}_clean.mp3`; $('#mp3Sub').textContent = `配信用・${fmtMB(R.mp3Size)}`;
-  $('#dlWav').href = R.wavUrl; $('#dlWav').download = `${R.base}_clean.wav`; $('#wavSub').textContent = `編集用・${fmtMB(R.wavSize)}`;
+  $('#dlMp3').href = R.mp3Url; $('#dlMp3').download = `${R.base}_clean.mp3`; $('#mp3Sub').textContent = t('mp3Sub', { s: fmtMB(R.mp3Size) });
+  $('#dlWav').href = R.wavUrl; $('#dlWav').download = `${R.base}_clean.wav`; $('#wavSub').textContent = t('wavSub', { s: fmtMB(R.wavSize) });
   $('#results').innerHTML = [
-    '雑音を取り除きました',
-    '音量をPodcast標準に揃えました',
-    s.repaired ? '音割れを修復しました' : '音割れはありませんでした',
-  ].map((t) => `<li>${ICON.check}${t}</li>`).join('') + '<li style="margin-left:auto"><button class="more" type="button" id="moreBtn" aria-expanded="false">詳しい数値</button></li>';
-  $('#moreBtn').onclick = () => { const n = $('#nums'); n.hidden = !n.hidden; $('#moreBtn').setAttribute('aria-expanded', String(!n.hidden)); $('#moreBtn').textContent = n.hidden ? '詳しい数値' : '数値を閉じる'; };
+    t('rNoise'), t('rLoud'), s.repaired ? t('rClip') : t('rNoClip'),
+  ].map((x) => `<li>${ICON.check}${x}</li>`).join('') + `<li style="margin-left:auto"><button class="more" type="button" id="moreBtn" aria-expanded="${!$('#nums').hidden}">${$('#nums').hidden ? t('more') : t('less')}</button></li>`;
+  $('#moreBtn').onclick = () => { const n = $('#nums'); n.hidden = !n.hidden; $('#moreBtn').setAttribute('aria-expanded', String(!n.hidden)); $('#moreBtn').textContent = n.hidden ? t('more') : t('less'); };
   $('#nums').innerHTML = `
-    <div><dt>音量（LUFS）</dt><dd>${isFinite(s.lufsBefore) ? s.lufsBefore.toFixed(1) : '—'} → ${s.lufsAfter.toFixed(1)} <small>目標 -16</small></dd></div>
-    <div><dt>ピーク（dBTP）</dt><dd>${s.peakDb.toFixed(1)} <small>上限 -1.5</small></dd></div>
-    <div><dt>音割れ修復</dt><dd>${s.repaired.toLocaleString()} <small>samples</small></dd></div>
-    <div><dt>処理時間</dt><dd>${fmtDur((it.t1 - it.t0) / 1000)} <small>音声 ${fmtDur(it.duration)}</small></dd></div>`;
+    <div><dt>${t('nLoud')}</dt><dd>${isFinite(s.lufsBefore) ? s.lufsBefore.toFixed(1) : '—'} → ${s.lufsAfter.toFixed(1)} <small>${t('nTarget')}</small></dd></div>
+    <div><dt>${t('nPeak')}</dt><dd>${s.peakDb.toFixed(1)} <small>${t('nLimit')}</small></dd></div>
+    <div><dt>${t('nClip')}</dt><dd>${s.repaired.toLocaleString()} <small>samples</small></dd></div>
+    <div><dt>${t('nTime')}</dt><dd>${fmtDur((it.t1 - it.t0) / 1000)} <small>${t('nAudio', { d: fmtDur(it.duration) })}</small></dd></div>`;
   if (!audio.getAttribute('src')) audio.src = view === 'after' ? R.mp3Url : R.srcUrl;
   updateTime();
 }
@@ -883,7 +1055,7 @@ document.querySelectorAll('#ab button').forEach((b) => b.onclick = () => {
   drawWave();
 });
 $('#play').onclick = () => { if (!sel()?.result) return; audio.paused ? audio.play() : audio.pause(); };
-const setIcon = () => { $('#icPlay').hidden = !audio.paused; $('#icPause').hidden = audio.paused; $('#play').setAttribute('aria-label', audio.paused ? '再生' : '一時停止'); };
+const setIcon = () => { $('#icPlay').hidden = !audio.paused; $('#icPause').hidden = audio.paused; $('#play').setAttribute('aria-label', audio.paused ? t('play') : t('pause')); };
 ['play', 'pause', 'ended'].forEach((ev) => audio.addEventListener(ev, () => { setIcon(); drawWave(); }));
 audio.addEventListener('timeupdate', updateTime);
 audio.addEventListener('loadedmetadata', updateTime);
@@ -899,8 +1071,14 @@ $('#helpBtn').onclick = () => $('#help').showModal();
 $('#helpClose').onclick = () => $('#help').close();
 $('#help').addEventListener('click', (e) => { if (e.target === $('#help')) $('#help').close(); });
 
-if (!envOk) { $('#engineText').textContent = 'このブラウザには対応していません'; $('#engine').dataset.state = 'error'; }
-refresh(); render();
+if (!envOk) { $('#engineText').textContent = t('stUnsupported'); $('#engine').dataset.state = 'error'; }
+// 言語の切り替え：画面の文言と、いま表示中の状態を描き直す
+document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => {
+  if (b.dataset.lang === lang) return;
+  applyLang(b.dataset.lang, true);
+  setEngine(engineState); presetDesc(); items.forEach(qText); refresh(); render(); setIcon();
+});
+setEngine(engineState); refresh(); render();
 </script>
 </body>
 </html>
