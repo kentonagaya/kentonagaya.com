@@ -14,7 +14,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 <!-- 表示言語を先に決める（ちらつき防止）：?lang= → 保存した設定 → ブラウザの言語 -->
 <script>(function(){var q=new URLSearchParams(location.search).get('lang'),v=null;try{v=localStorage.getItem('voixnette-lang')}catch(e){}var l=(q==='en'||q==='ja')?q:(v==='en'||v==='ja')?v:((navigator.language||'').toLowerCase().indexOf('ja')===0?'ja':'en');document.documentElement.lang=l;})();</script>
-<meta name="description" content="Podcastの録音から、雑音だけをサッと消すツール。AIが声と雑音を聞き分けて雑音だけを取り除き、こもりを取って、Podcast標準の音量に整えます。処理はブラウザの中だけで、音声はアップロードされません。">
+<meta name="description" content="Podcastの録音から、雑音だけをサッと消すツール。録音ごとに雑音の型を測って雑音だけを取り除き、こもりを取って、Podcast標準の音量に整えます。処理はブラウザの中だけで、音声はアップロードされません。">
 <meta name="author" content="Kento Nagaya">
 <meta name="theme-color" content="#F7F5F2">
 <meta name="color-scheme" content="light">
@@ -24,7 +24,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Kento Nagaya">
 <meta property="og:title" content="Voixnette | 雑音だけを、サッと消す。">
-<meta property="og:description" content="Podcastの録音から、雑音だけをサッと消すツール。AIが声と雑音を聞き分けて雑音だけを取り除き、こもりを取って、Podcast標準の音量に整えます。処理はブラウザの中だけで、音声はアップロードされません。">
+<meta property="og:description" content="Podcastの録音から、雑音だけをサッと消すツール。録音ごとに雑音の型を測って雑音だけを取り除き、こもりを取って、Podcast標準の音量に整えます。処理はブラウザの中だけで、音声はアップロードされません。">
 <meta property="og:url" content="https://kentonagaya.com/voixnette/">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:locale:alternate" content="en_US">
@@ -53,7 +53,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   "description": "Podcastの録音から、雑音だけをサッと消すツール。処理はブラウザの中だけで完結します。",
   "applicationCategory": "MultimediaApplication",
   "operatingSystem": "Any (modern web browser)",
-  "browserRequirements": "Requires WebAssembly SIMD and Web Workers",
+  "browserRequirements": "Requires Web Workers and the Web Audio API",
   "inLanguage": ["ja", "en"],
   "isAccessibleForFree": true,
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
@@ -470,7 +470,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
   <a class="brand" href="/voixnette/" aria-label="Voixnette">
     <img class="word" src="/voixnette/brand/logo.svg" alt="Voixnette" width="133" height="32">
     <span class="label">Podcast voice cleaner</span>
-    <span class="ver" id="ver" title="2026-10-25">v1.3.0</span>
+    <span class="ver" id="ver" title="2026-10-26">v1.4.0</span>
   </a>
   <div class="top-r">
     <span class="status" id="engine" data-state="idle"><span class="dot"></span><span id="engineText">ブラウザ内で処理</span></span>
@@ -677,10 +677,10 @@ const announce = (t) => { const a = document.getElementById('announce'); a.textC
 const I18N = {
   ja: {
     title: 'Voixnette | 雑音だけを、サッと消す。',
-    desc: 'Podcastの録音から、雑音だけをサッと消すツール。AIが声と雑音を聞き分けて雑音だけを取り除き、こもりを取って、Podcast標準の音量に整えます。処理はブラウザの中だけで、音声はアップロードされません。',
+    desc: 'Podcastの録音から、雑音だけをサッと消すツール。録音ごとに雑音の型を測って雑音だけを取り除き、こもりを取って、Podcast標準の音量に整えます。処理はブラウザの中だけで、音声はアップロードされません。',
     yomi: 'ボワネット',
     help: '使い方とコツ', close: '閉じる', railAria: 'ファイルと設定',
-    stIdle: 'ブラウザ内で処理', stLoading: 'AIを準備中', stReady: '<span class="long">準備OK・</span>ブラウザ内で処理', stError: 'AIを読み込めませんでした', stUnsupported: 'このブラウザには対応していません',
+    stIdle: 'ブラウザ内で処理', stLoading: '準備中', stReady: '<span class="long">準備OK・</span>ブラウザ内で処理', stError: '準備できませんでした', stUnsupported: 'このブラウザには対応していません',
     add: '音声を追加', addFormats: 'm4a・wav・mp3 など', addDrop: '／ドロップでもOK',
     queueAria: '追加したファイル', queueEmpty: '追加した音声が、ここに並びます', remove: '一覧から外す',
     finishAria: '仕上がり', clear: 'クリア', natural: 'ナチュラル',
@@ -688,19 +688,19 @@ const I18N = {
     startNone: '音声を追加してください', startOne: '処理をはじめる', startMany: '{n}件の処理をはじめる', startRunning: '処理中…（{i} / {n}）', startDone: 'すべて完了しました', startUnsupported: 'このブラウザでは使えません',
     estimate: '目安 約{m}分', goInfo: '{n}件・完了 {d}', privacy: '音声はアップロードされません',
     heroTitle: '<span class="ln">雑音だけを、</span><br><span class="s">サッと消す。</span>',
-    heroLead: '収録した音声を入れるだけ。AIが声と雑音を聞き分けて、雑音だけを取り除きます。こもりも取って、Podcastにちょうどいい音量に。すべてこのブラウザの中で完結します。',
+    heroLead: '収録した音声を入れるだけ。録音ごとに雑音の型を測って、声はそのままに雑音だけを取り除きます。こもりも取って、Podcastにちょうどいい音量に。すべてこのブラウザの中で完結します。',
     pick: '音声ファイルを選ぶ', orDrop: 'または、ここにドロップ',
-    s1: '入れる', s1d: '収録したままのm4aやwavを', s2: '待つ', s2d: '30分の音声で、約3〜5分', s3: '聴いて保存', s3d: '処理前と聴き比べて、MP3・WAVで',
+    s1: '入れる', s1d: '収録したままのm4aやwavを', s2: '待つ', s2d: '30分の音声で、約3分', s3: '聴いて保存', s3d: '処理前と聴き比べて、MP3・WAVで',
     bWaiting: '待機中', bRunning: '処理中', bDone: '完了', bError: 'エラー',
     stereo: 'ステレオ', mono: 'モノラル', finishClear: '仕上がり：クリア', finishNatural: '仕上がり：ナチュラル', metaSep: '　・　',
     readyT: '準備ができました', readyD: 'ボタンを押すと、下の4つを自動で行います',
-    st1: '読み込み', st1d: 'ファイルを開いて準備', st2: '雑音を除去', st2d: 'AIが声と雑音を聞き分ける', st3: '音を整える', st3d: '音量とこもりを調整', st4: '書き出し', st4d: 'MP3とWAVを作成',
-    now: ['音声を読み込んでいます', '音割れを直しています', 'AIで雑音を取り除いています', '話し手の音量を揃えています', 'こもりを取っています', '音量をPodcast標準に整えています', 'ファイルに書き出しています'],
+    st1: '読み込み', st1d: 'ファイルを開いて準備', st2: '雑音を除去', st2d: '雑音の型を測って取り除く', st3: '音を整える', st3d: '音量とこもりを調整', st4: '書き出し', st4d: 'MP3とWAVを作成',
+    now: ['音声を読み込んでいます', '音割れを直しています', '雑音を取り除いています', '話し手の音量を揃えています', 'こもりを取っています', '音量をPodcast標準に整えています', 'ファイルに書き出しています'],
     nowPrep: '準備しています', keepOpen: 'このタブは開いたままにしてください', almost: 'まもなく完了', left: '残り 約{m}分', sep: '・',
     qWaiting: '待機中', qDone: '完了', qError: '処理できませんでした',
     wave: '波形（クリックでその位置から再生）', play: '再生', pause: '一時停止', after: '処理後', before: '処理前', abAria: '聴き比べ', hearAfter: '処理後を聴く', hearBefore: '処理前を聴く',
     rNoise: '雑音を取り除きました', rLoud: '音量をPodcast標準に揃えました', rClip: '音割れを修復しました', rNoClip: '音割れはありませんでした', more: '詳しい数値', less: '数値を閉じる',
-    nLoud: '音量（LUFS）', nTarget: '目標 -16', nPeak: 'ピーク（dBTP）', nLimit: '上限 -1.5', nClip: '音割れ修復', nTime: '処理時間', nAudio: '音声 {d}',
+    nLoud: '音量（LUFS）', nTarget: '目標 -16', nPeak: 'ピーク（dBTP）', nLimit: '上限 -1.0', nClip: '音割れ修復', nTime: '処理時間', nAudio: '音声 {d}',
     dlMp3: 'MP3 をダウンロード', mp3Sub: '配信用・{s}', wavSub: '編集用・{s}',
     notAudio: '音声ファイルではないため追加しませんでした：{f}',
     eDecode: 'このファイルは読み込めませんでした。Chrome・Safari・Edgeで試すか、別の形式（wav・mp3など）にしてから入れてください。',
@@ -717,34 +717,33 @@ const I18N = {
     nfTitle: '処理が完了しました', nfBody: '{f} をダウンロードできます',
     titleRun: '({p}%) Voixnette', titleDone: '✓ 完了 | Voixnette',
     helpTitle: '使い方とコツ',
-    helpBody: `<h3>Voixnette（ボワネット）とは</h3><p class="about">Podcastの録音から、雑音だけをサッと消すためのツールです。収録した音声を入れるだけで、AIが声と雑音を聞き分けて雑音だけを取り除き、こもりの補正、話し手ごとの音量合わせ、Podcast標準の音量への調整までを自動で行います。処理はすべてこのブラウザの中で行われ、音声がどこかに送られることはありません。登録や料金も不要です。</p>
+    helpBody: `<h3>Voixnette（ボワネット）とは</h3><p class="about">Podcastの録音から、雑音だけをサッと消すためのツールです。収録した音声を入れるだけで、録音ごとに雑音の型を測って雑音だけを取り除き、こもりの補正、話し手ごとの音量合わせ、Podcast標準の音量への調整までを自動で行います。処理はすべてこのブラウザの中で行われ、音声がどこかに送られることはありません。登録や料金も不要です。</p>
       <h3>うまく使うコツ</h3><ul>
       <li><b>ノイズ除去や音量調整をする前の、収録したままのファイル</b>を入れてください。処理済みのファイルだと、声の高い音がすでに削られていて、こもりを直しきれません。</li>
       <li>m4aをWAVに変換してから入れる必要はありません（変換しても音質は上がりません）。</li>
       <li>iPhoneのボイスメモ（.m4a・.qta）も、そのまま入れられます。</li>
-      <li>30分の音声で3〜5分ほどかかります。処理中はこのタブを開いたままにしてください。</li>
+      <li>30分の音声で3分ほどかかります。処理中はこのタブを開いたままにしてください。</li>
       <li>長い音声はパソコン（Chrome・Edge・Safari）がおすすめです。スマートフォンではメモリ不足で止まることがあります。</li>
-      <li>書き出したWAVをAudacityなどで編集するときは、ノイズ除去やノーマライズを重ねてかけないでください。</li>
-      <li>初回だけAIエンジン（約34MB）を読み込みます。2回目からはブラウザに保存されたものを使います。</li></ul>
+      <li>書き出したWAVをAudacityなどで編集するときは、ノイズ除去やノーマライズを重ねてかけないでください。</li></ul>
       <h3>「クリア」と「ナチュラル」</h3><ul>
       <li><b>クリア</b>：雑音をしっかり消し、声の輪郭をはっきりさせます。迷ったらこちら。</li>
       <li><b>ナチュラル</b>：部屋の空気感を少し残し、強調も控えめにします。</li></ul>
       <h3>中で行っていること</h3><ol>
       <li>読み込み：48kHz・モノラルに揃えます。</li>
       <li>音割れ修復：波形の頭が切れた部分を補間して作り直します。</li>
-      <li>雑音の除去：音声専用AI（DeepFilterNet3）で、声と雑音を分けて雑音だけを取り除きます。雑音はいったん取り切ったうえで、取り除いた音を録音に合わせて少し戻します。雑音の多い録音では、低い帯域だけをごく小さく戻して、合間が無音に途切れないようにします（子音は雑音に埋もれません）。雑音の少ない録音では、AIの取りすぎで声や息がザラつかないよう、話している間は元の音を多めに残し、合間の雑音だけをしっかり下げます。</li>
+      <li>雑音の除去：録音全体のいちばん静かな部分から「雑音の型」を自動で測り、帯域ごとに、その型より十分大きい音（声）は残し、雑音だけを下げます。Audacityの「ノイズの低減」と同じ考え方ですが、無音部分を選ぶ手間がなく、下げ方をなめらかにして、語尾が急に切れたり声がザラついたりしないよう調整しています。</li>
       <li>音量の均一化：話している部分だけを見て、話し手ごとの音量差を揃えます。</li>
       <li>こもり補正：80Hz以下をカットし、録音ごとに声の音色を測って、標準的な話し声のバランスに近づくよう自動でEQをかけます（こもった録音ほど高域を持ち上げます）。雑音が残りやすい帯域は持ち上げを控えめにし、最後に軽くコンプレッサーをかけます。</li>
-      <li>仕上げ：Podcast標準の -16 LUFS に合わせ、ピークを -1.5dBTP 以下に抑えます。</li>
+      <li>仕上げ：Podcast標準の -16 LUFS に合わせ、ピークを -1.0dBTP 以下に抑えます（一瞬のピークはすぐに戻し、音がへこまないようにしています）。</li>
       <li>書き出し：配信用MP3（44.1kHz・128kbps）と編集用WAV（48kHz・16bit）。</li></ol>
-      <p class="credit">使用しているオープンソース：DeepFilterNet3（MIT / Apache-2.0）、lamejs（LGPL-3.0, LAME）。<a href="/voixnette/THIRD_PARTY_NOTICES.txt">ライセンス表記</a>　・　制作：<a href="https://kentonagaya.com/">Kento Nagaya</a></p>`,
+      <p class="credit">使用しているオープンソース：lamejs（LGPL-3.0, LAME）。<a href="/voixnette/THIRD_PARTY_NOTICES.txt">ライセンス表記</a>　・　制作：<a href="https://kentonagaya.com/">Kento Nagaya</a></p>`,
   },
   en: {
     title: 'Voixnette | Sweep away just the noise.',
-    desc: 'Sweep away just the noise from your podcast recordings. AI tells your voice apart from the noise and removes only the noise, then clears up muffled speech and sets podcast-standard loudness — all in your browser, nothing uploaded.',
+    desc: 'Sweep away just the noise from your podcast recordings. It measures each recording’s own noise and removes only the noise, then clears up muffled speech and sets podcast-standard loudness — all in your browser, nothing uploaded.',
     yomi: '/vwa·net/',
     help: 'How to use', close: 'Close', railAria: 'Files and settings',
-    stIdle: 'Runs in your browser', stLoading: 'Loading AI', stReady: '<span class="long">Ready · </span>runs in your browser', stError: 'Couldn’t load the AI', stUnsupported: 'This browser isn’t supported',
+    stIdle: 'Runs in your browser', stLoading: 'Getting ready', stReady: '<span class="long">Ready · </span>runs in your browser', stError: 'Couldn’t get ready', stUnsupported: 'This browser isn’t supported',
     add: 'Add audio', addFormats: 'm4a, wav, mp3 and more', addDrop: ' — or drop here',
     queueAria: 'Added files', queueEmpty: 'Your audio files will appear here', remove: 'Remove from list',
     finishAria: 'Finish', clear: 'Clear', natural: 'Natural',
@@ -752,19 +751,19 @@ const I18N = {
     startNone: 'Add audio to begin', startOne: 'Start processing', startMany: 'Process {n} files', startRunning: 'Processing… ({i} / {n})', startDone: 'All done', startUnsupported: 'Not supported in this browser',
     estimate: 'About {m} min', goInfo: '{n} {files} · {d} done', privacy: 'Your audio never leaves this device',
     heroTitle: '<span class="ln">Sweep away</span><br><span class="s">just the noise.</span>',
-    heroLead: 'Drop in your recording. AI tells your voice apart from the noise and removes only the noise — then clears up muffled speech and sets podcast-ready loudness, all inside this browser.',
+    heroLead: 'Drop in your recording. Voixnette measures its noise and removes only the noise, leaving your voice intact — then clears up muffled speech and sets podcast-ready loudness, all inside this browser.',
     pick: 'Choose audio files', orDrop: 'or drop them here',
-    s1: 'Add', s1d: 'Straight from the recorder — m4a or wav', s2: 'Wait', s2d: 'About 3–5 min for 30 min of audio', s3: 'Listen & save', s3d: 'Compare before and after, export MP3 or WAV',
+    s1: 'Add', s1d: 'Straight from the recorder — m4a or wav', s2: 'Wait', s2d: 'About 3 min for 30 min of audio', s3: 'Listen & save', s3d: 'Compare before and after, export MP3 or WAV',
     bWaiting: 'Waiting', bRunning: 'Processing', bDone: 'Done', bError: 'Error',
     stereo: 'Stereo', mono: 'Mono', finishClear: 'Finish: Clear', finishNatural: 'Finish: Natural', metaSep: '  ·  ',
     readyT: 'Ready to go', readyD: 'Press the button and these four steps run automatically',
-    st1: 'Load', st1d: 'Opens and prepares the file', st2: 'Remove noise', st2d: 'AI separates voice from noise', st3: 'Polish', st3d: 'Balances loudness and clarity', st4: 'Export', st4d: 'Creates MP3 and WAV',
-    now: ['Reading the audio', 'Repairing clipping', 'Removing noise with AI', 'Evening out speaker levels', 'Clearing up muffled tones', 'Setting podcast-standard loudness', 'Writing your files'],
+    st1: 'Load', st1d: 'Opens and prepares the file', st2: 'Remove noise', st2d: 'Measures the noise, then removes it', st3: 'Polish', st3d: 'Balances loudness and clarity', st4: 'Export', st4d: 'Creates MP3 and WAV',
+    now: ['Reading the audio', 'Repairing clipping', 'Removing noise', 'Evening out speaker levels', 'Clearing up muffled tones', 'Setting podcast-standard loudness', 'Writing your files'],
     nowPrep: 'Getting ready', keepOpen: 'Please keep this tab open', almost: 'Almost done', left: 'About {m} min left', sep: ' · ',
     qWaiting: 'Waiting', qDone: 'Done', qError: 'Couldn’t process',
     wave: 'Waveform (click to play from that point)', play: 'Play', pause: 'Pause', after: 'After', before: 'Before', abAria: 'Compare', hearAfter: 'Hear after', hearBefore: 'Hear before',
     rNoise: 'Noise removed', rLoud: 'Loudness set to podcast standard', rClip: 'Clipping repaired', rNoClip: 'No clipping found', more: 'Show details', less: 'Hide details',
-    nLoud: 'Loudness (LUFS)', nTarget: 'target -16', nPeak: 'Peak (dBTP)', nLimit: 'limit -1.5', nClip: 'Clipping repaired', nTime: 'Processing time', nAudio: 'audio {d}',
+    nLoud: 'Loudness (LUFS)', nTarget: 'target -16', nPeak: 'Peak (dBTP)', nLimit: 'limit -1.0', nClip: 'Clipping repaired', nTime: 'Processing time', nAudio: 'audio {d}',
     dlMp3: 'Download MP3', mp3Sub: 'For publishing · {s}', wavSub: 'For editing · {s}',
     notAudio: 'Skipped (not an audio file): {f}',
     eDecode: 'This file couldn’t be read. Try Chrome, Safari or Edge, or convert it to wav or mp3 first.',
@@ -781,34 +780,33 @@ const I18N = {
     nfTitle: 'Processing complete', nfBody: '{f} is ready to download',
     titleRun: '({p}%) Voixnette', titleDone: '✓ Done | Voixnette',
     helpTitle: 'Tips & how it works',
-    helpBody: `<h3>About Voixnette <span class="pron">(pronounced “vwa-net”)</span></h3><p class="about">Voixnette sweeps away just the noise from your podcast recordings. Add your recording and AI tells your voice apart from the noise, removes only the noise, then clears up muffled speech, evens out speaker levels and sets podcast-standard loudness — automatically. Everything runs inside this browser; your audio is never sent anywhere. No sign-up, no fees.</p>
+    helpBody: `<h3>About Voixnette <span class="pron">(pronounced “vwa-net”)</span></h3><p class="about">Voixnette sweeps away just the noise from your podcast recordings. Add your recording and it measures the recording’s own noise, removes only the noise, then clears up muffled speech, evens out speaker levels and sets podcast-standard loudness — automatically. Everything runs inside this browser; your audio is never sent anywhere. No sign-up, no fees.</p>
       <h3>Tips</h3><ul>
       <li>Use <b>the original recording, before any noise reduction or loudness changes</b>. Files that have already been processed have lost their high frequencies, so muffled speech can’t be fully restored.</li>
       <li>No need to convert m4a to WAV first — converting doesn’t improve quality.</li>
       <li>iPhone Voice Memos recordings (.m4a, .qta) work as they are.</li>
-      <li>30 minutes of audio takes about 3–5 minutes. Please keep this tab open while it runs.</li>
+      <li>30 minutes of audio takes about 3 minutes. Please keep this tab open while it runs.</li>
       <li>For long recordings, use a computer (Chrome, Edge or Safari). Phones may run out of memory.</li>
-      <li>If you edit the WAV in Audacity or similar, don’t apply noise reduction or normalization again.</li>
-      <li>The AI engine (about 34 MB) loads the first time only; after that your browser keeps a copy.</li></ul>
+      <li>If you edit the WAV in Audacity or similar, don’t apply noise reduction or normalization again.</li></ul>
       <h3>Clear vs. Natural</h3><ul>
       <li><b>Clear</b>: removes noise thoroughly and sharpens the voice. Start here if unsure.</li>
       <li><b>Natural</b>: keeps a little room tone with gentler enhancement.</li></ul>
       <h3>What happens inside</h3><ol>
       <li>Load: converts to 48 kHz mono.</li>
       <li>Clipping repair: rebuilds flattened waveform peaks by interpolation.</li>
-      <li>Noise removal: a speech-specific AI (DeepFilterNet3) separates voice from noise and removes only the noise. Noise is removed fully, then some of the removed sound is blended back to suit the recording. On noisy recordings only a trace is returned in the low range, so pauses never drop to dead silence while consonants stay clear. On quiet recordings more of the original is kept while someone is speaking, so the AI never over-processes the voice into a rough, grainy sound, and only the noise in pauses is pushed down.</li>
+      <li>Noise removal: measures a “noise profile” automatically from the quietest parts of the recording, then, band by band, keeps sounds well above that profile (your voice) and lowers only the noise. It works on the same idea as Audacity’s Noise Reduction, but you don’t have to pick a silent section, and the reduction is shaped smoothly so word endings never cut off abruptly and the voice never turns grainy.</li>
       <li>Leveling: evens out differences between speakers, looking only at speech (silence isn’t boosted).</li>
       <li>Clarity: high-pass at 80 Hz, then an automatic EQ that measures each recording’s voice and moves it toward a standard speech balance (more muffled recordings get more treble lift). Boosts are held back in bands where noise remains, followed by gentle compression.</li>
-      <li>Loudness: targets −16 LUFS (podcast standard) with peaks kept below −1.5 dBTP.</li>
+      <li>Loudness: targets −16 LUFS (podcast standard) with peaks kept below −1.0 dBTP (brief peaks recover instantly, so the sound doesn’t dip).</li>
       <li>Export: MP3 for publishing (44.1 kHz, 128 kbps) and WAV for editing (48 kHz, 16-bit).</li></ol>
-      <p class="credit">Open source used: DeepFilterNet3 (MIT / Apache-2.0), lamejs (LGPL-3.0, LAME). <a href="/voixnette/THIRD_PARTY_NOTICES.txt">Licenses</a> · Made by <a href="https://kentonagaya.com/">Kento Nagaya</a></p>`,
+      <p class="credit">Open source used: lamejs (LGPL-3.0, LAME). <a href="/voixnette/THIRD_PARTY_NOTICES.txt">Licenses</a> · Made by <a href="https://kentonagaya.com/">Kento Nagaya</a></p>`,
   },
 };
 let lang = document.documentElement.lang === 'en' ? 'en' : 'ja';
 const t = (k, v = {}) => { let x = I18N[lang][k] ?? I18N.ja[k] ?? k; if (typeof x === 'string') x = x.replace(/\{(\w+)\}/g, (_, n) => v[n] ?? ''); return x; };
 // ---------- バージョン（更新したら、ここだけ書き換える。ヘッダーとヘルプに反映される）
 // 番号の付け方：大きな変更は 2桁目、不具合修正や小さな調整は 3桁目を上げる
-const VERSION = { name: 'v1.3.0', date: '2026-10-25' };
+const VERSION = { name: 'v1.4.0', date: '2026-10-26' };
 
 function applyLang(l, save) {
   lang = l === 'en' ? 'en' : 'ja';
@@ -832,8 +830,7 @@ applyLang(lang);
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---------- 動作環境
-const simdOk = (() => { try { return WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11])); } catch { return false; } })();
-const envOk = simdOk && 'Worker' in window && 'OfflineAudioContext' in window;
+const envOk = 'Worker' in window && 'OfflineAudioContext' in window;
 
 // ---------- ワーカー（処理本体は変更なし）
 const worker = new Worker('/voixnette/app/worker.js', { type: 'module' });
@@ -970,7 +967,7 @@ presetDesc();
 
 // ---------- 処理
 const STAGE_OF = { decode: 0, 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, mp3: 6 };
-const WEIGHT = [[0, 8], [8, 10], [10, 78], [78, 80], [80, 83], [83, 88], [88, 100]];
+const WEIGHT = [[0, 2], [2, 3], [3, 27], [27, 31], [31, 36], [36, 47], [47, 100]]; // 実測（29分の音声）にもとづく各段階の時間の割合
 const STEP_OF_STAGE = [0, 1, 1, 2, 2, 2, 3];
 const STEP_RANGE = [[0, 8], [8, 78], [78, 88], [88, 100]];
 const stepOf = (it) => it.state === 'done' ? 4 : Math.max(0, STEP_OF_STAGE[Math.max(0, it.stage)]);
@@ -989,7 +986,7 @@ async function pump() {
 }
 window.addEventListener('beforeunload', (e) => { if (running) { e.preventDefault(); e.returnValue = ''; } });
 
-const RATE = 0.14; // 音声1秒あたりの処理時間の目安（秒）。実測値で置き換えていく
+const RATE = 0.1; // 音声1秒あたりの処理時間の目安（秒）。実測値で置き換えていく
 const estimateSec = (it) => (it.duration || 0) * RATE + 4;
 function etaOf(it) {
   if (it.state !== 'running' || it.etaSec == null) return it.state === 'running' ? estimateSec(it) : 0;

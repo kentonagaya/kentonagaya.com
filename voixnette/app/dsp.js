@@ -5,28 +5,17 @@
 export const SR = 48000;
 
 export const PRESETS = {
-  clear: { // 設定B（おすすめ）
-    // AIはいったん上限なしで雑音を取り切り、取り除いた分（元の音 − AIの出力）を録音に合わせて戻す（mixResidual）。
-    // ・雑音の多い録音（noisy）：低い帯域だけごく小さく戻す。合間が無音にならず、子音は雑音に埋もれない。
-    // ・雑音の少ない録音（clean）：AIの取りすぎで声がザラつく（シャギー）のを防ぐため、話している間は
-    //   元の音を多めに戻し、合間だけしっかり下げる。どちらの間も録音のSNRに応じてなめらかに切り替える。
-    attenLimit: 100,
-    roomTone: {
-      noisy: { speech: [-32, -50], gap: [-32, -50] }, // [低い帯域, 高い帯域] dB
-      clean: { speech: [-10, -10], gap: [-32, -32] },
-    },
-    // 声の音色は録音ごとに測って自動で整える（tonalEq）
-    tonal: { strength: 0.8, maxBoost: 14 },
+  clear: { // おすすめ：雑音をしっかり下げる
+    nr: { reductionDb: 42, holdDb: 10 },
+    tonal: { strength: 0.8, maxBoost: 14, noCutAbove: 2000 },
   },
-  natural: { // 設定A相当：ルームトーンを少し多めに残し、補正も控えめ
-    attenLimit: 100,
-    roomTone: {
-      noisy: { speech: [-26, -42], gap: [-26, -42] },
-      clean: { speech: [-8, -8], gap: [-22, -22] },
-    },
-    tonal: { strength: 0.6, maxBoost: 10 },
+  natural: { // 部屋の空気感を少し残し、補正も控えめ
+    nr: { reductionDb: 24, holdDb: 8 },
+    tonal: { strength: 0.6, maxBoost: 10, noCutAbove: 2000 },
   },
 };
+// 話し手ごとの音量合わせ・コンプレッサー・音量の仕上げ（聞き心地の評価で決めた値）
+export const DYNAMICS = { level: [-20, -10, 6], comp: { thresholdDb: -20, ratio: 2 }, lufs: -16, truePeakDb: -1.0 };
 
 const dbToLin = (db) => Math.pow(10, db / 20);
 
@@ -177,79 +166,6 @@ function biquadLow(x, f) {
 }
 const pct = (a, q) => { const s = Float64Array.from(a).sort(); return s[Math.min(s.length - 1, Math.floor(q * (s.length - 1)))]; };
 
-// ---------------------------------------------------------------- 2'. 取り除いた音を、録音と場面に合わせて戻す
-// AIで雑音を取り切ると、①雑音の多い録音では合間が無音になって「ぶつ切り」に、②雑音の少ない録音では
-// 声の細かい成分や息・衣ずれまで削られて「ザラつき（シャギー）」が出る。そこで、取り除いた分
-// （元の音 − AIの出力）を、録音のSNRと「いま話しているか」に応じた量だけ戻す。
-// 戻す量の変化は、話し始めは素早く・話し終わりはゆっくり（300ms）にして、背景が揺れないようにする。
-
-// 帯域を絞った 10ms ごとの音量（dB）。巨大な配列を作らないよう、フィルターを通しながら集計する
-const FRAME = 480;
-function frameLevels(x, lo = 100, hi = 8000) {
-  const n = Math.floor(x.length / FRAME), out = new Float32Array(n);
-  const H = biquadCoeffs('highpass', lo, Math.SQRT1_2, 0), L = biquadCoeffs('lowpass', hi, Math.SQRT1_2, 0);
-  let h1 = 0, h2 = 0, hy1 = 0, hy2 = 0, l1 = 0, l2 = 0, ly1 = 0, ly2 = 0;
-  for (let f = 0; f < n; f++) {
-    let acc = 0;
-    for (let i = f * FRAME, e = i + FRAME; i < e; i++) {
-      const v = x[i];
-      const a = H[0] * v + H[1] * h1 + H[2] * h2 - H[3] * hy1 - H[4] * hy2; h2 = h1; h1 = v; hy2 = hy1; hy1 = a;
-      const b = L[0] * a + L[1] * l1 + L[2] * l2 - L[3] * ly1 - L[4] * ly2; l2 = l1; l1 = a; ly2 = ly1; ly1 = b;
-      acc += b * b;
-    }
-    out[f] = 10 * Math.log10(acc / FRAME + 1e-16);
-  }
-  return out;
-}
-
-// 録音のSNR（話し声の大きい部分 − 雑音の床）。雑音の多いファン音の録音で約10dB、静かな部屋で35〜45dB
-export function recordingSnr(x) {
-  const lv = frameLevels(x, 150, 6000);
-  const step = 5, a = []; // 50ms 相当に間引いて集計
-  for (let i = 0; i + step <= lv.length; i += step) { let s = 0; for (let k = 0; k < step; k++) s += Math.pow(10, lv[i + k] / 10); a.push(10 * Math.log10(s / step)); }
-  return a.length > 20 ? pct(a, 0.95) - pct(a, 0.1) : 20;
-}
-
-// SNR 15dB 以下は noisy、30dB 以上は clean の設定。その間はなめらかにつなぐ
-export function residualPlan(snr, roomTone) {
-  const t = Math.max(0, Math.min(1, (snr - 15) / 15));
-  const lerp = (a, b) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
-  return { snr, speech: lerp(roomTone.noisy.speech, roomTone.clean.speech), gap: lerp(roomTone.noisy.gap, roomTone.clean.gap) };
-}
-
-export function mixResidual(x, y, plan, { fc = 1500, releaseMs = 300 } = {}) {
-  const n = y.length, nf = Math.floor(n / FRAME);
-  // 「話している度合い」：AIの出力が、元の録音の雑音の床よりどれだけ大きいか（6dB上で0 → 18dB上で1）
-  const lin = Float32Array.from(frameLevels(x));
-  const floor = pct(lin, 0.1);
-  const act = frameLevels(y);
-  const rel = Math.exp(-10 / releaseMs);
-  let g = 0;
-  const kl = new Float32Array(nf + 1), kh = new Float32Array(nf + 1);
-  for (let f = 0; f < nf; f++) {
-    const a = Math.max(0, Math.min(1, (act[f] - floor - 6) / 12));
-    g = a > g ? a : g * rel + a * (1 - rel);
-    kl[f] = dbToLin(plan.gap[0] + (plan.speech[0] - plan.gap[0]) * g);
-    kh[f] = dbToLin(plan.gap[1] + (plan.speech[1] - plan.gap[1]) * g);
-  }
-  kl[nf] = nf ? kl[nf - 1] : dbToLin(plan.gap[0]); kh[nf] = nf ? kh[nf - 1] : dbToLin(plan.gap[1]);
-  // 4次ローパス（2次バターワース×2）を1サンプルずつ回す。30分の音声でも余分な大きい配列を作らない
-  const w0 = 2 * Math.PI * fc / SR, cs = Math.cos(w0), al = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + al;
-  const b0 = (1 - cs) / 2 / a0, b1 = (1 - cs) / a0, b2 = b0, a1 = -2 * cs / a0, a2 = (1 - al) / a0;
-  let p1 = 0, p2 = 0, q1 = 0, q2 = 0, s1 = 0, s2 = 0; // 1段目の入出力履歴（p, q）と2段目の出力履歴（s）
-  for (let i = 0; i < n; i++) {
-    const r = x[i] - y[i];
-    const m = b0 * r + b1 * p1 + b2 * p2 - a1 * q1 - a2 * q2;
-    const l = b0 * m + b1 * q1 + b2 * q2 - a1 * s1 - a2 * s2;
-    p2 = p1; p1 = r; q2 = q1; q1 = m; s2 = s1; s1 = l;
-    // フレームの中央どうしを直線でつなぐ（段差を作らない）
-    const pos = i / FRAME - 0.5, f0 = Math.max(0, Math.min(nf, Math.floor(pos))), f1 = Math.min(nf, f0 + 1), t = Math.max(0, Math.min(1, pos - f0));
-    const lo = kl[f0] + (kl[f1] - kl[f0]) * t, hi = kh[f0] + (kh[f1] - kh[f0]) * t;
-    y[i] += hi * r + (lo - hi) * l;
-  }
-  return y;
-}
-
 // ---------------------------------------------------------------- 4''. 声の音色を自動で整える（トーンバランス補正）
 // 録音ごとに「話している区間」の平均スペクトルを測り、標準的な話し声のスペクトル
 // （ANSI S3.5 SII の標準音声スペクトル）との差を、オクターブごとの EQ で埋める。
@@ -299,7 +215,7 @@ function biquadMagDb(type, f, q, g, freq) {
   return 10 * Math.log10((nr * nr + ni * ni) / (dr * dr + di * di));
 }
 
-export function tonalEq(x, { strength = 0.8, tilt = 0, maxBoost = 10, maxCut = -10, snrMargin = 3 } = {}) {
+export function tonalEq(x, { strength = 0.8, tilt = 0, maxBoost = 10, maxCut = -10, snrMargin = 3, noCutAbove = 99999 } = {}) {
   const N = 2048, hop = Math.round(0.05 * SR), n = Math.floor((x.length - N) / hop);
   if (n < 40) return { eq: [], report: { skipped: 'short' } };
   const lv = new Float64Array(n);
@@ -322,6 +238,7 @@ export function tonalEq(x, { strength = 0.8, tilt = 0, maxBoost = 10, maxCut = -
     const dev = (TB_TARGET[i] - TB_TARGET[i1k]) - (S[i] - S[i1k]) + (c >= 4000 ? tilt : c >= 2000 ? tilt / 2 : 0);
     let g = dev * strength;
     if (c === 125) g = Math.min(0, g); // 最低域は下げるだけ
+    if (c >= noCutAbove) g = Math.max(0, g); // 高い帯域は削らない（子音・息の自然さを保つ）
     const cap = Math.max(0, Math.min(maxBoost, snr[i] - snrMargin));
     return Math.max(maxCut, Math.min(cap, g));
   });
@@ -435,7 +352,7 @@ export function truePeakEstimate(x) {
   return tp;
 }
 
-export function limit(x, ceilingDb = -1.5, lookaheadMs = 5, releaseMs = 80) {
+export function limit(x, ceilingDb = -1.0, lookaheadMs = 5, releaseMs = 80, { dual = true, fastMs = 12, slowAttackMs = 40, slowReleaseMs = 160 } = {}) {
   const ceil = dbToLin(ceilingDb);
   const tp = truePeakEstimate(x);
   const la = Math.max(1, Math.round(lookaheadMs * SR / 1000));
@@ -444,10 +361,23 @@ export function limit(x, ceilingDb = -1.5, lookaheadMs = 5, releaseMs = 80) {
   for (let i = 0; i < n; i++) need[i] = tp[i] > ceil ? ceil / tp[i] : 1;
   // ① 先読み：これから la サンプル以内に来るピークに必要なゲインの最小値
   const fut = slidingMinFuture(need, la);
-  // ② リリース：下げたゲインはゆっくり 1 に戻す（下げるのは即時）
-  const rel = Math.exp(-1 / (releaseMs * SR / 1000));
-  let g = 1;
-  for (let i = 0; i < n; i++) { g = Math.min(fut[i], 1 - (1 - g) * rel); fut[i] = g; }
+  // ② リリース
+  if (dual) {
+    // 2段のリリース：舌打ちや破裂音のような一瞬のピークは素早く戻し（fastMs）、
+    // 続けて大きい部分だけをゆっくり下げる（slow）。一瞬のピークのあとに音が「へこむ」のを防ぐ
+    const cF = Math.exp(-1 / (fastMs * SR / 1000)), aS = 1 - Math.exp(-1 / (slowAttackMs * SR / 1000)), cS = Math.exp(-1 / (slowReleaseMs * SR / 1000));
+    let f = 0, sl = 0;
+    for (let i = 0; i < n; i++) {
+      const r = fut[i] < 1 ? -Math.log(fut[i]) : 0; // 必要な下げ幅（自然対数）
+      f = Math.max(r, f * cF);
+      sl = r > sl ? sl + (r - sl) * aS : sl * cS;
+      fut[i] = Math.exp(-Math.max(f, sl));
+    }
+  } else {
+    const rel = Math.exp(-1 / (releaseMs * SR / 1000));
+    let g = 1;
+    for (let i = 0; i < n; i++) { g = Math.min(fut[i], 1 - (1 - g) * rel); fut[i] = g; }
+  }
   // ③ 直近 la サンプルの移動平均でなめらかにする（ピーク位置では必ず必要量以下になる）
   let s = 0; const buf = new Float32Array(la + 1); let bi = 0;
   for (let k = 0; k <= la; k++) { buf[k] = 1; s += 1; }
@@ -469,7 +399,7 @@ function slidingMinFuture(a, w) {
   return out;
 }
 
-export function normalizeLoudness(x, targetLufs = -16, tpDb = -1.5) {
+export function normalizeLoudness(x, targetLufs = -16, tpDb = -1.0) {
   const before = integratedLoudness(x);
   if (!isFinite(before)) return { before, after: before };
   // リミッターで少し音量が下がるため、目標との差が 0.1dB 未満になるまで最大3回くり返す
