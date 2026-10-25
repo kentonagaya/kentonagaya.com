@@ -77,8 +77,9 @@ async function process({ id, samples, preset }) {
   const repaired = D.declip(x);
   stage(3, 'AIでノイズを除去しています');
   const y = await denoise(x, P.attenLimit, (p) => stage(3, 'AIでノイズを除去しています', p));
-  // 合間が無音に切り落とされないよう、低い帯域にだけ元の背景音をごく小さく戻す
-  D.mixResidual(x, y, P.roomTone);
+  // 取り除いた音を、録音の雑音の多さと「話しているか」に合わせて戻す（ぶつ切り・ザラつき対策）
+  const plan = D.residualPlan(D.recordingSnr(x), P.roomTone);
+  D.mixResidual(x, y, plan);
   stage(4, '話し手ごとの音量差を揃えています'); await tick();
   D.level(y);
   stage(5, 'こもりを取るEQとコンプレッサーをかけています'); await tick();
@@ -91,7 +92,7 @@ async function process({ id, samples, preset }) {
   let peak = 0; for (let i = 0; i < y.length; i++) { const a = Math.abs(y[i]); if (a > peak) peak = a; }
   const wav = D.toWav16(y);
   post({ type: 'done', id, wav, samples: y, stats: {
-    lufsBefore: lufsIn, lufsAfter: loud.after, peakDb: 20 * Math.log10(peak || 1e-9), repaired, eq: eqReport,
+    lufsBefore: lufsIn, lufsAfter: loud.after, peakDb: 20 * Math.log10(peak || 1e-9), repaired, eq: eqReport, residual: plan,
   } }, [wav, y.buffer]);
 }
 

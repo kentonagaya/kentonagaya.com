@@ -470,7 +470,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
   <a class="brand" href="/voixnette/" aria-label="Voixnette">
     <img class="word" src="/voixnette/brand/logo.svg" alt="Voixnette" width="133" height="32">
     <span class="label">Podcast voice cleaner</span>
-    <span class="ver" id="ver" title="2026-10-25">v1.2.1</span>
+    <span class="ver" id="ver" title="2026-10-25">v1.3.0</span>
   </a>
   <div class="top-r">
     <span class="status" id="engine" data-state="idle"><span class="dot"></span><span id="engineText">ブラウザ内で処理</span></span>
@@ -732,7 +732,7 @@ const I18N = {
       <h3>中で行っていること</h3><ol>
       <li>読み込み：48kHz・モノラルに揃えます。</li>
       <li>音割れ修復：波形の頭が切れた部分を補間して作り直します。</li>
-      <li>雑音の除去：音声専用AI（DeepFilterNet3）で、声と雑音を分けて雑音だけを取り除きます。雑音はいったん取り切ったうえで、取り除いた音を低い帯域だけごく小さく戻し、言葉の合間が無音に途切れない自然な背景音にします。子音のある高い帯域には戻さないので、声の輪郭は雑音に埋もれません。</li>
+      <li>雑音の除去：音声専用AI（DeepFilterNet3）で、声と雑音を分けて雑音だけを取り除きます。雑音はいったん取り切ったうえで、取り除いた音を録音に合わせて少し戻します。雑音の多い録音では、低い帯域だけをごく小さく戻して、合間が無音に途切れないようにします（子音は雑音に埋もれません）。雑音の少ない録音では、AIの取りすぎで声や息がザラつかないよう、話している間は元の音を多めに残し、合間の雑音だけをしっかり下げます。</li>
       <li>音量の均一化：話している部分だけを見て、話し手ごとの音量差を揃えます。</li>
       <li>こもり補正：80Hz以下をカットし、録音ごとに声の音色を測って、標準的な話し声のバランスに近づくよう自動でEQをかけます（こもった録音ほど高域を持ち上げます）。雑音が残りやすい帯域は持ち上げを控えめにし、最後に軽くコンプレッサーをかけます。</li>
       <li>仕上げ：Podcast標準の -16 LUFS に合わせ、ピークを -1.5dBTP 以下に抑えます。</li>
@@ -796,7 +796,7 @@ const I18N = {
       <h3>What happens inside</h3><ol>
       <li>Load: converts to 48 kHz mono.</li>
       <li>Clipping repair: rebuilds flattened waveform peaks by interpolation.</li>
-      <li>Noise removal: a speech-specific AI (DeepFilterNet3) separates voice from noise and removes only the noise. Noise is removed fully, then a trace of the removed sound is added back in the low range only, so pauses keep a natural room tone instead of dropping to dead silence. Nothing is added back in the high range, so consonants stay clear of the noise.</li>
+      <li>Noise removal: a speech-specific AI (DeepFilterNet3) separates voice from noise and removes only the noise. Noise is removed fully, then some of the removed sound is blended back to suit the recording. On noisy recordings only a trace is returned in the low range, so pauses never drop to dead silence while consonants stay clear. On quiet recordings more of the original is kept while someone is speaking, so the AI never over-processes the voice into a rough, grainy sound, and only the noise in pauses is pushed down.</li>
       <li>Leveling: evens out differences between speakers, looking only at speech (silence isn’t boosted).</li>
       <li>Clarity: high-pass at 80 Hz, then an automatic EQ that measures each recording’s voice and moves it toward a standard speech balance (more muffled recordings get more treble lift). Boosts are held back in bands where noise remains, followed by gentle compression.</li>
       <li>Loudness: targets −16 LUFS (podcast standard) with peaks kept below −1.5 dBTP.</li>
@@ -808,7 +808,7 @@ let lang = document.documentElement.lang === 'en' ? 'en' : 'ja';
 const t = (k, v = {}) => { let x = I18N[lang][k] ?? I18N.ja[k] ?? k; if (typeof x === 'string') x = x.replace(/\{(\w+)\}/g, (_, n) => v[n] ?? ''); return x; };
 // ---------- バージョン（更新したら、ここだけ書き換える。ヘッダーとヘルプに反映される）
 // 番号の付け方：大きな変更は 2桁目、不具合修正や小さな調整は 3桁目を上げる
-const VERSION = { name: 'v1.2.1', date: '2026-10-25' };
+const VERSION = { name: 'v1.3.0', date: '2026-10-25' };
 
 function applyLang(l, save) {
   lang = l === 'en' ? 'en' : 'ja';
