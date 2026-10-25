@@ -77,11 +77,13 @@ async function process({ id, samples, preset }) {
   const repaired = D.declip(x);
   stage(3, 'AIでノイズを除去しています');
   const y = await denoise(x, P.attenLimit, (p) => stage(3, 'AIでノイズを除去しています', p));
+  // 合間が無音に切り落とされないよう、低い帯域にだけ元の背景音をごく小さく戻す
+  D.mixResidual(x, y, P.roomTone);
   stage(4, '話し手ごとの音量差を揃えています'); await tick();
   D.level(y);
   stage(5, 'こもりを取るEQとコンプレッサーをかけています'); await tick();
-  // 雑音が残りやすい帯域は持ち上げを控えめにする（静かな録音では設定どおり）
-  const { eq, report: eqReport } = D.adaptEq(y, P.eq);
+  // 録音ごとに声のスペクトルを測り、こもりを自動で補正する（雑音の多い帯域は持ち上げを控えめに）
+  const { eq, report: eqReport } = D.tonalEq(y, P.tonal);
   D.eqChain(y, eq);
   D.compress(y);
   stage(6, '音量をPodcast標準（-16 LUFS）に合わせています'); await tick();

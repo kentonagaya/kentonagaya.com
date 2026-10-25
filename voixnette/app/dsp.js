@@ -6,22 +6,17 @@ export const SR = 48000;
 
 export const PRESETS = {
   clear: { // 設定B（おすすめ）
-    // AIの除去量の上限。100（無制限）だと言葉の合間が完全な無音に切り落とされ、
-    // 雑音の多い録音では「ぶつ切り」に聞こえる。24dB に抑えて、合間はごく静かな背景音として残す。
-    attenLimit: 24,
-    eq: [
-      { type: 'peaking', f: 250, q: 1.0, g: -3 },
-      { type: 'peaking', f: 3000, q: 0.8, g: 7 },
-      { type: 'highshelf', f: 5000, q: 0.5, g: 9 },
-    ],
+    // AIは上限なしで雑音を取り切り、取り除いた分を「低い帯域だけ」ごく小さく戻す（mixResidual）。
+    // 合間が完全な無音にならないので「ぶつ切り」にならず、子音のある高い帯域は雑音に埋もれない。
+    attenLimit: 100,
+    roomTone: { lowDb: -32, highDb: -50 },
+    // 声の音色は録音ごとに測って自動で整える（tonalEq）
+    tonal: { strength: 0.8, maxBoost: 14 },
   },
-  natural: { // 設定A相当：ルームトーンを少し残す
-    attenLimit: 15,
-    eq: [
-      { type: 'peaking', f: 250, q: 1.0, g: -2 },
-      { type: 'peaking', f: 3000, q: 0.8, g: 5 },
-      { type: 'highshelf', f: 5000, q: 0.5, g: 6 },
-    ],
+  natural: { // 設定A相当：ルームトーンを少し多めに残し、補正も控えめ
+    attenLimit: 100,
+    roomTone: { lowDb: -26, highDb: -42 },
+    tonal: { strength: 0.6, maxBoost: 10 },
   },
 };
 
@@ -80,7 +75,9 @@ export function level(x, target = -20, maxCut = -10, maxBoost = 14) {
   }
   const sorted = Float64Array.from(db).sort();
   const p97 = sorted[Math.min(n - 1, Math.floor(0.97 * (n - 1)))];
-  const thr = Math.max(-50, p97 - 35);
+  // 合間の雑音を「声」と数えないよう、雑音の床（下位10%）より十分大きい部分だけを声とみなす
+  const p10 = sorted[Math.floor(0.1 * (n - 1))];
+  const thr = Math.max(-50, p97 - 35, Math.min(p97 - 20, p10 + 10));
   const voiced = new Uint8Array(n);
   for (let f = 0; f < n; f++) voiced[f] = db[f] > thr ? 1 : 0;
 
@@ -162,18 +159,6 @@ export function biquad(x, type, f, q, gainDb = 0) {
   }
 }
 
-// ---------------------------------------------------------------- 4'. 雑音に合わせて EQ の持ち上げ量を決める
-// 雑音の多い帯域を持ち上げると、残った雑音まで大きくなる。そこで帯域ごとに
-// 「話している区間」と「合間」の音量差（帯域SNR）を測り、差が小さい帯域ほど持ち上げを控えめにする。
-// 静かな録音（帯域SNRが十分）では、設定どおりに持ち上げる。
-function bandLevels(x, lo, hi) {
-  const y = Float32Array.from(x);
-  if (lo) { biquad(y, 'highpass', lo, Math.SQRT1_2); biquad(y, 'highpass', lo, Math.SQRT1_2); }
-  if (hi) { biquadLow(y, hi); biquadLow(y, hi); }
-  const hop = Math.round(0.05 * SR), n = Math.floor(y.length / hop), d = new Float64Array(n);
-  for (let f = 0; f < n; f++) { let s = 0; for (let i = f * hop; i < (f + 1) * hop; i++) s += y[i] * y[i]; d[f] = 10 * Math.log10(s / hop + 1e-14); }
-  return d;
-}
 function biquadLow(x, f) {
   const w0 = 2 * Math.PI * f / SR, cs = Math.cos(w0), al = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + al;
   const b0 = (1 - cs) / 2 / a0, b1 = (1 - cs) / a0, b2 = b0, a1 = -2 * cs / a0, a2 = (1 - al) / a0;
@@ -181,24 +166,115 @@ function biquadLow(x, f) {
   for (let i = 0; i < x.length; i++) { const xi = x[i]; const y = b0 * xi + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2; x2 = x1; x1 = xi; y2 = y1; y1 = y; x[i] = y; }
 }
 const pct = (a, q) => { const s = Float64Array.from(a).sort(); return s[Math.min(s.length - 1, Math.floor(q * (s.length - 1)))]; };
-export function adaptEq(x, eq, { fullAt = 26, zeroAt = 12 } = {}) {
-  const broad = bandLevels(x, 100, 0);
-  const hiTh = pct(broad, 0.8), loTh = pct(broad, 0.2);
-  const snrOf = (lo, hi) => {
-    const b = bandLevels(x, lo, hi); const sp = [], gp = [];
-    for (let i = 0; i < b.length; i++) { if (broad[i] >= hiTh) sp.push(b[i]); else if (broad[i] <= loTh) gp.push(b[i]); }
-    return sp.length && gp.length ? pct(sp, 0.5) - pct(gp, 0.5) : 99;
-  };
-  const report = {};
-  const out = eq.map((b) => {
-    if (b.g <= 0) return b;                       // 下げる EQ はそのまま
-    const lo = b.type === 'highshelf' ? b.f : b.f / 1.6, hi = b.type === 'highshelf' ? 12000 : b.f * 1.6;
-    const snr = snrOf(lo, hi);
-    const k = Math.max(0, Math.min(1, (snr - zeroAt) / (fullAt - zeroAt)));
-    report[`${b.type}@${b.f}`] = { snr: +snr.toFixed(1), gain: +(b.g * k).toFixed(1) };
-    return { ...b, g: b.g * k };
+
+// ---------------------------------------------------------------- 2'. 除去しきった音に、ごく小さく元の背景音を戻す
+// AIで雑音を最大限取り除くと、言葉の合間が完全な無音になり「ぶつ切り」に聞こえる。
+// そこで取り除いた分（元の音 − AIの出力）を、低い帯域だけ少し戻して自然な背景音（ルームトーン）にする。
+// 子音のある高い帯域にはほとんど戻さないので、声の輪郭は雑音に埋もれない。
+export function mixResidual(x, y, { lowDb = -32, highDb = -50, fc = 1500 } = {}) {
+  const lo = dbToLin(lowDb), hi = dbToLin(highDb);
+  // 4次ローパス（2次バターワース×2）を1サンプルずつ回す。30分の音声でも余分な配列を作らない
+  const w0 = 2 * Math.PI * fc / SR, cs = Math.cos(w0), al = Math.sin(w0) / (2 * Math.SQRT1_2), a0 = 1 + al;
+  const b0 = (1 - cs) / 2 / a0, b1 = (1 - cs) / a0, b2 = b0, a1 = -2 * cs / a0, a2 = (1 - al) / a0;
+  let p1 = 0, p2 = 0, q1 = 0, q2 = 0, s1 = 0, s2 = 0; // 1段目の入出力履歴（p, q）と2段目の出力履歴（s）
+  for (let i = 0; i < y.length; i++) {
+    const r = x[i] - y[i];
+    const m = b0 * r + b1 * p1 + b2 * p2 - a1 * q1 - a2 * q2;
+    const l = b0 * m + b1 * q1 + b2 * q2 - a1 * s1 - a2 * s2;
+    p2 = p1; p1 = r; q2 = q1; q1 = m; s2 = s1; s1 = l;
+    y[i] += hi * r + (lo - hi) * l;
+  }
+  return y;
+}
+
+// ---------------------------------------------------------------- 4''. 声の音色を自動で整える（トーンバランス補正）
+// 録音ごとに「話している区間」の平均スペクトルを測り、標準的な話し声のスペクトル
+// （ANSI S3.5 SII の標準音声スペクトル）との差を、オクターブごとの EQ で埋める。
+// こもった録音ほど高域を持ち上げ、低域のこもりを下げる。もともと整った録音ではほとんど何もしない。
+// 雑音の多い帯域は、持ち上げると雑音も大きくなるため、帯域SNRに応じて持ち上げ量を制限する。
+const TB_CENTERS = [125, 250, 500, 1000, 2000, 4000, 8000];
+const TB_TARGET = [-3, 0, -0.5, -9.7, -17.4, -25.4, -33.6]; // 1Hzあたりのレベル（250Hz基準, dB）
+
+function fftPow(re, im) { // 基数2の FFT（その場で計算）→ パワーを re に返す
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) {
+    let bit = n >> 1; for (; j & bit; bit >>= 1) j ^= bit; j ^= bit;
+    if (i < j) { let t = re[i]; re[i] = re[j]; re[j] = t; t = im[i]; im[i] = im[j]; im[j] = t; }
+  }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = -2 * Math.PI / len, wr = Math.cos(ang), wi = Math.sin(ang);
+    for (let i = 0; i < n; i += len) {
+      let cr = 1, ci = 0;
+      for (let k = 0; k < len / 2; k++) {
+        const a = i + k, b = a + len / 2;
+        const tr = re[b] * cr - im[b] * ci, ti = re[b] * ci + im[b] * cr;
+        re[b] = re[a] - tr; im[b] = im[a] - ti; re[a] += tr; im[a] += ti;
+        const nr = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = nr;
+      }
+    }
+  }
+  for (let i = 0; i < n; i++) re[i] = re[i] * re[i] + im[i] * im[i];
+}
+
+function avgSpectrum(x, starts, N) {
+  const acc = new Float64Array(N / 2), re = new Float64Array(N), im = new Float64Array(N);
+  const win = Float64Array.from({ length: N }, (_, i) => 0.5 - 0.5 * Math.cos(2 * Math.PI * i / N));
+  for (const s of starts) {
+    for (let i = 0; i < N; i++) { re[i] = (x[s + i] || 0) * win[i]; im[i] = 0; }
+    fftPow(re, im);
+    for (let k = 0; k < N / 2; k++) acc[k] += re[k];
+  }
+  for (let k = 0; k < N / 2; k++) acc[k] /= Math.max(1, starts.length);
+  return acc;
+}
+
+function biquadMagDb(type, f, q, g, freq) {
+  const [b0, b1, b2, a1, a2] = biquadCoeffs(type, f, q, g);
+  const w = 2 * Math.PI * freq / SR, c1 = Math.cos(w), s1 = Math.sin(w), c2 = Math.cos(2 * w), s2 = Math.sin(2 * w);
+  const nr = b0 + b1 * c1 + b2 * c2, ni = -(b1 * s1 + b2 * s2);
+  const dr = 1 + a1 * c1 + a2 * c2, di = -(a1 * s1 + a2 * s2);
+  return 10 * Math.log10((nr * nr + ni * ni) / (dr * dr + di * di));
+}
+
+export function tonalEq(x, { strength = 0.8, tilt = 0, maxBoost = 10, maxCut = -10, snrMargin = 3 } = {}) {
+  const N = 2048, hop = Math.round(0.05 * SR), n = Math.floor((x.length - N) / hop);
+  if (n < 40) return { eq: [], report: { skipped: 'short' } };
+  const lv = new Float64Array(n);
+  for (let f = 0; f < n; f++) { let s = 0; for (let i = f * hop; i < f * hop + N; i++) s += x[i] * x[i]; lv[f] = 10 * Math.log10(s / N + 1e-14); }
+  const hiTh = pct(lv, 0.8), loTh = pct(lv, 0.2);
+  const pick = (cond) => { const a = []; for (let f = 0; f < n; f++) if (cond(lv[f])) a.push(f * hop); const step = Math.max(1, Math.floor(a.length / 1500)); return a.filter((_, i) => i % step === 0); };
+  const Psp = avgSpectrum(x, pick((v) => v >= hiTh), N), Pgp = avgSpectrum(x, pick((v) => v <= loTh), N);
+  const binHz = SR / N;
+  const S = [], snr = [];
+  for (const c of TB_CENTERS) {
+    let sp = 0, gp = 0, m = 0;
+    for (let k = Math.ceil(c / Math.SQRT2 / binHz); k <= Math.floor(c * Math.SQRT2 / binHz); k++) { sp += Psp[k]; gp += Pgp[k]; m++; }
+    sp /= m; gp /= m;
+    const clean = Math.max(sp - gp, sp * 0.02); // 話し声だけの推定（雑音の分を差し引く）
+    S.push(10 * Math.log10(clean + 1e-30)); snr.push(10 * Math.log10(clean / (gp + 1e-30)));
+  }
+  // 1kHz を基準に、目標スペクトルとの差を求める
+  const i1k = TB_CENTERS.indexOf(1000);
+  const want = TB_CENTERS.map((c, i) => {
+    const dev = (TB_TARGET[i] - TB_TARGET[i1k]) - (S[i] - S[i1k]) + (c >= 4000 ? tilt : c >= 2000 ? tilt / 2 : 0);
+    let g = dev * strength;
+    if (c === 125) g = Math.min(0, g); // 最低域は下げるだけ
+    const cap = Math.max(0, Math.min(maxBoost, snr[i] - snrMargin));
+    return Math.max(maxCut, Math.min(cap, g));
   });
-  return { eq: out, report };
+  // オクターブ幅のピーキングEQ 7本の重なりを考慮して、各中心周波数で目標どおりになるゲインを求める
+  const Q = 1.41;
+  const g = want.slice();
+  for (let it = 0; it < 40; it++) {
+    for (let i = 0; i < TB_CENTERS.length; i++) {
+      let h = 0; for (let j = 0; j < TB_CENTERS.length; j++) h += biquadMagDb('peaking', TB_CENTERS[j], Q, g[j], TB_CENTERS[i]);
+      g[i] = Math.max(-14, Math.min(14, g[i] + 0.6 * (want[i] - h)));
+    }
+  }
+  const eq = TB_CENTERS.map((f, i) => ({ type: 'peaking', f, q: Q, g: +g[i].toFixed(2) })).filter((b) => Math.abs(b.g) >= 0.2);
+  const report = {};
+  TB_CENTERS.forEach((c, i) => { report[c] = { snr: +snr[i].toFixed(1), gain: +want[i].toFixed(1) }; });
+  return { eq, report };
 }
 
 export function eqChain(x, eq) {
