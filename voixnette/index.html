@@ -38,6 +38,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="twitter:description" content="Podcastの録音から、雑音だけをサッと消すツール。処理はブラウザの中だけで完結します。">
 <meta name="twitter:image" content="https://kentonagaya.com/voixnette/ogp.png">
 <!-- アイコン -->
+<link rel="preload" href="/voixnette/brand/logo.svg" as="image">
 <link rel="icon" id="favicon" href="/voixnette/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/voixnette/apple-touch-icon.png">
 <link rel="manifest" href="/voixnette/site.webmanifest">
@@ -57,6 +58,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   "isAccessibleForFree": true,
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
   "image": "https://kentonagaya.com/voixnette/ogp.png",
+  "logo": "https://kentonagaya.com/voixnette/brand/logo.png",
   "author": { "@type": "Person", "name": "Kento Nagaya", "url": "https://kentonagaya.com/" }
 }
 </script>
@@ -104,8 +106,8 @@ a { color: inherit; }
 /* ===== ヘッダー ===== */
 .top { height: var(--head); display: flex; align-items: center; gap: 20px; padding: 0 28px; }
 .brand { display: flex; align-items: baseline; gap: 16px; text-decoration: none; }
-.word { font-family: var(--serif); font-size: 32px; line-height: 1; letter-spacing: -.01em; }
-.word i { color: var(--rose-ink); }
+.word { display: block; height: 32px; width: auto; transform: translateY(5px); transition: transform .6s var(--ease); }
+.brand:hover .word { transform: translateY(5px) rotate(-2deg); }
 .top .label { white-space: nowrap; }
 .top-r { margin-left: auto; display: flex; align-items: center; gap: 18px; }
 .status { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-3); white-space: nowrap; }
@@ -452,7 +454,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
 
 <header class="top">
   <a class="brand" href="/voixnette/" aria-label="Voixnette">
-    <span class="word">Voix<i>nette</i></span>
+    <img class="word" src="/voixnette/brand/logo.svg" alt="Voixnette" width="133" height="32">
     <span class="label">Podcast voice cleaner</span>
   </a>
   <div class="top-r">
