@@ -109,6 +109,8 @@ a { color: inherit; }
 .word { display: block; height: 32px; width: auto; transform: translateY(5px); transition: transform .6s var(--ease); }
 .brand:hover .word { transform: translateY(5px) rotate(-2deg); }
 .top .label { white-space: nowrap; }
+.ver { margin-left: -6px; font-family: var(--mono); font-size: 10px; letter-spacing: .06em; color: var(--ink-4); white-space: nowrap; }
+.dlg .credit .ver-c { font-family: var(--mono); letter-spacing: .04em; }
 .top-r { margin-left: auto; display: flex; align-items: center; gap: 18px; }
 .status { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-3); white-space: nowrap; }
 .status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--aqua-ink); box-shadow: 0 0 0 4px var(--aqua-pale); }
@@ -456,6 +458,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
   <a class="brand" href="/voixnette/" aria-label="Voixnette">
     <img class="word" src="/voixnette/brand/logo.svg" alt="Voixnette" width="133" height="32">
     <span class="label">Podcast voice cleaner</span>
+    <span class="ver" id="ver" title="2026-10-25">v1.2.0</span>
   </a>
   <div class="top-r">
     <span class="status" id="engine" data-state="idle"><span class="dot"></span><span id="engineText">ブラウザ内で処理</span></span>
@@ -785,6 +788,10 @@ const I18N = {
 };
 let lang = document.documentElement.lang === 'en' ? 'en' : 'ja';
 const t = (k, v = {}) => { let x = I18N[lang][k] ?? I18N.ja[k] ?? k; if (typeof x === 'string') x = x.replace(/\{(\w+)\}/g, (_, n) => v[n] ?? ''); return x; };
+// ---------- バージョン（更新したら、ここだけ書き換える。ヘッダーとヘルプに反映される）
+// 番号の付け方：大きな変更は 2桁目、不具合修正や小さな調整は 3桁目を上げる
+const VERSION = { name: 'v1.2.0', date: '2026-10-25' };
+
 function applyLang(l, save) {
   lang = l === 'en' ? 'en' : 'ja';
   document.documentElement.lang = lang;
@@ -798,6 +805,9 @@ function applyLang(l, save) {
   document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
   document.getElementById('queue').dataset.empty = t('queueEmpty');
   document.getElementById('helpBody').innerHTML = t('helpBody');
+  const ver = document.getElementById('ver'); ver.textContent = VERSION.name; ver.title = VERSION.date;
+  const cr = document.querySelector('#helpBody .credit');
+  if (cr) cr.insertAdjacentHTML('beforeend', `　・　<span class="ver-c">${VERSION.name}（${VERSION.date}）</span>`);
 }
 applyLang(lang);
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
