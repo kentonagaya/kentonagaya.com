@@ -253,6 +253,7 @@ a { color: inherit; }
 .priv { display: flex; align-items: center; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line-2); font-size: 11.5px; color: var(--ink-3); }
 .priv svg { color: var(--aqua-ink); flex-shrink: 0; }
 .priv a { margin-left: auto; color: var(--ink-3); white-space: nowrap; }
+.priv .ver-foot { display: none; font-family: var(--mono); font-size: 10px; letter-spacing: .06em; color: var(--ink-4); white-space: nowrap; }
 
 /* ----- 右：ステージ ----- */
 .stage { position: relative; overflow: hidden; border-radius: 28px; background: var(--paper); border: 1px solid var(--line-2); min-height: 0; isolation: isolate; box-shadow: 0 30px 60px -40px rgba(29,31,40,.25); }
@@ -277,6 +278,9 @@ a { color: inherit; }
 .v-empty .label::after { content: ""; width: 40px; height: 1px; background: var(--ink-4); }
 .hero-t { margin: 18px 0 0; font-size: clamp(40px, 5.4vw, 76px); font-weight: 900; line-height: 1.22; letter-spacing: .01em; }
 .hero-t .s { color: var(--rose-ink); }
+/* 見出しは1行ずつ必ずひとかたまりで表示（ブラウザ任せの折り返しで「雑音だ／けを、」と割れないように） */
+.hero-t { align-self: stretch; }
+.hero-t .ln, .hero-t .s { white-space: nowrap; }
 :lang(en) .hero-t { letter-spacing: -.015em; line-height: 1.08; }
 :lang(en) .hero-t .s { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 1.12em; letter-spacing: -.02em; }
 :lang(en) body { font-feature-settings: normal; }
@@ -417,11 +421,19 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
   .top { padding: 0 16px; }
   .top .label { display: none; }
   .steps3 { grid-template-columns: 1fr; gap: 12px; margin-top: 28px; }
-  .hero-t { font-size: 40px; }
+  /* 画面幅に合わせて縮める（1行が画面に収まる大きさ） */
+  .hero-t { font-size: min(40px, calc((100vw - 80px) / 6.4)); }
+  :lang(en) .hero-t { font-size: min(40px, calc((100vw - 80px) / 5.6)); }
 }
 @media (max-width: 560px) {
   .status .long { display: none; }
-  .top-r { gap: 10px; }
+  .top { gap: 10px; }
+  .top-r { gap: 8px; }
+  .word { height: 26px; }
+  .brand { gap: 8px; }
+  .brand .ver { display: none; }       /* 狭い画面ではヘッダーに入りきらないので、下の欄に表示 */
+  .priv .ver-foot { display: inline; }
+  .lang button { padding: 0 8px; }
   .status #engineText { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .status { padding: 8px; }
   .run-top { grid-template-columns: 1fr 1fr !important; gap: 10px 16px; }
@@ -458,7 +470,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
   <a class="brand" href="/voixnette/" aria-label="Voixnette">
     <img class="word" src="/voixnette/brand/logo.svg" alt="Voixnette" width="133" height="32">
     <span class="label">Podcast voice cleaner</span>
-    <span class="ver" id="ver" title="2026-10-25">v1.2.0</span>
+    <span class="ver" id="ver" title="2026-10-25">v1.2.1</span>
   </a>
   <div class="top-r">
     <span class="status" id="engine" data-state="idle"><span class="dot"></span><span id="engineText">ブラウザ内で処理</span></span>
@@ -480,7 +492,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
     <label class="add" id="add">
       <span class="plus" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
       <span><b data-i18n="add"></b><small><span data-i18n="addFormats"></span><span class="drop-hint" data-i18n="addDrop"></span></small></span>
-      <input id="file" type="file" multiple accept="audio/*,.m4a,.wav,.mp3,.aac,.flac,.ogg,.opus,.caf,.aif,.aiff,.mp4,.mov">
+      <input id="file" type="file" multiple accept="audio/*,video/mp4,video/quicktime,.m4a,.qta,.wav,.mp3,.aac,.flac,.ogg,.opus,.caf,.aif,.aiff,.mp4,.mov,.m4b,.3gp,.amr,.webm">
     </label>
     <ul class="queue" id="queue" data-i18n-aria="queueAria"></ul>
 
@@ -500,6 +512,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
         <span data-i18n="privacy"></span>
         <a href="https://kentonagaya.com/">Kento Nagaya</a>
+        <span class="ver-foot" data-ver></span>
       </div>
     </div>
   </aside>
@@ -515,7 +528,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
       <h1 class="hero-t" data-i18n-html="heroTitle"></h1>
       <p class="hero-l" data-i18n="heroLead"></p>
       <div class="hero-cta">
-        <label class="pick"><span data-i18n="pick"></span><input type="file" multiple accept="audio/*,.m4a,.wav,.mp3,.aac,.flac,.ogg,.opus,.caf,.aif,.aiff,.mp4,.mov" data-picker></label>
+        <label class="pick"><span data-i18n="pick"></span><input type="file" multiple accept="audio/*,video/mp4,video/quicktime,.m4a,.qta,.wav,.mp3,.aac,.flac,.ogg,.opus,.caf,.aif,.aiff,.mp4,.mov,.m4b,.3gp,.amr,.webm" data-picker></label>
         <span class="or" data-i18n="orDrop"></span>
       </div>
       <ol class="steps3">
@@ -653,6 +666,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script type="module">
+import { extractAacAdts } from '/voixnette/app/qt-aac.js';
 const $ = (s, r = document) => r.querySelector(s);
 const queueEl = $('#queue'), stage = $('#stage'), audio = $('#audio');
 const items = [];
@@ -673,7 +687,7 @@ const I18N = {
     descClear: 'ノイズをしっかり消して、声をはっきりさせます。迷ったらこちら。', descNatural: '部屋の空気感を少し残して、自然な仕上がりにします。',
     startNone: '音声を追加してください', startOne: '処理をはじめる', startMany: '{n}件の処理をはじめる', startRunning: '処理中…（{i} / {n}）', startDone: 'すべて完了しました', startUnsupported: 'このブラウザでは使えません',
     estimate: '目安 約{m}分', goInfo: '{n}件・完了 {d}', privacy: '音声はアップロードされません',
-    heroTitle: '雑音だけを、<br><span class="s">サッと消す。</span>',
+    heroTitle: '<span class="ln">雑音だけを、</span><br><span class="s">サッと消す。</span>',
     heroLead: '収録した音声を入れるだけ。AIが声と雑音を聞き分けて、雑音だけを取り除きます。こもりも取って、Podcastにちょうどいい音量に。すべてこのブラウザの中で完結します。',
     pick: '音声ファイルを選ぶ', orDrop: 'または、ここにドロップ',
     s1: '入れる', s1d: '収録したままのm4aやwavを', s2: '待つ', s2d: '30分の音声で、約3〜5分', s3: '聴いて保存', s3d: '処理前と聴き比べて、MP3・WAVで',
@@ -688,6 +702,7 @@ const I18N = {
     rNoise: '雑音を取り除きました', rLoud: '音量をPodcast標準に揃えました', rClip: '音割れを修復しました', rNoClip: '音割れはありませんでした', more: '詳しい数値', less: '数値を閉じる',
     nLoud: '音量（LUFS）', nTarget: '目標 -16', nPeak: 'ピーク（dBTP）', nLimit: '上限 -1.5', nClip: '音割れ修復', nTime: '処理時間', nAudio: '音声 {d}',
     dlMp3: 'MP3 をダウンロード', mp3Sub: '配信用・{s}', wavSub: '編集用・{s}',
+    notAudio: '音声ファイルではないため追加しませんでした：{f}',
     eDecode: 'このファイルは読み込めませんでした。Chrome・Safari・Edgeで試すか、別の形式（wav・mp3など）にしてから入れてください。',
     eMemory: 'メモリが足りず、途中で止まりました。パソコンで試すか、音声を短く分けてから入れてください。',
     eOther: '処理中にエラーが発生しました（{m}）。ページを再読み込みして、もう一度お試しください。',
@@ -706,6 +721,7 @@ const I18N = {
       <h3>うまく使うコツ</h3><ul>
       <li><b>ノイズ除去や音量調整をする前の、収録したままのファイル</b>を入れてください。処理済みのファイルだと、声の高い音がすでに削られていて、こもりを直しきれません。</li>
       <li>m4aをWAVに変換してから入れる必要はありません（変換しても音質は上がりません）。</li>
+      <li>iPhoneのボイスメモ（.m4a・.qta）も、そのまま入れられます。</li>
       <li>30分の音声で3〜5分ほどかかります。処理中はこのタブを開いたままにしてください。</li>
       <li>長い音声はパソコン（Chrome・Edge・Safari）がおすすめです。スマートフォンではメモリ不足で止まることがあります。</li>
       <li>書き出したWAVをAudacityなどで編集するときは、ノイズ除去やノーマライズを重ねてかけないでください。</li>
@@ -735,7 +751,7 @@ const I18N = {
     descClear: 'Removes noise thoroughly for a crisp, present voice. Start here if unsure.', descNatural: 'Keeps a little room tone for a softer, more natural sound.',
     startNone: 'Add audio to begin', startOne: 'Start processing', startMany: 'Process {n} files', startRunning: 'Processing… ({i} / {n})', startDone: 'All done', startUnsupported: 'Not supported in this browser',
     estimate: 'About {m} min', goInfo: '{n} {files} · {d} done', privacy: 'Your audio never leaves this device',
-    heroTitle: 'Sweep away<br><span class="s">just the noise.</span>',
+    heroTitle: '<span class="ln">Sweep away</span><br><span class="s">just the noise.</span>',
     heroLead: 'Drop in your recording. AI tells your voice apart from the noise and removes only the noise — then clears up muffled speech and sets podcast-ready loudness, all inside this browser.',
     pick: 'Choose audio files', orDrop: 'or drop them here',
     s1: 'Add', s1d: 'Straight from the recorder — m4a or wav', s2: 'Wait', s2d: 'About 3–5 min for 30 min of audio', s3: 'Listen & save', s3d: 'Compare before and after, export MP3 or WAV',
@@ -750,6 +766,7 @@ const I18N = {
     rNoise: 'Noise removed', rLoud: 'Loudness set to podcast standard', rClip: 'Clipping repaired', rNoClip: 'No clipping found', more: 'Show details', less: 'Hide details',
     nLoud: 'Loudness (LUFS)', nTarget: 'target -16', nPeak: 'Peak (dBTP)', nLimit: 'limit -1.5', nClip: 'Clipping repaired', nTime: 'Processing time', nAudio: 'audio {d}',
     dlMp3: 'Download MP3', mp3Sub: 'For publishing · {s}', wavSub: 'For editing · {s}',
+    notAudio: 'Skipped (not an audio file): {f}',
     eDecode: 'This file couldn’t be read. Try Chrome, Safari or Edge, or convert it to wav or mp3 first.',
     eMemory: 'Ran out of memory. Try on a computer, or split the audio into shorter parts.',
     eOther: 'Something went wrong ({m}). Please reload the page and try again.',
@@ -768,6 +785,7 @@ const I18N = {
       <h3>Tips</h3><ul>
       <li>Use <b>the original recording, before any noise reduction or loudness changes</b>. Files that have already been processed have lost their high frequencies, so muffled speech can’t be fully restored.</li>
       <li>No need to convert m4a to WAV first — converting doesn’t improve quality.</li>
+      <li>iPhone Voice Memos recordings (.m4a, .qta) work as they are.</li>
       <li>30 minutes of audio takes about 3–5 minutes. Please keep this tab open while it runs.</li>
       <li>For long recordings, use a computer (Chrome, Edge or Safari). Phones may run out of memory.</li>
       <li>If you edit the WAV in Audacity or similar, don’t apply noise reduction or normalization again.</li>
@@ -790,7 +808,7 @@ let lang = document.documentElement.lang === 'en' ? 'en' : 'ja';
 const t = (k, v = {}) => { let x = I18N[lang][k] ?? I18N.ja[k] ?? k; if (typeof x === 'string') x = x.replace(/\{(\w+)\}/g, (_, n) => v[n] ?? ''); return x; };
 // ---------- バージョン（更新したら、ここだけ書き換える。ヘッダーとヘルプに反映される）
 // 番号の付け方：大きな変更は 2桁目、不具合修正や小さな調整は 3桁目を上げる
-const VERSION = { name: 'v1.2.0', date: '2026-10-25' };
+const VERSION = { name: 'v1.2.1', date: '2026-10-25' };
 
 function applyLang(l, save) {
   lang = l === 'en' ? 'en' : 'ja';
@@ -806,6 +824,7 @@ function applyLang(l, save) {
   document.getElementById('queue').dataset.empty = t('queueEmpty');
   document.getElementById('helpBody').innerHTML = t('helpBody');
   const ver = document.getElementById('ver'); ver.textContent = VERSION.name; ver.title = VERSION.date;
+  document.querySelectorAll('[data-ver]').forEach((el) => { el.textContent = VERSION.name; });
   const cr = document.querySelector('#helpBody .credit');
   if (cr) cr.insertAdjacentHTML('beforeend', `　・　<span class="ver-c">${VERSION.name}（${VERSION.date}）</span>`);
 }
@@ -861,11 +880,12 @@ const ICON = {
 $('.ornament').innerHTML = [38,62,88,54,100,72,46,80,58,92,40,66,30].map((h, i) => `<i style="--h:${h};--d:${(i * .37) % 2.6}"></i>`).join('');
 
 // ---------- ファイル追加
-const isAudio = (f) => /^(audio|video)\//.test(f.type) || /\.(m4a|wav|mp3|aac|flac|ogg|opus|caf|aiff?|mp4|mov)$/i.test(f.name);
+// 種類が分からないファイル（iPhoneのボイスメモ .qta など）も受け付け、読み込みで判断する。明らかに音声でないものだけ除く
+const isAudio = (f) => /^(audio|video)\//.test(f.type) || /\.(m4a|qta|wav|mp3|aac|flac|ogg|opus|caf|aiff?|mp4|mov|m4b|3gp|amr|webm)$/i.test(f.name) || !f.type || f.type === 'application/octet-stream';
 function addFiles(list) {
-  let first = null;
+  let first = null; const skipped = [];
   for (const file of list) {
-    if (!isAudio(file)) continue;
+    if (!isAudio(file)) { skipped.push(file.name); continue; }
     const it = { id: ++seq, file, state: 'waiting', stage: -1, pct: 0, overall: 0, urls: [], preset: currentPreset() };
     const li = document.createElement('li');
     li.className = 'q'; li.dataset.state = 'waiting'; li.tabIndex = 0;
@@ -883,7 +903,9 @@ function addFiles(list) {
     a.onloadedmetadata = () => { if (isFinite(a.duration)) { it.duration = a.duration; qText(it); refresh(); if (selectedId === it.id) render(); } URL.revokeObjectURL(u); };
     a.onerror = () => URL.revokeObjectURL(u);
   }
-  if (first && !running) select(first.id);
+  if (skipped.length) toast(t('notAudio', { f: skipped.join('、') }));
+  if (!first) return;
+  if (!running) select(first.id);
   refresh(); presetDesc(); preloadEngine(); pump();
 }
 function removeItem(it) {
@@ -928,6 +950,10 @@ function refresh() {
 }
 
 // 入力：ボタン・ドロップ・どこにでもドロップ
+// iPhone・iPad では accept の絞り込みで、ボイスメモなどが選べない（グレー表示）ことがあるため、絞り込みを外す
+if (/iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+  document.querySelectorAll('input[type=file]').forEach((el) => el.removeAttribute('accept'));
+}
 $('#file').addEventListener('change', (e) => { addFiles(e.target.files); e.target.value = ''; });
 document.querySelectorAll('[data-picker]').forEach((el) => el.addEventListener('change', (e) => { addFiles(e.target.files); e.target.value = ''; }));
 let dragDepth = 0;
@@ -1000,7 +1026,8 @@ async function runItem(it) {
   const base = it.file.name.replace(/\.[^.]+$/, '') + (it.preset === 'natural' ? '_natural' : '');
   try {
     setProgress(it, 'decode', 0.3);
-    const { mono, duration, channels } = await decodeToMono(it.file);
+    const { mono, duration, channels, adts } = await decodeToMono(it.file);
+    it.srcBlob = adts ? new Blob([adts], { type: 'audio/aac' }) : null; // 元の形式で再生できないときの「処理前」用
     it.duration = duration; it.channels = channels;
     it.envBefore = envelope(mono);
     if (selectedId === it.id) render();
@@ -1016,7 +1043,7 @@ async function runItem(it) {
       mp3Worker.postMessage({ id: it.id, pcm: pcm44, sampleRate: 44100, kbps: 128 }, [pcm44.buffer]);
     });
     const wavBlob = new Blob([res.wav], { type: 'audio/wav' });
-    const mp3Url = URL.createObjectURL(mp3), wavUrl = URL.createObjectURL(wavBlob), srcUrl = URL.createObjectURL(it.file);
+    const mp3Url = URL.createObjectURL(mp3), wavUrl = URL.createObjectURL(wavBlob), srcUrl = URL.createObjectURL(it.srcBlob || it.file);
     it.urls.push(mp3Url, wavUrl, srcUrl);
     it.t1 = performance.now();
     it.result = { mp3Url, wavUrl, srcUrl, base, mp3Size: mp3.size, wavSize: wavBlob.size, stats: res.stats };
@@ -1043,13 +1070,18 @@ function friendlyError(err) {
 
 // ---------- 音声の変換（変更なし）
 async function decodeToMono(file) {
-  const buf = await file.arrayBuffer();
   const ctx = new OfflineAudioContext(1, 1, 48000);
-  let ab;
-  try { ab = await ctx.decodeAudioData(buf); } catch (e) { throw new Error('ファイルを読み込めません: ' + (e?.message || e)); }
+  let ab, adts = null;
+  try { ab = await ctx.decodeAudioData(await file.arrayBuffer()); } catch (e) {
+    // iPhoneのボイスメモ（.qta）など：読めないトラックが先頭にある QuickTime/MP4 は、
+    // 中の AAC トラックだけを取り出して読み直す（失敗した decodeAudioData はバッファを手放すので、ファイルから読み直す）
+    try { adts = extractAacAdts(await file.arrayBuffer()); } catch { adts = null; }
+    if (!adts) throw new Error('ファイルを読み込めません: ' + (e?.message || e));
+    try { ab = await ctx.decodeAudioData(adts.slice(0)); } catch (e2) { throw new Error('ファイルを読み込めません: ' + (e2?.message || e2)); }
+  }
   const n = ab.length, ch = ab.numberOfChannels, mono = new Float32Array(n);
   for (let c = 0; c < ch; c++) { const d = ab.getChannelData(c); for (let i = 0; i < n; i++) mono[i] += d[i] / ch; }
-  return { mono, duration: ab.duration, channels: ch };
+  return { mono, duration: ab.duration, channels: ch, adts };
 }
 async function resampleTo16bit(samples, rate) {
   const ctx = new OfflineAudioContext(1, Math.ceil(samples.length * rate / 48000), rate);
