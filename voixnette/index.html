@@ -14,17 +14,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 <!-- 表示言語を先に決める（ちらつき防止）：?lang= → 保存した設定 → ブラウザの言語 -->
 <script>(function(){var q=new URLSearchParams(location.search).get('lang'),v=null;try{v=localStorage.getItem('voixnette-lang')}catch(e){}var l=(q==='en'||q==='ja')?q:(v==='en'||v==='ja')?v:((navigator.language||'').toLowerCase().indexOf('ja')===0?'ja':'en');document.documentElement.lang=l;})();</script>
-<meta name="description" content="Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正するツール。雑音を消し、こもりを取り、Podcast標準の音量に整えます。音声はアップロードされません。">
+<meta name="description" content="Podcastの録音から、雑音だけをサッと消すツール。AIが声と雑音を聞き分けて雑音だけを取り除き、こもりを取って、Podcast標準の音量に整えます。処理はブラウザの中だけで、音声はアップロードされません。">
 <meta name="author" content="Kento Nagaya">
 <meta name="theme-color" content="#F7F5F2">
 <meta name="color-scheme" content="light">
-<title>Voixnette | 声を、くっきり。</title>
+<title>Voixnette | 雑音だけを、サッと消す。</title>
 <link rel="canonical" href="https://kentonagaya.com/voixnette/">
 <!-- OGP（SNSやチャットで共有したときの表示） -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Kento Nagaya">
-<meta property="og:title" content="Voixnette | 声を、くっきり。">
-<meta property="og:description" content="Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正。雑音を消し、こもりを取り、Podcast標準の音量に整えます。音声はアップロードされません。">
+<meta property="og:title" content="Voixnette | 雑音だけを、サッと消す。">
+<meta property="og:description" content="Podcastの録音から、雑音だけをサッと消すツール。AIが声と雑音を聞き分けて雑音だけを取り除き、こもりを取って、Podcast標準の音量に整えます。処理はブラウザの中だけで、音声はアップロードされません。">
 <meta property="og:url" content="https://kentonagaya.com/voixnette/">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:locale:alternate" content="en_US">
@@ -32,10 +32,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Voixnette — 声を、くっきり。Your voice, crystal clear.">
+<meta property="og:image:alt" content="Voixnette（ボワネット）— 雑音だけを、サッと消す。 Sweep away just the noise.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Voixnette | 声を、くっきり。">
-<meta name="twitter:description" content="Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正するツール。">
+<meta name="twitter:title" content="Voixnette | 雑音だけを、サッと消す。">
+<meta name="twitter:description" content="Podcastの録音から、雑音だけをサッと消すツール。処理はブラウザの中だけで完結します。">
 <meta name="twitter:image" content="https://kentonagaya.com/voixnette/ogp.png">
 <!-- アイコン -->
 <link rel="icon" id="favicon" href="/voixnette/favicon.svg" type="image/svg+xml">
@@ -48,7 +48,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   "@type": "WebApplication",
   "name": "Voixnette",
   "url": "https://kentonagaya.com/voixnette/",
-  "description": "Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正するツール。",
+  "alternateName": "ボワネット",
+  "description": "Podcastの録音から、雑音だけをサッと消すツール。処理はブラウザの中だけで完結します。",
   "applicationCategory": "MultimediaApplication",
   "operatingSystem": "Any (modern web browser)",
   "browserRequirements": "Requires WebAssembly SIMD and Web Workers",
@@ -267,6 +268,8 @@ a { color: inherit; }
 /* 空の状態 */
 .v-empty { justify-content: center; align-items: flex-start; }
 .v-empty .label { display: flex; align-items: center; gap: 14px; }
+.yomi { margin-left: .9em; font-family: var(--ja); letter-spacing: .12em; text-transform: none; color: var(--ink-3); }
+.yomi:empty { display: none; }
 .v-empty .label::after { content: ""; width: 40px; height: 1px; background: var(--ink-4); }
 .hero-t { margin: 18px 0 0; font-size: clamp(40px, 5.4vw, 76px); font-weight: 900; line-height: 1.22; letter-spacing: .01em; }
 .hero-t .s { color: var(--rose-ink); }
@@ -394,6 +397,8 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
 .dlg ul, .dlg ol { margin: 0; padding-left: 1.3em; color: var(--ink-2); font-size: 13.5px; }
 .dlg li { margin: 4px 0; }
 .dlg .about { margin: 0; font-size: 14px; line-height: 1.95; color: var(--ink); }
+.dlg .etym { display: block; margin-top: 6px; font-size: 12px; color: var(--ink-3); }
+.dlg .pron { font-weight: 400; font-size: 12px; color: var(--ink-3); }
 .dlg .credit { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line-2); font-size: 11.5px; color: var(--ink-3); }
 
 /* ===== 画面が狭いとき ===== */
@@ -501,7 +506,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
 
     <!-- 空 -->
     <section class="view v-empty on" id="vEmpty">
-      <span class="label">Voixnette</span>
+      <span class="label">Voixnette<span class="yomi" data-i18n="yomi"></span></span>
       <h1 class="hero-t" data-i18n-html="heroTitle"></h1>
       <p class="hero-l" data-i18n="heroLead"></p>
       <div class="hero-cta">
@@ -652,8 +657,9 @@ const announce = (t) => { const a = document.getElementById('announce'); a.textC
 // ---------- 表示言語（日本語 / English）
 const I18N = {
   ja: {
-    title: 'Voixnette | 声を、くっきり。',
-    desc: 'Podcastの録音を、ブラウザの中だけでノイズ除去・音質補正するツール。雑音を消し、こもりを取り、Podcast標準の音量に整えます。音声はアップロードされません。',
+    title: 'Voixnette | 雑音だけを、サッと消す。',
+    desc: 'Podcastの録音から、雑音だけをサッと消すツール。AIが声と雑音を聞き分けて雑音だけを取り除き、こもりを取って、Podcast標準の音量に整えます。処理はブラウザの中だけで、音声はアップロードされません。',
+    yomi: 'ボワネット',
     help: '使い方とコツ', close: '閉じる', railAria: 'ファイルと設定',
     stIdle: 'ブラウザ内で処理', stLoading: 'AIを準備中', stReady: '<span class="long">準備OK・</span>ブラウザ内で処理', stError: 'AIを読み込めませんでした', stUnsupported: 'このブラウザには対応していません',
     add: '音声を追加', addFormats: 'm4a・wav・mp3 など', addDrop: '／ドロップでもOK',
@@ -662,8 +668,8 @@ const I18N = {
     descClear: 'ノイズをしっかり消して、声をはっきりさせます。迷ったらこちら。', descNatural: '部屋の空気感を少し残して、自然な仕上がりにします。',
     startNone: '音声を追加してください', startOne: '処理をはじめる', startMany: '{n}件の処理をはじめる', startRunning: '処理中…（{i} / {n}）', startDone: 'すべて完了しました', startUnsupported: 'このブラウザでは使えません',
     estimate: '目安 約{m}分', goInfo: '{n}件・完了 {d}', privacy: '音声はアップロードされません',
-    heroTitle: '声を、<br><span class="s">くっきり。</span>',
-    heroLead: '収録した音声を入れるだけ。雑音を消して、こもりを取り、Podcastにちょうどいい音量に整えます。すべてこのブラウザの中で完結します。',
+    heroTitle: '雑音だけを、<br><span class="s">サッと消す。</span>',
+    heroLead: '収録した音声を入れるだけ。AIが声と雑音を聞き分けて、雑音だけを取り除きます。こもりも取って、Podcastにちょうどいい音量に。すべてこのブラウザの中で完結します。',
     pick: '音声ファイルを選ぶ', orDrop: 'または、ここにドロップ',
     s1: '入れる', s1d: '収録したままのm4aやwavを', s2: '待つ', s2d: '30分の音声で、約3〜5分', s3: '聴いて保存', s3d: '処理前と聴き比べて、MP3・WAVで',
     bWaiting: '待機中', bRunning: '処理中', bDone: '完了', bError: 'エラー',
@@ -691,7 +697,7 @@ const I18N = {
     nfTitle: '処理が完了しました', nfBody: '{f} をダウンロードできます',
     titleRun: '({p}%) Voixnette', titleDone: '✓ 完了 | Voixnette',
     helpTitle: '使い方とコツ',
-    helpBody: `<h3>Voixnetteとは</h3><p class="about">Podcastの録音を、聴きやすい音に整えるためのツールです。収録した音声を入れるだけで、雑音の除去、こもりの補正、話し手ごとの音量合わせ、Podcast標準の音量への調整までを自動で行います。処理はすべてこのブラウザの中で行われ、音声がどこかに送られることはありません。登録や料金も不要です。</p>
+    helpBody: `<h3>Voixnette（ボワネット）とは</h3><p class="about">Podcastの録音から、雑音だけをサッと消すためのツールです。収録した音声を入れるだけで、AIが声と雑音を聞き分けて雑音だけを取り除き、こもりの補正、話し手ごとの音量合わせ、Podcast標準の音量への調整までを自動で行います。処理はすべてこのブラウザの中で行われ、音声がどこかに送られることはありません。登録や料金も不要です。</p>
       <h3>うまく使うコツ</h3><ul>
       <li><b>ノイズ除去や音量調整をする前の、収録したままのファイル</b>を入れてください。処理済みのファイルだと、声の高い音がすでに削られていて、こもりを直しきれません。</li>
       <li>m4aをWAVに変換してから入れる必要はありません（変換しても音質は上がりません）。</li>
@@ -713,8 +719,9 @@ const I18N = {
       <p class="credit">使用しているオープンソース：DeepFilterNet3（MIT / Apache-2.0）、lamejs（LGPL-3.0, LAME）。<a href="/voixnette/THIRD_PARTY_NOTICES.txt">ライセンス表記</a>　・　制作：<a href="https://kentonagaya.com/">Kento Nagaya</a></p>`,
   },
   en: {
-    title: 'Voixnette | Your voice, crystal clear.',
-    desc: 'Clean up podcast recordings right in your browser: remove background noise, clear up muffled speech and set podcast-standard loudness. Nothing is uploaded.',
+    title: 'Voixnette | Sweep away just the noise.',
+    desc: 'Sweep away just the noise from your podcast recordings. AI tells your voice apart from the noise and removes only the noise, then clears up muffled speech and sets podcast-standard loudness — all in your browser, nothing uploaded.',
+    yomi: '/vwa·net/',
     help: 'How to use', close: 'Close', railAria: 'Files and settings',
     stIdle: 'Runs in your browser', stLoading: 'Loading AI', stReady: '<span class="long">Ready · </span>runs in your browser', stError: 'Couldn’t load the AI', stUnsupported: 'This browser isn’t supported',
     add: 'Add audio', addFormats: 'm4a, wav, mp3 and more', addDrop: ' — or drop here',
@@ -723,8 +730,8 @@ const I18N = {
     descClear: 'Removes noise thoroughly for a crisp, present voice. Start here if unsure.', descNatural: 'Keeps a little room tone for a softer, more natural sound.',
     startNone: 'Add audio to begin', startOne: 'Start processing', startMany: 'Process {n} files', startRunning: 'Processing… ({i} / {n})', startDone: 'All done', startUnsupported: 'Not supported in this browser',
     estimate: 'About {m} min', goInfo: '{n} {files} · {d} done', privacy: 'Your audio never leaves this device',
-    heroTitle: 'Your voice,<br><span class="s">crystal clear.</span>',
-    heroLead: 'Drop in your recording. Voixnette removes background noise, lifts muffled speech and sets podcast-ready loudness — all inside this browser.',
+    heroTitle: 'Sweep away<br><span class="s">just the noise.</span>',
+    heroLead: 'Drop in your recording. AI tells your voice apart from the noise and removes only the noise — then clears up muffled speech and sets podcast-ready loudness, all inside this browser.',
     pick: 'Choose audio files', orDrop: 'or drop them here',
     s1: 'Add', s1d: 'Straight from the recorder — m4a or wav', s2: 'Wait', s2d: 'About 3–5 min for 30 min of audio', s3: 'Listen & save', s3d: 'Compare before and after, export MP3 or WAV',
     bWaiting: 'Waiting', bRunning: 'Processing', bDone: 'Done', bError: 'Error',
@@ -752,7 +759,7 @@ const I18N = {
     nfTitle: 'Processing complete', nfBody: '{f} is ready to download',
     titleRun: '({p}%) Voixnette', titleDone: '✓ Done | Voixnette',
     helpTitle: 'Tips & how it works',
-    helpBody: `<h3>About Voixnette</h3><p class="about">Voixnette makes podcast recordings easier to listen to. Just add your recording and it automatically removes background noise, clears up muffled speech, evens out speaker levels and sets podcast-standard loudness. Everything runs inside this browser — your audio is never sent anywhere. No sign-up, no fees.</p>
+    helpBody: `<h3>About Voixnette <span class="pron">(pronounced “vwa-net”)</span></h3><p class="about">Voixnette sweeps away just the noise from your podcast recordings. Add your recording and AI tells your voice apart from the noise, removes only the noise, then clears up muffled speech, evens out speaker levels and sets podcast-standard loudness — automatically. Everything runs inside this browser; your audio is never sent anywhere. No sign-up, no fees.</p>
       <h3>Tips</h3><ul>
       <li>Use <b>the original recording, before any noise reduction or loudness changes</b>. Files that have already been processed have lost their high frequencies, so muffled speech can’t be fully restored.</li>
       <li>No need to convert m4a to WAV first — converting doesn’t improve quality.</li>
