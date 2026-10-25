@@ -6,11 +6,11 @@ export const SR = 48000;
 
 export const PRESETS = {
   clear: { // おすすめ：雑音をしっかり下げる
-    nr: { reductionDb: 42, holdDb: 10 },
+    nr: { reductionDb: 42, holdDb: 30, maxDropDb: 1.0 },
     tonal: { strength: 0.8, maxBoost: 14, noCutAbove: 2000 },
   },
   natural: { // 部屋の空気感を少し残し、補正も控えめ
-    nr: { reductionDb: 24, holdDb: 8 },
+    nr: { reductionDb: 24, holdDb: 24, maxDropDb: 1.0 },
     tonal: { strength: 0.6, maxBoost: 10, noCutAbove: 2000 },
   },
 };
@@ -301,24 +301,21 @@ const KW1 = { b: [1.53512485958697, -2.69169618940638, 1.19839281085285], a: [-1
 const KW2 = { b: [1.0, -2.0, 1.0], a: [-1.99004745483398, 0.99007225036621] };
 
 export function integratedLoudness(x) {
-  const y = new Float32Array(x.length);
-  let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+  // K 特性フィルターを通しながら 100ms ごとの合計を集める（音声と同じ長さの配列は作らない）
+  const step = Math.round(0.1 * SR);
+  const seg = [];
+  let a1 = 0, a2 = 0, b1 = 0, b2 = 0, c1 = 0, c2 = 0, d1 = 0, d2 = 0, acc = 0, cnt = 0;
   for (let i = 0; i < x.length; i++) {
-    const v = KW1.b[0] * x[i] + KW1.b[1] * x1 + KW1.b[2] * x2 - KW1.a[0] * y1 - KW1.a[1] * y2;
-    x2 = x1; x1 = x[i]; y2 = y1; y1 = v; y[i] = v;
+    const v = KW1.b[0] * x[i] + KW1.b[1] * a1 + KW1.b[2] * a2 - KW1.a[0] * b1 - KW1.a[1] * b2;
+    a2 = a1; a1 = x[i]; b2 = b1; b1 = v;
+    const w = KW2.b[0] * v + KW2.b[1] * c1 + KW2.b[2] * c2 - KW2.a[0] * d1 - KW2.a[1] * d2;
+    c2 = c1; c1 = v; d2 = d1; d1 = w;
+    acc += w * w;
+    if (++cnt === step) { seg.push(acc); acc = 0; cnt = 0; }
   }
-  x1 = x2 = y1 = y2 = 0;
-  for (let i = 0; i < y.length; i++) {
-    const xi = y[i];
-    const v = KW2.b[0] * xi + KW2.b[1] * x1 + KW2.b[2] * x2 - KW2.a[0] * y1 - KW2.a[1] * y2;
-    x2 = x1; x1 = xi; y2 = y1; y1 = v; y[i] = v;
-  }
-  const block = Math.round(0.4 * SR), step = Math.round(0.1 * SR);
+  // 400ms のブロック（100ms ずつずらす）＝連続する 4 区間の合計
   const powers = [];
-  for (let st = 0; st + block <= y.length; st += step) {
-    let s = 0; for (let i = st; i < st + block; i++) s += y[i] * y[i];
-    powers.push(s / block);
-  }
+  for (let k = 0; k + 4 <= seg.length; k++) powers.push((seg[k] + seg[k + 1] + seg[k + 2] + seg[k + 3]) / (4 * step));
   const L = (p) => -0.691 + 10 * Math.log10(p);
   let g1 = powers.filter((p) => L(p) > -70);
   if (!g1.length) return -Infinity;
@@ -328,83 +325,69 @@ export function integratedLoudness(x) {
 }
 
 // 先読み付きピークリミッター（4倍オーバーサンプリングで真のピークを推定）
-export function truePeakEstimate(x) {
-  // 4点の windowed-sinc 補間で、サンプル間の山（インターサンプルピーク）を近似
-  const taps = 8; const phases = [0.25, 0.5, 0.75];
-  const kern = phases.map((ph) => {
-    const k = []; for (let n = -taps + 1; n <= taps; n++) {
-      const t = n - ph; const sinc = t === 0 ? 1 : Math.sin(Math.PI * t) / (Math.PI * t);
-      const w = 0.5 + 0.5 * Math.cos(Math.PI * t / taps); k.push(sinc * w);
-    } return k;
-  });
-  const tp = new Float32Array(x.length);
-  for (let i = 0; i < x.length; i++) {
-    let m = Math.abs(x[i]);
-    if (m > 0.3) { // 小さい区間は計算を省略（ピークにならない）
-      for (const k of kern) {
-        let s = 0;
-        for (let j = 0; j < k.length; j++) { const idx = i + j - taps + 1; if (idx >= 0 && idx < x.length) s += k[j] * x[idx]; }
-        if (Math.abs(s) > m) m = Math.abs(s);
-      }
+// サンプル間の山（インターサンプルピーク）を近似するための補間係数（4倍・windowed-sinc）
+const TP_TAPS = 8;
+const TP_KERN = [0.25, 0.5, 0.75].map((ph) => {
+  const k = []; for (let n = -TP_TAPS + 1; n <= TP_TAPS; n++) {
+    const t = n - ph; const sinc = t === 0 ? 1 : Math.sin(Math.PI * t) / (Math.PI * t);
+    const w = 0.5 + 0.5 * Math.cos(Math.PI * t / TP_TAPS); k.push(sinc * w);
+  } return k;
+});
+function truePeakAt(x, i) {
+  let m = Math.abs(x[i]);
+  if (m > 0.3) { // 小さい区間は計算を省略（ピークにならない）
+    for (const k of TP_KERN) {
+      let s = 0;
+      for (let j = 0; j < k.length; j++) { const idx = i + j - TP_TAPS + 1; if (idx >= 0 && idx < x.length) s += k[j] * x[idx]; }
+      if (Math.abs(s) > m) m = Math.abs(s);
     }
-    tp[i] = m;
   }
-  return tp;
+  return m;
 }
+export function truePeakEstimate(x) { const tp = new Float32Array(x.length); for (let i = 0; i < x.length; i++) tp[i] = truePeakAt(x, i); return tp; }
 
+// 先読みリミッター（流れ作業で処理。使うメモリは先読み分だけ）
+//  ① これから la サンプル以内に来るピークに必要なゲインの最小値（先読み）
+//  ② 2段のリリース：一瞬のピークは素早く戻し（fastMs）、続く大きい部分だけゆっくり下げる（slow）
+//  ③ 直近 la サンプルの移動平均でなめらかにする（ピーク位置では必ず必要量以下になる）
 export function limit(x, ceilingDb = -1.0, lookaheadMs = 5, releaseMs = 80, { dual = true, fastMs = 12, slowAttackMs = 40, slowReleaseMs = 160 } = {}) {
-  const ceil = dbToLin(ceilingDb);
-  const tp = truePeakEstimate(x);
-  const la = Math.max(1, Math.round(lookaheadMs * SR / 1000));
-  const n = x.length;
-  const need = new Float32Array(n);
-  for (let i = 0; i < n; i++) need[i] = tp[i] > ceil ? ceil / tp[i] : 1;
-  // ① 先読み：これから la サンプル以内に来るピークに必要なゲインの最小値
-  const fut = slidingMinFuture(need, la);
-  // ② リリース
-  if (dual) {
-    // 2段のリリース：舌打ちや破裂音のような一瞬のピークは素早く戻し（fastMs）、
-    // 続けて大きい部分だけをゆっくり下げる（slow）。一瞬のピークのあとに音が「へこむ」のを防ぐ
-    const cF = Math.exp(-1 / (fastMs * SR / 1000)), aS = 1 - Math.exp(-1 / (slowAttackMs * SR / 1000)), cS = Math.exp(-1 / (slowReleaseMs * SR / 1000));
-    let f = 0, sl = 0;
-    for (let i = 0; i < n; i++) {
-      const r = fut[i] < 1 ? -Math.log(fut[i]) : 0; // 必要な下げ幅（自然対数）
+  const ceil = dbToLin(ceilingDb), n = x.length;
+  const la = Math.max(TP_TAPS, Math.round(lookaheadMs * SR / 1000));
+  const W = la + 1;
+  // 必要ゲインの「区間最小」を求める単調キュー（リング）
+  const qi = new Int32Array(W + 1), qv = new Float32Array(W + 1); let qh = 0, qt = 0, qn = 0;
+  const cF = Math.exp(-1 / (fastMs * SR / 1000)), aS = 1 - Math.exp(-1 / (slowAttackMs * SR / 1000)), cS = Math.exp(-1 / (slowReleaseMs * SR / 1000));
+  const rel = Math.exp(-1 / (releaseMs * SR / 1000));
+  let f = 0, sl = 0, g = 1;
+  const ma = new Float32Array(W); let maSum = W, mi = 0; ma.fill(1);
+  for (let k = 0; k < n + la; k++) {
+    // k 番目の必要ゲイン（元の音で計算。書き換えるのは k - la 以前なので、ここで読む値はまだ元のまま）
+    const need = k < n ? (() => { const tp = truePeakAt(x, k); return tp > ceil ? ceil / tp : 1; })() : 1;
+    while (qn > 0 && qv[(qt - 1 + W + 1) % (W + 1)] >= need) { qt = (qt - 1 + W + 1) % (W + 1); qn--; }
+    qi[qt] = k; qv[qt] = need; qt = (qt + 1) % (W + 1); qn++;
+    const i = k - la;
+    if (i < 0) continue;
+    while (qn > 0 && qi[qh] < i) { qh = (qh + 1) % (W + 1); qn--; }
+    const fut = qv[qh];
+    let gi;
+    if (dual) {
+      const r = fut < 1 ? -Math.log(fut) : 0;
       f = Math.max(r, f * cF);
       sl = r > sl ? sl + (r - sl) * aS : sl * cS;
-      fut[i] = Math.exp(-Math.max(f, sl));
-    }
-  } else {
-    const rel = Math.exp(-1 / (releaseMs * SR / 1000));
-    let g = 1;
-    for (let i = 0; i < n; i++) { g = Math.min(fut[i], 1 - (1 - g) * rel); fut[i] = g; }
+      gi = Math.exp(-Math.max(f, sl));
+    } else { g = Math.min(fut, 1 - (1 - g) * rel); gi = g; }
+    if (i === 0) { ma.fill(gi); maSum = gi * W; } // 先頭：過去のない部分も最初のゲインで埋める（ファイル冒頭のピークを逃さない）
+    maSum += gi - ma[mi]; ma[mi] = gi; mi = (mi + 1) % W;
+    x[i] *= maSum / W;
   }
-  // ③ 直近 la サンプルの移動平均でなめらかにする（ピーク位置では必ず必要量以下になる）
-  let s = 0; const buf = new Float32Array(la + 1); let bi = 0;
-  for (let k = 0; k <= la; k++) { buf[k] = 1; s += 1; }
-  for (let i = 0; i < n; i++) {
-    s += fut[i] - buf[bi]; buf[bi] = fut[i]; bi = (bi + 1) % (la + 1);
-    x[i] *= s / (la + 1);
-  }
-}
-
-// a[i..i+w] の最小値（単調キュー）
-function slidingMinFuture(a, w) {
-  const n = a.length, out = new Float32Array(n); const dq = new Int32Array(n); let h = 0, t = 0;
-  for (let i = n - 1; i >= 0; i--) {
-    while (t > h && a[dq[t - 1]] >= a[i]) t--;
-    dq[t++] = i;
-    while (dq[h] > i + w) h++;
-    out[i] = a[dq[h]];
-  }
-  return out;
 }
 
 export function normalizeLoudness(x, targetLufs = -16, tpDb = -1.0) {
   const before = integratedLoudness(x);
   if (!isFinite(before)) return { before, after: before };
-  // リミッターで少し音量が下がるため、目標との差が 0.1dB 未満になるまで最大3回くり返す
+  // リミッターで少し音量が下がるため、目標との差が 0.1dB 未満になるまで最大5回くり返す
   let now = before;
-  for (let it = 0; it < 3 && Math.abs(targetLufs - now) >= 0.1; it++) {
+  for (let it = 0; it < 5 && Math.abs(targetLufs - now) >= 0.1; it++) {
     const g = dbToLin(targetLufs - now);
     for (let i = 0; i < x.length; i++) x[i] *= g;
     limit(x, tpDb);

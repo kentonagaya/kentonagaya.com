@@ -4,7 +4,8 @@
 //  ・雑音の型：ファイル全体のいちばん静かな部分から自動で測る（手で無音部分を選ぶ必要がない）
 //  ・判定：0/1 で切り替えず、雑音の型との差に応じてなめらかに下げる（ザラつき・チリチリ音を抑える）
 //  ・時間方向：立ち上がりは先回りして上げ（30ms）、下げるときはゆっくり（250ms）→ 語尾が急に切れない
-//  ・語尾の保護：直前まで話していた区間は、下げる量を浅く抑える（holdDb）
+//  ・語尾の保護：直前まで話していた区間は、下げる量を holdDb までに抑える。ただし浅くしすぎると
+//    「声が出るたびに雑音（シャカシャカ）が上がる」ポンピングになるため、深め（30dB）にしている
 //  ・周波数方向：となりの帯域と平均して、細かな凸凹（金属的な響き）を作らない
 // 48kHz・モノラル・Float32Array。巨大な配列を作らないよう、数フレーム先までを持つ流れ作業で処理する。
 
@@ -37,7 +38,7 @@ const OLA = 1.5; // Hann² を 1/4 ずつずらして重ねたときの合計
 export function spectralNR(x, opts = {}, onProgress = () => {}) {
   const {
     reductionDb = 36, // 雑音を下げる最大量
-    holdDb = 10,      // 話の直後（語尾）で下げてよい最大量
+    holdDb = 30,      // 話の直後（語尾）で下げてよい最大量
     lo = 3, hi = 12,  // 雑音の型より lo dB 上までは雑音、hi dB 上からは声とみなし、その間はなめらかに
     freqBins = 6,     // 周波数方向の平滑化（± ビン数。1ビン ≈ 23Hz）
     attackMs = 30, releaseMs = 250, holdReleaseMs = 350,
@@ -81,10 +82,13 @@ export function spectralNR(x, opts = {}, onProgress = () => {}) {
   const Xr = Array.from({ length: R }, () => new Float64Array(K)), Xi = Array.from({ length: R }, () => new Float64Array(K));
   const Pw = Array.from({ length: R }, () => new Float64Array(K)), LG = Array.from({ length: R }, () => new Float64Array(K));
   const prevLG = new Float64Array(K).fill(logf);
-  const y = new Float32Array(n);
+  // 出力先：inPlace なら入力の配列にそのまま書き戻す（30分の音声で約350MBの節約。スマートフォン対策）。
+  // 書き戻すのは「もう読み込まない位置」だけなので、入力を壊さずに処理できる
+  const y = opts.inPlace ? x : new Float32Array(n);
+  const ola = new Float64Array(N); // 重ね合わせ中のサンプル（start(i) から N 個）
   const gl = new Float64Array(K), gs = new Float64Array(K), cum = new Float64Array(K + 1);
   let holdAct = 0, lastPct = 0, prevBB = 0;
-  const maxDrop = opts.maxDropDb ?? 1.5; // 1フレーム（約10.7ms）あたりの下げ幅の上限（dB）
+  const maxDrop = opts.maxDropDb ?? 1.0; // 1フレーム（約10.7ms）あたりの下げ幅の上限（dB）
   const bHi6 = Math.floor(6000 / binHz);
 
   const ring = (f) => ((f % R) + R) % R;
@@ -153,7 +157,10 @@ export function spectralNR(x, opts = {}, onProgress = () => {}) {
     for (let k = 1; k < K - 1; k++) { re[N - k] = re[k]; im[N - k] = -im[k]; }
     fft(re, im, true);
     const s = start(i);
-    for (let t = 0; t < N; t++) { const idx = s + t; if (idx >= 0 && idx < n) y[idx] += re[t] / N * WIN[t] / OLA; }
+    for (let t = 0; t < N; t++) ola[t] += re[t] / N * WIN[t] / OLA;
+    // 先頭の H サンプルはこれ以降のフレームと重ならないので確定。書き出して、窓を H 進める
+    for (let t = 0; t < H; t++) { const idx = s + t; if (idx >= 0 && idx < n) y[idx] = ola[t]; }
+    ola.copyWithin(0, H); ola.fill(0, N - H);
   };
 
   // 先読み：フレーム 0..A+1 を解析し、0..A を判定

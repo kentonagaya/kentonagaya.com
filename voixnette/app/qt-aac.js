@@ -42,8 +42,10 @@ function parseAsc(asc) {
   return { aot, sfi, ch };
 }
 
-/** AAC トラックを ADTS（.aac）のバイト列にして返す。見つからなければ null。 */
-export function extractAacAdts(buf) {
+const SFI_RATES = [96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000, 7350];
+
+/** AAC の音声トラックを探して、各フレームの位置と大きさの一覧を返す。見つからなければ null */
+export function aacTrack(buf) {
   const v = new DataView(buf);
   let moov = null;
   for (const a of atoms(v, 0, v.byteLength)) if (a.type === 'moov') moov = a;
@@ -66,39 +68,54 @@ export function extractAacAdts(buf) {
     if (sfi > 12 || ch < 1 || ch > 7) continue;
     const profile = (aot === 5 || aot === 29 ? 2 : aot) - 1; // HE-AAC は LC として包む（復号側で SBR を自動検出）
     if (profile < 0 || profile > 3) continue;
-
     // サンプル表：各フレームの位置と大きさ
     const stsz = child(v, stbl, 'stsz'), stsc = child(v, stbl, 'stsc');
     const stco = child(v, stbl, 'stco'), co64 = child(v, stbl, 'co64');
     if (!stsz || !stsc || !(stco || co64)) continue;
     const uni = v.getUint32(stsz.start + 4), count = v.getUint32(stsz.start + 8);
-    const sizeOf = (i) => uni || v.getUint32(stsz.start + 12 + i * 4);
     const nChunks = v.getUint32((stco || co64).start + 4);
     const chunkOff = (i) => co64 ? Number(v.getBigUint64(co64.start + 8 + i * 8)) : v.getUint32(stco.start + 8 + i * 4);
     const nRuns = v.getUint32(stsc.start + 4);
     const runs = []; for (let i = 0; i < nRuns; i++) runs.push([v.getUint32(stsc.start + 8 + i * 12) - 1, v.getUint32(stsc.start + 12 + i * 12)]);
-
-    let total = 0; for (let i = 0; i < count; i++) total += sizeOf(i) + 7;
-    const out = new Uint8Array(total), src = new Uint8Array(buf);
-    let s = 0, w = 0;
+    const offs = new Float64Array(count), sizes = new Uint32Array(count);
+    let s = 0;
     for (let c = 0, r = 0; c < nChunks && s < count; c++) {
       while (r + 1 < runs.length && runs[r + 1][0] <= c) r++;
       let off = chunkOff(c);
       for (let k = 0; k < runs[r][1] && s < count; k++, s++) {
-        const n = sizeOf(s), fl = n + 7;
-        if (off + n > src.length) return null;
-        out[w] = 0xff; out[w + 1] = 0xf1;
-        out[w + 2] = (profile << 6) | (sfi << 2) | (ch >> 2);
-        out[w + 3] = ((ch & 3) << 6) | (fl >> 11);
-        out[w + 4] = (fl >> 3) & 0xff;
-        out[w + 5] = ((fl & 7) << 5) | 0x1f;
-        out[w + 6] = 0xfc;
-        out.set(src.subarray(off, off + n), w + 7);
-        w += fl; off += n;
+        const n = uni || v.getUint32(stsz.start + 12 + s * 4);
+        if (off + n > v.byteLength) return null;
+        offs[s] = off; sizes[s] = n; off += n;
       }
     }
     if (s === 0) continue;
-    return out.subarray(0, w).slice().buffer;
+    return { profile, sfi, ch, sampleRate: SFI_RATES[sfi], count: s, offs, sizes };
   }
   return null;
+}
+
+/** フレーム f0〜f1（f1 は含まない）を ADTS（.aac）のバイト列にする */
+export function adtsRange(buf, t, f0, f1) {
+  f0 = Math.max(0, f0); f1 = Math.min(t.count, f1);
+  let total = 0; for (let i = f0; i < f1; i++) total += t.sizes[i] + 7;
+  const out = new Uint8Array(total), src = new Uint8Array(buf);
+  let w = 0;
+  for (let i = f0; i < f1; i++) {
+    const n = t.sizes[i], fl = n + 7, off = t.offs[i];
+    out[w] = 0xff; out[w + 1] = 0xf1;
+    out[w + 2] = (t.profile << 6) | (t.sfi << 2) | (t.ch >> 2);
+    out[w + 3] = ((t.ch & 3) << 6) | (fl >> 11);
+    out[w + 4] = (fl >> 3) & 0xff;
+    out[w + 5] = ((fl & 7) << 5) | 0x1f;
+    out[w + 6] = 0xfc;
+    out.set(src.subarray(off, off + n), w + 7);
+    w += fl;
+  }
+  return out.buffer;
+}
+
+/** AAC トラックを丸ごと ADTS（.aac）のバイト列にして返す。見つからなければ null。 */
+export function extractAacAdts(buf) {
+  const t = aacTrack(buf);
+  return t ? adtsRange(buf, t, 0, t.count) : null;
 }

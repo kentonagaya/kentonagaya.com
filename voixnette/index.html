@@ -391,6 +391,7 @@ a { color: inherit; }
 .dl.sub { color: var(--ink); }
 .dl.sub::before { background: var(--ink); }
 .dl.sub:hover { color: var(--canvas); }
+.err-detail { margin-top: 8px; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--ink-3); word-break: break-all; }
 .err-msg { margin-top: 28px; padding: 18px 20px; border-radius: 16px; background: color-mix(in srgb, var(--rose-pale) 55%, transparent); color: var(--ink); font-size: 14px; max-width: 36em; }
 
 /* ヘルプ */
@@ -470,7 +471,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
   <a class="brand" href="/voixnette/" aria-label="Voixnette">
     <img class="word" src="/voixnette/brand/logo.svg" alt="Voixnette" width="133" height="32">
     <span class="label">Podcast voice cleaner</span>
-    <span class="ver" id="ver" title="2026-10-26">v1.4.0</span>
+    <span class="ver" id="ver" title="2026-10-26">v1.5.0</span>
   </a>
   <div class="top-r">
     <span class="status" id="engine" data-state="idle"><span class="dot"></span><span id="engineText">ブラウザ内で処理</span></span>
@@ -614,7 +615,7 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
         </ol>
       </div>
 
-      <div id="blkErr" hidden><p class="err-msg" id="errMsg"></p></div>
+      <div id="blkErr" hidden><p class="err-msg" id="errMsg"></p><p class="err-detail" id="errDetail"></p></div>
 
       <div class="wave-wrap" id="waveWrap">
         <canvas id="wave" data-i18n-aria="wave"></canvas>
@@ -666,7 +667,8 @@ dialog::backdrop { background: rgba(29,31,40,.32); backdrop-filter: blur(3px); }
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script type="module">
-import { extractAacAdts } from '/voixnette/app/qt-aac.js';
+import { aacTrack, extractAacAdts } from '/voixnette/app/qt-aac.js';
+import { decodeAacChunked } from '/voixnette/app/chunked-decode.js';
 const $ = (s, r = document) => r.querySelector(s);
 const queueEl = $('#queue'), stage = $('#stage'), audio = $('#audio');
 const items = [];
@@ -703,6 +705,7 @@ const I18N = {
     nLoud: '音量（LUFS）', nTarget: '目標 -16', nPeak: 'ピーク（dBTP）', nLimit: '上限 -1.0', nClip: '音割れ修復', nTime: '処理時間', nAudio: '音声 {d}',
     dlMp3: 'MP3 をダウンロード', mp3Sub: '配信用・{s}', wavSub: '編集用・{s}',
     notAudio: '音声ファイルではないため追加しませんでした：{f}',
+    phDecode: '読み込み', phProcess: '音の処理', phMp3: 'MP3書き出し', errDetail: '詳細（{p}）: {m}',
     eDecode: 'このファイルは読み込めませんでした。Chrome・Safari・Edgeで試すか、別の形式（wav・mp3など）にしてから入れてください。',
     eMemory: 'メモリが足りず、途中で止まりました。パソコンで試すか、音声を短く分けてから入れてください。',
     eOther: '処理中にエラーが発生しました（{m}）。ページを再読み込みして、もう一度お試しください。',
@@ -723,7 +726,7 @@ const I18N = {
       <li>m4aをWAVに変換してから入れる必要はありません（変換しても音質は上がりません）。</li>
       <li>iPhoneのボイスメモ（.m4a・.qta）も、そのまま入れられます。</li>
       <li>30分の音声で3分ほどかかります。処理中はこのタブを開いたままにしてください。</li>
-      <li>長い音声はパソコン（Chrome・Edge・Safari）がおすすめです。スマートフォンではメモリ不足で止まることがあります。</li>
+      <li>スマートフォン（iPhoneのボイスメモなど）でもそのまま使えます。1時間を超えるような長い音声は、パソコン（Chrome・Edge・Safari）がおすすめです。</li>
       <li>書き出したWAVをAudacityなどで編集するときは、ノイズ除去やノーマライズを重ねてかけないでください。</li></ul>
       <h3>「クリア」と「ナチュラル」</h3><ul>
       <li><b>クリア</b>：雑音をしっかり消し、声の輪郭をはっきりさせます。迷ったらこちら。</li>
@@ -731,7 +734,7 @@ const I18N = {
       <h3>中で行っていること</h3><ol>
       <li>読み込み：48kHz・モノラルに揃えます。</li>
       <li>音割れ修復：波形の頭が切れた部分を補間して作り直します。</li>
-      <li>雑音の除去：録音全体のいちばん静かな部分から「雑音の型」を自動で測り、帯域ごとに、その型より十分大きい音（声）は残し、雑音だけを下げます。Audacityの「ノイズの低減」と同じ考え方ですが、無音部分を選ぶ手間がなく、下げ方をなめらかにして、語尾が急に切れたり声がザラついたりしないよう調整しています。</li>
+      <li>雑音の除去：録音全体のいちばん静かな部分から「雑音の型」を自動で測り、帯域ごとに、その型より十分大きい音（声）は残し、雑音だけを下げます。Audacityの「ノイズの低減」と同じ考え方ですが、無音部分を選ぶ手間がなく、下げ方をなめらかにして、語尾が急に切れたり、声が出るたびに雑音が大きくなったりしないよう調整しています。</li>
       <li>音量の均一化：話している部分だけを見て、話し手ごとの音量差を揃えます。</li>
       <li>こもり補正：80Hz以下をカットし、録音ごとに声の音色を測って、標準的な話し声のバランスに近づくよう自動でEQをかけます（こもった録音ほど高域を持ち上げます）。雑音が残りやすい帯域は持ち上げを控えめにし、最後に軽くコンプレッサーをかけます。</li>
       <li>仕上げ：Podcast標準の -16 LUFS に合わせ、ピークを -1.0dBTP 以下に抑えます（一瞬のピークはすぐに戻し、音がへこまないようにしています）。</li>
@@ -766,6 +769,7 @@ const I18N = {
     nLoud: 'Loudness (LUFS)', nTarget: 'target -16', nPeak: 'Peak (dBTP)', nLimit: 'limit -1.0', nClip: 'Clipping repaired', nTime: 'Processing time', nAudio: 'audio {d}',
     dlMp3: 'Download MP3', mp3Sub: 'For publishing · {s}', wavSub: 'For editing · {s}',
     notAudio: 'Skipped (not an audio file): {f}',
+    phDecode: 'loading', phProcess: 'processing', phMp3: 'MP3 export', errDetail: 'Details ({p}): {m}',
     eDecode: 'This file couldn’t be read. Try Chrome, Safari or Edge, or convert it to wav or mp3 first.',
     eMemory: 'Ran out of memory. Try on a computer, or split the audio into shorter parts.',
     eOther: 'Something went wrong ({m}). Please reload the page and try again.',
@@ -786,7 +790,7 @@ const I18N = {
       <li>No need to convert m4a to WAV first — converting doesn’t improve quality.</li>
       <li>iPhone Voice Memos recordings (.m4a, .qta) work as they are.</li>
       <li>30 minutes of audio takes about 3 minutes. Please keep this tab open while it runs.</li>
-      <li>For long recordings, use a computer (Chrome, Edge or Safari). Phones may run out of memory.</li>
+      <li>Works on phones too, including iPhone Voice Memos. For very long recordings (over an hour), a computer (Chrome, Edge or Safari) is recommended.</li>
       <li>If you edit the WAV in Audacity or similar, don’t apply noise reduction or normalization again.</li></ul>
       <h3>Clear vs. Natural</h3><ul>
       <li><b>Clear</b>: removes noise thoroughly and sharpens the voice. Start here if unsure.</li>
@@ -794,7 +798,7 @@ const I18N = {
       <h3>What happens inside</h3><ol>
       <li>Load: converts to 48 kHz mono.</li>
       <li>Clipping repair: rebuilds flattened waveform peaks by interpolation.</li>
-      <li>Noise removal: measures a “noise profile” automatically from the quietest parts of the recording, then, band by band, keeps sounds well above that profile (your voice) and lowers only the noise. It works on the same idea as Audacity’s Noise Reduction, but you don’t have to pick a silent section, and the reduction is shaped smoothly so word endings never cut off abruptly and the voice never turns grainy.</li>
+      <li>Noise removal: measures a “noise profile” automatically from the quietest parts of the recording, then, band by band, keeps sounds well above that profile (your voice) and lowers only the noise. It works on the same idea as Audacity’s Noise Reduction, but you don’t have to pick a silent section, and the reduction is shaped smoothly so word endings never cut off abruptly and the background hiss doesn’t swell each time someone speaks.</li>
       <li>Leveling: evens out differences between speakers, looking only at speech (silence isn’t boosted).</li>
       <li>Clarity: high-pass at 80 Hz, then an automatic EQ that measures each recording’s voice and moves it toward a standard speech balance (more muffled recordings get more treble lift). Boosts are held back in bands where noise remains, followed by gentle compression.</li>
       <li>Loudness: targets −16 LUFS (podcast standard) with peaks kept below −1.0 dBTP (brief peaks recover instantly, so the sound doesn’t dip).</li>
@@ -806,7 +810,7 @@ let lang = document.documentElement.lang === 'en' ? 'en' : 'ja';
 const t = (k, v = {}) => { let x = I18N[lang][k] ?? I18N.ja[k] ?? k; if (typeof x === 'string') x = x.replace(/\{(\w+)\}/g, (_, n) => v[n] ?? ''); return x; };
 // ---------- バージョン（更新したら、ここだけ書き換える。ヘッダーとヘルプに反映される）
 // 番号の付け方：大きな変更は 2桁目、不具合修正や小さな調整は 3桁目を上げる
-const VERSION = { name: 'v1.4.0', date: '2026-10-26' };
+const VERSION = { name: 'v1.5.0', date: '2026-10-26' };
 
 function applyLang(l, save) {
   lang = l === 'en' ? 'en' : 'ja';
@@ -832,24 +836,38 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // ---------- 動作環境
 const envOk = 'Worker' in window && 'OfflineAudioContext' in window;
 
-// ---------- ワーカー（処理本体は変更なし）
-const worker = new Worker('/voixnette/app/worker.js', { type: 'module' });
-const mp3Worker = new Worker('/voixnette/app/mp3-worker.js');
+// ---------- ワーカー（重い処理はすべて別スレッドで）
+// メモリ不足などでワーカーが止まったときは、待っている処理をエラーにして、次の処理のために作り直す
+let worker, mp3Worker;
 const pending = new Map(), mp3Pending = new Map();
-worker.onmessage = (e) => {
-  const m = e.data;
-  if (m.type === 'engine') return setEngine(m.ready ? 'ready' : 'loading', m);
-  const p = pending.get(m.id);
-  if (m.type === 'progress') p?.onProgress(m);
-  else if (m.type === 'done') { pending.delete(m.id); p?.resolve(m); }
-  else if (m.type === 'error') { if (m.id == null) { setEngine('error'); return; } pending.delete(m.id); p?.reject(new Error(m.message)); }
-};
-worker.onerror = () => setEngine('error');
-mp3Worker.onmessage = (e) => {
-  const m = e.data, p = mp3Pending.get(m.id); if (!p) return;
-  if (m.type === 'progress') p.onProgress(m.pct);
-  else { mp3Pending.delete(m.id); m.type === 'done' ? p.resolve(m.blob) : p.reject(new Error(m.message)); }
-};
+const failAll = (map, msg) => { for (const [, p] of map) p.reject(new Error(msg)); map.clear(); };
+function makeWorker() {
+  worker = new Worker('/voixnette/app/worker.js', { type: 'module' });
+  worker.onmessage = (e) => {
+    const m = e.data;
+    if (m.type === 'engine') return setEngine(m.ready ? 'ready' : 'loading', m);
+    const p = pending.get(m.id);
+    if (m.type === 'progress') p?.onProgress(m);
+    else if (m.type === 'done') { pending.delete(m.id); p?.resolve(m); }
+    else if (m.type === 'error') { if (m.id == null) { setEngine('error'); return; } pending.delete(m.id); p?.reject(new Error(m.message)); }
+  };
+  worker.onerror = (e) => {
+    if (pending.size) { failAll(pending, 'WorkerCrashed: ' + ((e && e.message) || '処理用のスレッドが止まりました（メモリ不足の可能性）')); worker.terminate(); makeWorker(); }
+    else setEngine('error');
+  };
+}
+function makeMp3Worker() {
+  mp3Worker = new Worker('/voixnette/app/mp3-worker.js');
+  mp3Worker.onmessage = (e) => {
+    const m = e.data, p = mp3Pending.get(m.id); if (!p) return;
+    if (m.type === 'progress') p.onProgress(m.pct);
+    else { mp3Pending.delete(m.id); m.type === 'done' ? p.resolve(m.blob) : p.reject(new Error(m.message)); }
+  };
+  mp3Worker.onerror = (e) => {
+    if (mp3Pending.size) { failAll(mp3Pending, 'WorkerCrashed: ' + ((e && e.message) || 'MP3書き出しのスレッドが止まりました（メモリ不足の可能性）')); mp3Worker.terminate(); makeMp3Worker(); }
+  };
+}
+makeWorker(); makeMp3Worker();
 let engineState_m = {};
 function setEngine(state, m = {}) {
   engineState = state; $('#engine').dataset.state = envOk ? state : 'error';
@@ -1021,23 +1039,26 @@ async function runItem(it) {
   announce(t('aStart', { f: it.file.name }));
   it.li.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
   const base = it.file.name.replace(/\.[^.]+$/, '') + (it.preset === 'natural' ? '_natural' : '');
+  let phase = 'decode';
   try {
-    setProgress(it, 'decode', 0.3);
-    const { mono, duration, channels, adts } = await decodeToMono(it.file);
+    setProgress(it, 'decode', 0.05);
+    const { mono, duration, channels, adts } = await decodeToMono(it.file, (p) => setProgress(it, 'decode', p));
     it.srcBlob = adts ? new Blob([adts], { type: 'audio/aac' }) : null; // 元の形式で再生できないときの「処理前」用
     it.duration = duration; it.channels = channels;
     it.envBefore = envelope(mono);
     if (selectedId === it.id) render();
+    phase = 'process';
     const res = await new Promise((resolve, reject) => {
       pending.set(it.id, { resolve, reject, onProgress: (m) => setProgress(it, m.step, m.pct) });
       worker.postMessage({ type: 'process', id: it.id, samples: mono, preset: it.preset }, [mono.buffer]);
     });
     it.envAfter = envelope(res.samples);
+    phase = 'mp3';
     setProgress(it, 'mp3', 0);
-    const pcm44 = await resampleTo16bit(res.samples, 44100);
+    // 44.1kHz への変換と MP3 化はワーカーの中で少しずつ行う（音声データは手放して渡す＝コピーしない）
     const mp3 = await new Promise((resolve, reject) => {
       mp3Pending.set(it.id, { resolve, reject, onProgress: (p) => setProgress(it, 'mp3', p) });
-      mp3Worker.postMessage({ id: it.id, pcm: pcm44, sampleRate: 44100, kbps: 128 }, [pcm44.buffer]);
+      mp3Worker.postMessage({ id: it.id, samples: res.samples, kbps: 128 }, [res.samples.buffer]);
     });
     const wavBlob = new Blob([res.wav], { type: 'audio/wav' });
     const mp3Url = URL.createObjectURL(mp3), wavUrl = URL.createObjectURL(wavBlob), srcUrl = URL.createObjectURL(it.srcBlob || it.file);
@@ -1050,6 +1071,7 @@ async function runItem(it) {
     onFinished(it);
   } catch (err) {
     console.error(err);
+    try { err.phase = phase; } catch {}
     it.state = 'error'; it.li.dataset.state = 'error'; it.errorRaw = err;
     announce(`${it.file.name}: ${friendlyError(err)}`);
     onFinished(it);
@@ -1060,34 +1082,37 @@ async function runItem(it) {
 }
 function friendlyError(err) {
   const msg = String(err?.message || err);
+  if (/WorkerCrashed|memory|allocation|Array buffer|RangeError|QuotaExceeded/i.test(msg)) return t('eMemory');
   if (/decode|EncodingError|Unable to decode|ファイルを読み込めません/i.test(msg)) return t('eDecode');
-  if (/memory|allocation|Array buffer|RangeError/i.test(msg)) return t('eMemory');
   return t('eOther', { m: msg });
+}
+// 問い合わせのときに役立つ詳細（どの段階で・どんなエラーか）
+function errorDetail(err) {
+  const ph = { decode: t('phDecode'), process: t('phProcess'), mp3: t('phMp3') }[err?.phase] || '-';
+  return t('errDetail', { p: ph, m: `${err?.name && err.name !== 'Error' ? err.name + ': ' : ''}${String(err?.message || err).slice(0, 180)}` });
 }
 
 // ---------- 音声の変換（変更なし）
-async function decodeToMono(file) {
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+async function decodeToMono(file, onProgress = () => {}) {
   const ctx = new OfflineAudioContext(1, 1, 48000);
-  let ab, adts = null;
-  try { ab = await ctx.decodeAudioData(await file.arrayBuffer()); } catch (e) {
-    // iPhoneのボイスメモ（.qta）など：読めないトラックが先頭にある QuickTime/MP4 は、
-    // 中の AAC トラックだけを取り出して読み直す（失敗した decodeAudioData はバッファを手放すので、ファイルから読み直す）
-    try { adts = extractAacAdts(await file.arrayBuffer()); } catch { adts = null; }
-    if (!adts) throw new Error('ファイルを読み込めません: ' + (e?.message || e));
-    try { ab = await ctx.decodeAudioData(adts.slice(0)); } catch (e2) { throw new Error('ファイルを読み込めません: ' + (e2?.message || e2)); }
+  const decode = (ab) => ctx.decodeAudioData(ab);
+  const buf = await file.arrayBuffer();
+  let track = null; try { track = aacTrack(buf); } catch { track = null; }
+  const isQt = /\.(qta|mov)$/i.test(file.name);
+  // AAC（m4a・mp4・iPhoneのボイスメモ）は、スマートフォンでは少しずつ読み込む（一度に展開するとメモリが足りない）
+  const chunked = async () => { const r = await decodeAacChunked(buf, track, decode, { onProgress }); return { ...r, adts: isQt ? extractAacAdts(buf) : null }; };
+  if (track && isMobile) return chunked();
+  let ab;
+  try { ab = await decode(buf.slice(0)); } catch (e) {
+    // 一度に読めなかったとき：AAC なら少しずつ読む（.qta のように読めないトラックが先頭にある場合もこれで読める）
+    if (track) { try { return await chunked(); } catch (e2) { throw new Error('ファイルを読み込めません: ' + (e2?.message || e2)); } }
+    throw new Error('ファイルを読み込めません: ' + (e?.name ? e.name + ' ' : '') + (e?.message || e));
   }
-  const n = ab.length, ch = ab.numberOfChannels, mono = new Float32Array(n);
-  for (let c = 0; c < ch; c++) { const d = ab.getChannelData(c); for (let i = 0; i < n; i++) mono[i] += d[i] / ch; }
-  return { mono, duration: ab.duration, channels: ch, adts };
-}
-async function resampleTo16bit(samples, rate) {
-  const ctx = new OfflineAudioContext(1, Math.ceil(samples.length * rate / 48000), rate);
-  const b = ctx.createBuffer(1, samples.length, 48000); b.copyToChannel(samples, 0);
-  const src = ctx.createBufferSource(); src.buffer = b; src.connect(ctx.destination); src.start();
-  const out = (await ctx.startRendering()).getChannelData(0);
-  const pcm = new Int16Array(out.length);
-  for (let i = 0; i < out.length; i++) { const s = Math.max(-1, Math.min(1, out[i])); pcm[i] = s < 0 ? s * 32768 : s * 32767; }
-  return pcm;
+  const n = ab.length, ch = ab.numberOfChannels;
+  const mono = ch === 1 ? ab.getChannelData(0).slice() : new Float32Array(n);
+  if (ch > 1) for (let c = 0; c < ch; c++) { const d = ab.getChannelData(c); for (let i = 0; i < n; i++) mono[i] += d[i] / ch; }
+  return { mono, duration: ab.duration, channels: ch, adts: null };
 }
 function envelope(x, bins = 2000) {
   const env = new Float32Array(bins), step = x.length / bins;
@@ -1130,7 +1155,7 @@ function render() {
   $('#blkDone').hidden = it.state !== 'done';
   $('#blkErr').hidden = it.state !== 'error';
   $('#waveWrap').hidden = it.state === 'error';
-  if (it.state === 'error') $('#errMsg').textContent = friendlyError(it.errorRaw);
+  if (it.state === 'error') { $('#errMsg').textContent = friendlyError(it.errorRaw); $('#errDetail').textContent = errorDetail(it.errorRaw); }
   if (it.state === 'waiting') $('#queuedD').textContent = t('queuedD', { m: Math.max(1, Math.round(estimateSec(it) / 60)) });
   if (it.state === 'running') renderRun(it);
   if (it.state === 'done') renderDone(it);

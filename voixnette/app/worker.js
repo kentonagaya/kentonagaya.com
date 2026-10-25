@@ -16,7 +16,7 @@ async function process({ id, samples, preset }) {
   const lufsIn = D.integratedLoudness(x); // 処理前の音量（表示用）
   const repaired = D.declip(x);
   stage(3, '雑音を取り除いています'); await tick();
-  const y = spectralNR(x, P.nr, (p) => stage(3, '雑音を取り除いています', p));
+  const y = spectralNR(x, { ...P.nr, inPlace: true }, (p) => stage(3, '雑音を取り除いています', p)); // メモリ節約のため入力に書き戻す
   stage(4, '話し手ごとの音量差を揃えています'); await tick();
   D.level(y, ...D.DYNAMICS.level);
   stage(5, 'こもりを取るEQとコンプレッサーをかけています'); await tick();
