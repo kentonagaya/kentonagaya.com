@@ -44,7 +44,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       inactive: function() { K.state = 'inactive'; if (K.onstate) K.onstate('inactive'); }
     };
     K.config = config;
-    var h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/wf-loading/g,"")+" wf-inactive";if(K.state==='loading'){K.state='inactive';if(K.onstate)K.onstate('inactive');}},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+    var h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/wf-loading/g,"")+" wf-inactive";if(K.state==='loading'){K.slow=true;if(K.onstate)K.onstate('slow');}},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};tk.onerror=function(){clearTimeout(t);if(K.state==='loading'){K.state='inactive';if(K.onstate)K.onstate('inactive');}};s.parentNode.insertBefore(tk,s)
   })(document);
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -644,6 +644,37 @@ body { font-feature-settings: "palt"; letter-spacing: .01em; }
 .kit-note.bad { background: color-mix(in srgb, var(--coral) 12%, var(--surface)); color: var(--ink); }
 .kit-note b { color: var(--ink); }
 .alpha-note { color: var(--coral) !important; }
+/* 書体が届くまでの待ち画面 */
+.kit-wait { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 22px 6px 28px; text-align: center; }
+.kw-stage { position: relative; width: 132px; height: 132px; border-radius: 50%; background: var(--seg); display: grid; place-items: center; overflow: hidden; }
+.kw-stage::after { content: ""; position: absolute; inset: 0; border-radius: inherit; border: 1.5px dashed color-mix(in srgb, var(--accent) 35%, transparent); animation: kw-spin 14s linear infinite; }
+.kw-glyph { font-size: 64px; line-height: 1; color: var(--ink); font-weight: 400; }
+.kw-glyph.in { animation: kw-dress .55s cubic-bezier(.2,.8,.2,1); }
+.kw-label { position: absolute; bottom: 9px; left: 0; right: 0; font-size: 10px; color: var(--ink-3); letter-spacing: .04em; }
+.kw-title { margin: 2px 0 0; font-size: 13px; font-weight: 600; line-height: 1.6; color: var(--ink); }
+.kw-steps { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.kw-steps li { font-size: 10.5px; padding: 3px 8px; border-radius: 99px; background: var(--seg); color: var(--ink-3); }
+.kw-steps li.now { background: var(--accent-soft, var(--seg)); color: var(--accent-ink); font-weight: 600; }
+.kw-steps li.done { color: var(--ink-2); }
+.kw-steps li.done::before { content: "✓ "; color: var(--ok); }
+.kw-bar { width: min(220px, 80%); height: 3px; border-radius: 3px; background: var(--seg); overflow: hidden; }
+.kw-bar i { display: block; width: 36%; height: 100%; border-radius: inherit; background: var(--accent); animation: kw-slide 1.4s ease-in-out infinite; }
+.kw-tip { margin: 4px 0 0; max-width: 270px; min-height: 4.8em; font-size: 11.5px; line-height: 1.65; color: var(--ink-2); }
+.kw-tip b { display: block; margin-bottom: 2px; font-size: 10px; letter-spacing: .08em; color: var(--coral); }
+.kw-tip span { display: block; }
+.kw-tip span.in { animation: kw-fade .5s ease; }
+.kw-cat { margin-top: 2px; padding: 7px 14px; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); background: var(--surface); color: var(--accent-ink); font-size: 12px; font-weight: 600; cursor: pointer; }
+.kw-cat:hover { background: var(--accent-ink); border-color: var(--accent-ink); color: var(--surface); }
+.kit-note.wait { display: flex; align-items: center; gap: 8px; }
+.kit-note.ok { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: color-mix(in srgb, var(--ok) 12%, var(--surface)); }
+.kn-dot { flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: kw-pulse 1.1s ease-in-out infinite; }
+.kn-go { margin-left: auto; padding: 3px 9px; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); background: var(--surface); color: var(--accent-ink); font-size: 11px; font-weight: 600; cursor: pointer; }
+@keyframes kw-dress { from { opacity: 0; transform: translateY(10px) scale(.86); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes kw-fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes kw-slide { 0% { transform: translateX(-110%); } 100% { transform: translateX(290%); } }
+@keyframes kw-spin { to { transform: rotate(360deg); } }
+@keyframes kw-pulse { 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .kw-stage::after, .kw-bar i, .kn-dot, .kw-glyph.in, .kw-tip span.in { animation: none; } }
 /* タブが 4 つになったので、1 行に収める */
 #tabs button { white-space: nowrap; padding: 0 3px; gap: 3px; font-size: 12.5px; min-width: 0; }
 #tabs .n { font-size: 10px; }
@@ -1701,7 +1732,7 @@ function renderList() {
   if (!current.length) {
     const noKit = state.tab !== 'system' && !FONTS.some(f => f.src === 'adobe');
     listEl.innerHTML = noKit
-      ? (ADOBE.state === 'loading' ? '<div class="empty">Adobe Fonts を読み込んでいます…</div>' : '<div class="empty">Adobe Fonts のフォントがありません。<br>上の案内をご確認ください。</div>')
+      ? (ADOBE.state === 'loading' ? kitWaitHTML() : '<div class="empty">Adobe Fonts のフォントがありません。<br>上の案内をご確認ください。</div>')
       : `<div class="empty">${state.tab === 'jp' && !baseList('jp').length ? 'キットに和文フォントがありません。<br>「欧文」タブをご覧ください。' : '該当するフォントがありません。<br>検索語や絞り込みを見直してください。'}</div>`;
   } else {
     listEl.appendChild(sentinel);
@@ -3052,7 +3083,7 @@ $('#tabs').addEventListener('click', e => {
   state.tab = b.dataset.tab; state.cat = 'all';
   $('#sample').value = sampleText();
   $('#sample').placeholder = DEFAULT_SAMPLE[state.tab];
-  renderTabs(); renderChips(); renderList(); save();
+  renderTabs(); renderChips(); renderList(); save(); renderKitStatus();
 });
 $('#chips').addEventListener('click', e => {
   const b = e.target.closest('[data-cat]');
@@ -3551,6 +3582,73 @@ document.querySelector('.tabbar').addEventListener('click', e => {
   logo.addEventListener('click', () => { start(); if (matchMedia('(hover: none)').matches) restore(); });
 })();
 
+/* --- 待ち時間の演出：「永」の字が書体を着替えながら、届くのを待つ --- */
+const KW_DRESS = [
+  ['永', '"Hiragino Mincho ProN", "Yu Mincho", YuMincho, "Noto Serif JP", serif', '明朝体', 400],
+  ['永', '"Hiragino Sans", "Yu Gothic", YuGothic, "Noto Sans JP", sans-serif', 'ゴシック体', 400],
+  ['永', '"IBM Plex Sans JP", sans-serif', '太いゴシック体', 700],
+  ['Aa', 'Georgia, "Times New Roman", serif', 'セリフ', 400],
+  ['Aa', '"Helvetica Neue", Arial, sans-serif', 'サンセリフ', 400],
+  ['Aa', '"IBM Plex Mono", ui-monospace, monospace', '等幅', 400],
+];
+const KW_TIPS = [
+  'キャンバスの見出しや本文をクリックすると、そのタグだけに書体を当てられます。',
+  '「英数字」を選ぶと、英字と数字だけ欧文書体にする（和欧混植）こともできます。',
+  '上の 375 / 768 / 1280 で画面幅を切り替えて、スマホでの見え方も確かめられます。',
+  '右上の「プロンプト・CSS」から、AI に渡す指示文や CSS を書き出せます。',
+  '日本語の Adobe Fonts は、ページにある文字だけを読み込みます。文字を書き換えると、その文字も追って読み込みます。',
+  'Web プロジェクト「Font Dresser」に書体を足すと、次に開いたときから一覧に並びます。',
+  '明朝体の横画の終わりにある三角の山は「ウロコ」と呼ばれます。',
+  '「Pr6N」の N は、JIS2004 の字形に対応していることを表します。',
+  '日本語の書体は 1 書体に数千〜2 万字以上を収めるため、欧文の書体よりデータが大きくなります。',
+  '欧文の世界では、かつてサンセリフ体のことを「ゴシック」とも呼びました。和文の「ゴシック体」の名前はここから来ています。',
+];
+const kwReduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let kwDress = 0, kwTip = Math.floor(Math.random() * KW_TIPS.length), kwTimer = null, kwTick = 0;
+function kitWaitHTML() {
+  const [ch, ff, label, wt] = KW_DRESS[kwDress];
+  const slow = ADOBE.slow;
+  const connected = !!window.Typekit;
+  return `<div class="kit-wait" id="kitWait">
+    <div class="kw-stage" aria-hidden="true"><span class="kw-glyph" style="font-family:${esc(ff)};font-weight:${wt}">${ch}</span><span class="kw-label">${label}</span></div>
+    <p class="kw-title">${slow ? '少し時間がかかっています。もう少しお待ちください…' : 'Web プロジェクト「Font Dresser」から<br>書体を取り寄せています'}</p>
+    <ol class="kw-steps">
+      <li class="${connected ? 'done' : 'now'}" data-kw="connect">プロジェクトに接続</li>
+      <li class="${connected ? 'now' : ''}" data-kw="fonts">書体を受け取る</li>
+      <li data-kw="show">一覧に並べる</li>
+    </ol>
+    <div class="kw-bar"><i></i></div>
+    <p class="kw-tip"><b>Tips</b><span>${esc(KW_TIPS[kwTip])}</span></p>
+    <button type="button" class="kw-cat" data-kw-catalog>待つあいだに「全書体」を見る</button>
+  </div>`;
+}
+function kwStep() {
+  const box = $('#kitWait');
+  if (!box) return;
+  if (window.Typekit) { const c = box.querySelector('[data-kw="connect"]'), f = box.querySelector('[data-kw="fonts"]'); c.className = 'done'; if (!f.classList.contains('now')) f.className = 'now'; }
+  if (kwReduce) return;
+  kwTick++;
+  // 0.9 秒ごとに着替え、6 秒ごとに Tips を替える
+  kwDress = (kwDress + 1) % KW_DRESS.length;
+  const [ch, ff, label, wt] = KW_DRESS[kwDress];
+  const g = box.querySelector('.kw-glyph'), l = box.querySelector('.kw-label');
+  g.classList.remove('in'); void g.offsetWidth;
+  g.textContent = ch; g.style.fontFamily = ff; g.style.fontWeight = wt; l.textContent = label; g.classList.add('in');
+  if (kwTick % 7 === 0) {
+    kwTip = (kwTip + 1) % KW_TIPS.length;
+    const t = box.querySelector('.kw-tip span');
+    t.classList.remove('in'); void t.offsetWidth; t.textContent = KW_TIPS[kwTip]; t.classList.add('in');
+  }
+}
+function kwSync() {
+  const waiting = ADOBE.state === 'loading' && !FONTS.some(f => f.src === 'adobe');
+  if (waiting && !kwTimer) kwTimer = setInterval(kwStep, 900);
+  if (!waiting && kwTimer) { clearInterval(kwTimer); kwTimer = null; }
+}
+listEl.addEventListener('click', e => {
+  if (!e.target.closest('[data-kw-catalog]')) return;
+  $('#tabs [data-tab="catalog"]').click();
+});
 /* ===== 起動 ===== */
 $('#sample').value = state.sample[state.tab] || '';
 $('#sample').placeholder = DEFAULT_SAMPLE[state.tab];
@@ -3565,7 +3663,23 @@ renderBg(); renderTabs(); renderChips(); renderList(); update();
 function renderKitStatus() {
   const el = $('#kitNote');
   const n = FONTS.filter(f => f.src === 'adobe').length;
-  if (ADOBE.state === 'loading' && !n) { el.hidden = false; el.className = 'kit-note'; el.textContent = 'Adobe Fonts を読み込んでいます…'; return; }
+  kwSync();
+  if (ADOBE.state === 'loading' && !n) {
+    // 一覧に待ち画面を出しているあいだは、ここでは出さない（全書体を見ているときだけ小さく知らせる）
+    el.hidden = state.tab !== 'catalog'; el.className = 'kit-note wait';
+    el.innerHTML = '<i class="kn-dot"></i>Adobe Fonts を取り寄せています。届いたら「和文」「欧文」タブに並びます。';
+    return;
+  }
+  if (ADOBE.state === 'loading' && n) {
+    el.hidden = false; el.className = 'kit-note wait';
+    el.innerHTML = `<i class="kn-dot"></i>${nf(n)} 書体が届きました。続きを受け取っています…`;
+    return;
+  }
+  if (ADOBE.state === 'active' && n && state.tab === 'catalog' && !kitReadyAck) {
+    el.hidden = false; el.className = 'kit-note ok';
+    el.innerHTML = `<b>${nf(n)} 書体の準備ができました。</b> <button type="button" class="kn-go" data-kn-go>「${baseList('jp').length ? '和文' : '欧文'}」タブで試す</button>`;
+    return;
+  }
   if (!n) {
     el.hidden = false; el.className = 'kit-note bad';
     el.innerHTML = `<b>Adobe Fonts を読み込めませんでした。</b><br>Web プロジェクト「Font Dresser」（${esc(ADOBE.id)}）に、このページのドメイン（${esc(location.hostname || 'ローカル')}）が登録されているか確認してください。システムフォントは使えます。`;
@@ -3573,6 +3687,12 @@ function renderKitStatus() {
   }
   el.hidden = true;
 }
+let kitReadyAck = false;
+$('#kitNote').addEventListener('click', e => {
+  if (!e.target.closest('[data-kn-go]')) return;
+  kitReadyAck = true;
+  $(`#tabs [data-tab="${baseList('jp').length ? 'jp' : 'latin'}"]`).click();
+});
 let adobeRenderT = null;
 function scheduleAdobeRender() {
   clearTimeout(adobeRenderT);
@@ -3598,8 +3718,18 @@ function onAdobeFont(family, fvd) {
 let kitStarted = false;
 ADOBE.fonts.forEach(([fam, fvd]) => addAdobeFont(fam, fvd));
 ADOBE.onfont = onAdobeFont;
-ADOBE.onstate = st => { renderKitStatus(); if (st === 'active') { kitStarted = true; scheduleAdobeRender(); } else if (!FONTS.some(f => f.src === 'adobe')) renderList(); };
+let kitGiveUpT = null;
+ADOBE.onstate = st => {
+  if (st === 'slow') {
+    if (state.tab !== 'catalog' && !FONTS.some(f => f.src === 'adobe')) { const t = $('#kitWait .kw-title'); if (t) t.textContent = '少し時間がかかっています。もう少しお待ちください…'; }
+    clearTimeout(kitGiveUpT);
+    kitGiveUpT = setTimeout(() => { if (ADOBE.state === 'loading' && !FONTS.some(f => f.src === 'adobe')) { ADOBE.state = 'inactive'; ADOBE.onstate('inactive'); } }, 20000);
+    return;
+  }
+  clearTimeout(kitGiveUpT);
+  renderKitStatus(); if (st === 'active') { kitStarted = true; scheduleAdobeRender(); } else if (!FONTS.some(f => f.src === 'adobe')) renderList(); };
 if (ADOBE.state === 'inactive') renderList();
+if (ADOBE.slow) ADOBE.onstate('slow');
 if (ADOBE.fonts.length) scheduleAdobeRender();
 renderKitStatus();
 /* 日本語フォントは「ページにある文字だけ」を読み込む仕組み（動的サブセット）なので、
@@ -3626,4 +3756,3 @@ if (!tourSeen) requestAnimationFrame(() => requestAnimationFrame(startTour));
 </body>
 </html>
 
-</body></html>
