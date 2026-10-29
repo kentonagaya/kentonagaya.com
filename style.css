@@ -16,7 +16,7 @@
   --ink:#1D1F28;
   --ink-2:#40434F;
   --ink-3:#606470;       /* 本文に使える下限 */
-  --ink-4:#7E8290;       /* 大きな文字・装飾のみ */
+  --ink-4:#686C78;       /* 補助（4.5:1 以上） */
 
   /* -- 罫 -- */
   --line:#DDD8D2;
@@ -1324,3 +1324,121 @@ html[lang="en"] .profile-meta{font-size:.78rem;letter-spacing:.02em;}
 html{font-synthesis:none;}
 /* 読み込み中は大見出しだけ隠す（最大3秒） */
 .wf-loading .hero-title,.wf-loading .sec-en,.wf-loading .page-en{opacity:0;}
+
+
+/* ===== 可読性（文字の大きさ・コントラスト） ===== */
+.gnav a{font-size:.76rem;}
+.hero-label,.crumb,.case-cat,.work-cat,.svc-no,.point-no{font-size:.75rem;}
+.cta .sec-en{font-size:.75rem;color:rgba(252,251,249,.7);}
+.work-tags li{font-size:.68rem;}
+.svc-grid h3 span,.plan h3 span,.profile-name span,.case-spec dt,.case-grid h3,.footer h4,.copy,.gnav-label,.follow-label,.tally dt,.who-tag{font-size:.72rem;}
+.svc-grid .svc-tools,.plan .price small,.plan .from,.voice footer,.note-date,.timeline .yr,.sns-pill small,.footer-sns small,.gnav .sns-row small{font-size:.78rem;}
+.case-shots figcaption,.scroll-cue{font-size:.7rem;}
+.plan .plan-note,.tally .t-sub,.profile-meta{font-size:.82rem;}
+.problem p span,.work-desc,.plan ul li,.price-caution{font-size:.9rem;}
+.footer h4{color:rgba(252,251,249,.62);}
+.copy,.footer-sns small{color:rgba(252,251,249,.62);}
+.sec-head .sec-en::after{font-size:.7rem;}
+
+/* ===== 見出しの階層（日本語を主役に） ===== */
+.sec-head .sec-en{font-size:clamp(1.9rem,4vw,3rem);margin-bottom:.55rem;color:var(--ink-3);}
+.sec-ink .sec-head .sec-en{color:rgba(252,251,249,.7);}
+.sec-head .sec-ja{font-size:clamp(1.45rem,3vw,2.05rem);font-weight:900;letter-spacing:.04em;line-height:1.5;}
+
+/* ===== ヒーロー ===== */
+.hero-tags{gap:.6rem 1.6rem;}
+.hero-tags li{font-size:.95rem;color:var(--ink-2);font-weight:500;}
+.hero-tags li::before,.hero-tags li:nth-child(even)::before{background:var(--rose);width:.42rem;height:.42rem;}
+.hero-tags li:nth-child(3)::before{background:var(--aqua);}
+figure.hero-art{margin:0 auto;}
+.hero-art .pig{z-index:0;}
+.hero-art .ring{z-index:2;}
+.hero-photo{
+  position:absolute;z-index:1;left:11%;top:21%;width:48%;height:48%;
+  border-radius:50%;overflow:hidden;box-shadow:0 0 0 .5rem var(--canvas);
+}
+.hero-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+.hero-cap{position:absolute;z-index:3;right:0;bottom:4%;margin:0;text-align:right;font-size:.82rem;color:var(--ink-3);line-height:1.6;}
+.hero-cap b{display:block;font-size:1rem;color:var(--ink);letter-spacing:.08em;}
+@media (max-width:60rem){.hero-art{opacity:1;}}
+@media (max-width:48rem){.hero-art{display:block;max-width:15rem;margin:2.4rem auto 0;}}
+
+/* ===== 色の意味：ローズ＝つくる／アクア＝運用・改善 ===== */
+.voice::before,.voice:nth-child(even)::before{background:var(--rose);}
+.voice .qm,.voice:nth-child(even) .qm{color:var(--rose);}
+.faq summary::before,.faq details:nth-child(even) summary::before{color:var(--rose);}
+.faq details:nth-child(even) summary:hover{color:inherit;}
+
+/* ===== お悩み：最後のマスを相談への入口に ===== */
+.problem-cta{display:flex;flex-direction:column;justify-content:space-between;gap:1.2rem;text-decoration:none;color:var(--ink);background:var(--paper);}
+.problem-cta p{font-size:1.05rem;}
+.problem-link{display:inline-flex;align-items:center;gap:.5rem;font-size:.92rem;font-weight:700;color:var(--rose-ink);}
+.problem-cta:hover{background:var(--ink);color:var(--paper);}
+.problem-cta:hover .accent,.problem-cta:hover .problem-link{color:var(--paper);}
+
+/* ===== 進め方の約束 ===== */
+.policy{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border-block:1px solid var(--line);}
+.policy li{background:var(--canvas);padding:clamp(1.6rem,3vw,2.4rem);}
+.policy-no{display:block;margin-bottom:1rem;font-family:var(--serif);font-size:2.6rem;line-height:1;color:var(--rose-ink);}
+.policy li:nth-child(n+2) .policy-no{color:var(--aqua-ink);}
+.policy h3{margin:0 0 .8rem;font-size:1.15rem;font-weight:900;letter-spacing:.03em;}
+.policy p{margin:0;font-size:.95rem;color:var(--ink-2);line-height:1.9;}
+@media (max-width:48rem){.policy{grid-template-columns:1fr;}}
+
+/* ===== 公開後の継続プラン ===== */
+.plan.plan-care{
+  margin-top:clamp(1.2rem,2.5vw,1.6rem);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:1rem 2.4rem;
+  border-color:var(--aqua-ink);
+}
+.plan-care h3 span{color:var(--aqua-ink);}
+.plan-care ul{margin-top:0;}
+.plan-care .price.is-ja{font-size:1.15rem;}
+@media (max-width:48rem){.plan.plan-care{grid-template-columns:1fr;}}
+
+/* ===== プロフィール（トップは短く） ===== */
+.profile-lead{margin:1.4rem 0 0;font-size:.95rem;line-height:1.95;}
+.sec-ink .profile-lead{color:rgba(252,251,249,.85);}
+.profile-more{margin:1.6rem 0 2rem;}
+.btn-ghost-w{border:1px solid rgba(252,251,249,.6);color:var(--paper);}
+.btn-ghost-w::before{background:var(--paper);}
+.btn-ghost-w:hover{color:var(--ink);transform:translateY(-2px);}
+
+/* ===== 実績の画像：PCとスマホの高さをそろえる ===== */
+.case-shots{grid-template-columns:2.85fr 1fr;}
+@media (max-width:40rem){.case-shots{grid-template-columns:2.85fr 1fr;}}
+.case-shots.single{grid-template-columns:1fr;}
+.case-shots .ph.wide{aspect-ratio:1200/630;}
+
+/* ===== お問い合わせフォーム ===== */
+.container.narrow{max-width:46rem;}
+.cform{display:grid;gap:1.7rem;}
+.field{display:grid;gap:.55rem;margin:0;padding:0;border:0;min-width:0;}
+.field > label,.field > legend{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem;padding:0;font-size:.98rem;font-weight:700;}
+.field legend small{font-size:.82rem;font-weight:400;color:var(--ink-3);}
+.req,.opt{font-size:.72rem;font-weight:700;line-height:1;padding:.32rem .55rem;border-radius:100px;letter-spacing:.04em;}
+.req{background:var(--rose-ink);color:#fff;}
+.opt{background:var(--canvas-2);color:var(--ink-3);border:1px solid var(--line);}
+.cform input[type="text"],.cform input[type="email"],.cform select,.cform textarea{
+  width:100%;box-sizing:border-box;padding:.85rem 1rem;font:inherit;font-size:1rem;color:var(--ink);
+  background:var(--paper);border:1px solid #8C909B;border-radius:8px;
+}
+.cform textarea{min-height:11rem;line-height:1.8;resize:vertical;}
+.cform input:focus-visible,.cform select:focus-visible,.cform textarea:focus-visible{outline:2px solid var(--aqua-ink);outline-offset:2px;border-color:var(--aqua-ink);}
+.cform ::placeholder{color:var(--ink-4);}
+.hint{margin:0;font-size:.84rem;color:var(--ink-3);}
+.chks{display:flex;flex-wrap:wrap;gap:.6rem;}
+.chk{display:inline-flex;align-items:center;gap:.55rem;padding:.6rem .95rem;font-size:.92rem;background:var(--paper);border:1px solid var(--line);border-radius:100px;cursor:pointer;}
+.chk input{width:1.1rem;height:1.1rem;margin:0;accent-color:var(--rose-ink);flex:none;}
+.chk:has(input:checked){border-color:var(--rose-ink);}
+.chk.agree{padding:0;border:0;background:none;font-size:.95rem;}
+.chk.agree span{display:inline-flex;align-items:center;flex-wrap:wrap;gap:.6rem;}
+.field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem;}
+@media (max-width:40rem){.field-row{grid-template-columns:1fr;}}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+.form-error{margin:0;padding:1rem 1.2rem;font-size:.92rem;color:#8E2152;background:#FBEFF4;border:1px solid var(--rose-ink);border-radius:8px;}
+.form-error[hidden]{display:none;}
+.form-submit{margin:.4rem 0 0;}
+.form-submit .btn{border:0;cursor:pointer;font-family:inherit;font-size:.95rem;font-weight:700;}
+.thanks-note{font-size:.98rem;color:var(--ink-2);}
+.page-head .page-en{font-size:clamp(2.2rem,5.5vw,3.8rem);color:var(--ink-3);}
+.page-head h1{font-size:clamp(1.6rem,3.6vw,2.3rem);}
