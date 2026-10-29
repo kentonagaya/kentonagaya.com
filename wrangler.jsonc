@@ -5,6 +5,8 @@
   "compatibility_date": "2026-10-01",
   // 管理画面で設定した値を、デプロイのたびに消さない
   "keep_vars": true,
+  // 管理画面の「Logs」で動作の記録を見られるようにする
+  "observability": { "enabled": true },
   "assets": {
     "directory": ".",
     "binding": "ASSETS",

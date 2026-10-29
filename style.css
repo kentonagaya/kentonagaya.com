@@ -1442,3 +1442,15 @@ figure.hero-art{margin:0 auto;}
 .thanks-note{font-size:.98rem;color:var(--ink-2);}
 .page-head .page-en{font-size:clamp(2.2rem,5.5vw,3.8rem);color:var(--ink-3);}
 .page-head h1{font-size:clamp(1.6rem,3.6vw,2.3rem);}
+
+/* ヒーローの写真：線を写真の下に通し、名前は線と重ならない位置に */
+.hero-art .ring{z-index:1;}
+.hero-photo{z-index:3;}
+.hero-cap{
+  z-index:4;left:2%;right:auto;top:78%;bottom:auto;text-align:left;
+  padding:.3rem .6rem;background:var(--canvas);border-radius:4px;
+}
+@media (min-width:64.01rem){
+  .hero-tags{display:grid;grid-template-columns:repeat(2,max-content);}
+}
+.hero-tags li{font-family:var(--ja);letter-spacing:.02em;}

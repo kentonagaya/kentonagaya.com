@@ -11,6 +11,8 @@
  *   TURNSTILE_SECRET      Turnstile のシークレットキー（シークレット）
  */
 
+import { EmailMessage } from "cloudflare:email";
+
 const TOPICS = {
   web: { ja: "Webサイト制作", en: "Website" },
   rebuild: { ja: "止まったサイトの立て直し・修正", en: "Fixing or rebuilding a site" },
@@ -51,6 +53,49 @@ const MSG = {
 };
 
 const enc = new TextEncoder();
+
+/* ---------- メールの組み立て（Email Routing で送れる形式） ---------- */
+function b64(str) {
+  let bin = "";
+  for (const b of enc.encode(str)) bin += String.fromCharCode(b);
+  return btoa(bin);
+}
+const mimeWord = (s) => "=?UTF-8?B?" + b64(s) + "?=";
+
+function rawMime({ from, to, replyTo, subject, text }) {
+  const domain = from.split("@")[1] || "kentonagaya.com";
+  return [
+    "From: " + mimeWord("kentonagaya.com お問い合わせ") + " <" + from + ">",
+    "To: <" + to + ">",
+    "Reply-To: <" + replyTo + ">",
+    "Subject: " + mimeWord(subject),
+    "Date: " + new Date().toUTCString(),
+    "Message-ID: <" + crypto.randomUUID() + "@" + domain + ">",
+    "MIME-Version: 1.0",
+    "Content-Type: text/plain; charset=UTF-8",
+    "Content-Transfer-Encoding: base64",
+    "",
+    b64(text.replace(/\n/g, "\r\n")).replace(/.{1,76}/g, "$&\r\n"),
+  ].join("\r\n");
+}
+
+/** まず Email Routing の方式で送り、だめなら Email Service の方式で送る */
+async function sendMail(env, mail) {
+  const errors = [];
+  try {
+    await env.EMAIL.send(new EmailMessage(mail.from, mail.to, rawMime(mail)));
+    return;
+  } catch (err) {
+    errors.push("routing: " + (err && (err.code || err.message)));
+  }
+  try {
+    await env.EMAIL.send(mail);
+    return;
+  } catch (err) {
+    errors.push("service: " + (err && (err.code || err.message)));
+  }
+  throw new Error(errors.join(" / "));
+}
 
 async function hmac(secret, text) {
   const key = await crypto.subtle.importKey("raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
@@ -173,7 +218,7 @@ export async function handleContactPost(request, env) {
 
   if (env.FORM_SECRET && !(await checkToken(env, form.get("token")))) return fail("expired");
   if (!values.name || !values.email || !values.message || form.get("privacy") !== "agree") return fail("invalid");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) return fail("email");
+  if (!/^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/.test(values.email)) return fail("email");
 
   if (env.TURNSTILE_SECRET) {
     const body = new FormData();
@@ -189,7 +234,10 @@ export async function handleContactPost(request, env) {
     if (!ok) return fail("robot");
   }
 
-  if (!env.EMAIL || !env.CONTACT_TO) return fail("send", 500);
+  if (!env.EMAIL || !env.CONTACT_TO) {
+    console.error("contact not configured", { EMAIL: !!env.EMAIL, CONTACT_TO: !!env.CONTACT_TO });
+    return fail("send", 500);
+  }
 
   const pick = (table, key) => (key ? table[key].ja : "（未選択）");
   const now = new Date(Date.now() + 9 * 3600 * 1000).toISOString().replace("T", " ").slice(0, 16);
@@ -213,15 +261,15 @@ export async function handleContactPost(request, env) {
   ].join("\n");
 
   try {
-    await env.EMAIL.send({
-      to: env.CONTACT_TO,
-      from: env.CONTACT_FROM || "form@kentonagaya.com",
+    await sendMail(env, {
+      to: String(env.CONTACT_TO).trim(),
+      from: String(env.CONTACT_FROM || "form@kentonagaya.com").trim(),
       replyTo: values.email,
       subject: "【お問い合わせ】" + values.name + " 様（kentonagaya.com）",
       text,
     });
   } catch (err) {
-    console.error("contact send failed", err && (err.code || err.message));
+    console.error("contact send failed:", err && err.message);
     return fail("send", 502);
   }
 
