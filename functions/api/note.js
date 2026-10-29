@@ -78,6 +78,7 @@ function attr(block, tagName, attrName) {
 function findImage(block) {
   return (
     attr(block, "media:thumbnail", "url") ||
+    tag(block, "media:thumbnail") ||
     attr(block, "media:content", "url") ||
     attr(block, "enclosure", "url") ||
     attr(block, "img", "src") ||
@@ -85,13 +86,14 @@ function findImage(block) {
   );
 }
 
-/** RFC822の日付を 2026.09.29 形式に */
+/** RFC822の日付を 2026.09.29 形式に（日本時間） */
 function formatDate(raw) {
   if (!raw) return "";
-  const d = new Date(raw);
-  if (isNaN(d.getTime())) return "";
+  const t = new Date(raw).getTime();
+  if (isNaN(t)) return "";
+  const d = new Date(t + 9 * 3600 * 1000); // 日本時間で表示
   const p = (n) => String(n).padStart(2, "0");
-  return d.getFullYear() + "." + p(d.getMonth() + 1) + "." + p(d.getDate());
+  return d.getUTCFullYear() + "." + p(d.getUTCMonth() + 1) + "." + p(d.getUTCDate());
 }
 
 /** XMLの実体参照を戻す */
