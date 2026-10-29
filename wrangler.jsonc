@@ -1,11 +1,47 @@
-{
-  // name は Cloudflare の Worker 名と同じにする（〇〇.workers.dev の〇〇の部分）
-  "name": "kentonagaya-com",
-  "main": "src/worker.js",
-  "compatibility_date": "2026-10-01",
-  "assets": {
-    "directory": ".",
-    "binding": "ASSETS",
-    "run_worker_first": ["/api/*"]
-  }
-}
+/**
+ * kentonagaya.com（Cloudflare Workers）
+ * /api/note・お問い合わせフォームだけをこのプログラムで処理し、それ以外は静的ファイルをそのまま返す。
+ */
+import { onRequest as note } from "../functions/api/note.js";
+import { renderContactPage, handleContactPost } from "./contact.js";
+
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    const path = url.pathname.replace(/\/+$/, "") || "/";
+
+    if (path === "/api/note") {
+      return note({ request, env, waitUntil: ctx.waitUntil.bind(ctx) });
+    }
+    if (path === "/api/contact") {
+      return handleContactPost(request, env);
+    }
+    if ((path === "/contact" || path === "/en-contact") && request.method === "GET") {
+      return renderContactPage(request, env);
+    }
+    return env.ASSETS.fetch(request);
+  },
+};/**
+ * kentonagaya.com（Cloudflare Workers）
+ * /api/note・お問い合わせフォームだけをこのプログラムで処理し、それ以外は静的ファイルをそのまま返す。
+ */
+import { onRequest as note } from "../functions/api/note.js";
+import { renderContactPage, handleContactPost } from "./contact.js";
+
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    const path = url.pathname.replace(/\/+$/, "") || "/";
+
+    if (path === "/api/note") {
+      return note({ request, env, waitUntil: ctx.waitUntil.bind(ctx) });
+    }
+    if (path === "/api/contact") {
+      return handleContactPost(request, env);
+    }
+    if ((path === "/contact" || path === "/en-contact") && request.method === "GET") {
+      return renderContactPage(request, env);
+    }
+    return env.ASSETS.fetch(request);
+  },
+};
