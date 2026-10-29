@@ -1,0 +1,11 @@
+{
+  // name は Cloudflare の Worker 名と同じにする（〇〇.workers.dev の〇〇の部分）
+  "name": "kentonagaya-com",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  }
+}

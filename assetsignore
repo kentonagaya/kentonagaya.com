@@ -1,0 +1,10 @@
+# サイトとして公開しないファイル
+.git
+.github
+.DS_Store
+**/.DS_Store
+.assetsignore
+wrangler.jsonc
+src
+functions
+node_modules
