@@ -31,9 +31,9 @@
   --aqua-pale:#D6ECF3;
 
   /* -- 書体 -- */
-  --ja:"dnp-shuei-gothic-gin-std","Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif;
-  --serif:"kepler-std-semicondensed-dis","dnp-shuei-gothic-gin-std",serif;
-  --mono:"source-code-pro","dnp-shuei-gothic-gin-std",monospace;
+  --ja:"biz-udpgothic","BIZ UDPGothic","Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif;
+  --serif:"kepler-std-semicondensed-dis","biz-udpgothic","BIZ UDPGothic",serif;
+  --mono:"source-code-pro","biz-udpgothic","BIZ UDPGothic",monospace;
 
   --pad:clamp(1.25rem,5vw,4.5rem);
   --gap:clamp(4rem,10vw,8.5rem);
@@ -1320,7 +1320,7 @@ html[lang="en"] .profile-meta{font-size:.78rem;letter-spacing:.02em;}
 .flow-title{margin:0 0 1.6rem;font-size:1.15rem;font-weight:700;}
 
 /* ===== Adobe Fonts ===== */
-/* 和文はM・Bの2ウェイト。400→M、700・900→Bで表示される。疑似ボールドは使わない */
+/* 和文はRegular・Boldの2ウェイト。400・500→Regular、700・900→Boldで表示される。疑似ボールドは使わない */
 html{font-synthesis:none;}
 /* 読み込み中は大見出しだけ隠す（最大3秒） */
 .wf-loading .hero-title,.wf-loading .sec-en,.wf-loading .page-en{opacity:0;}
