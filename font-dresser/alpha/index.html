@@ -38,17 +38,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       kitId: K.id,
       scriptTimeout: 3000,
       async: true,
+      // 書体ごとの読み込み監視をしない（全書体を一度に読み込まず、画面で使う書体だけをブラウザが読み込む）
+      classes: false,
+      events: false,
       // 書体ごとの状況（要求した・届いた・時間切れ）を記録して、ツールに知らせる
       fontloading: function(family, fvd) { K.font(family, fvd, 'loading'); },
       fontactive: function(family, fvd) { K.font(family, fvd, 'active'); },
       fontinactive: function(family, fvd) { K.font(family, fvd, 'inactive'); },
-      active: function() { K.state = 'active'; if (K.onstate) K.onstate('active'); },
-      inactive: function() { K.state = 'inactive'; if (K.onstate) K.onstate('inactive'); }
+      // 監視が動いた場合の結果（判定はツール側で、実際に届いた書体を見て行う）
+      active: function() { K.said = 'active'; if (K.onstate) K.onstate('active'); },
+      inactive: function() { K.said = 'inactive'; if (K.onstate) K.onstate('said-inactive'); }
     };
     K.t0 = Date.now(); K.script = 'loading';
     K.font = function(family, fvd, st) { K.fonts.push([family, fvd, st]); if (K.onfont) K.onfont(family, fvd, st); };
     K.config = config;
-    var h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/wf-loading/g,"")+" wf-inactive";if(K.state==='loading'){K.slow=true;if(K.onstate)K.onstate('slow');}},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);K.script='ok';try{Typekit.load(config)}catch(e){}};tk.onerror=function(){clearTimeout(t);K.script='error';if(K.state==='loading'){K.state='inactive';if(K.onstate)K.onstate('inactive');}};s.parentNode.insertBefore(tk,s)
+    var h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/wf-loading/g,"")+" wf-inactive";if(K.state==='loading'){K.slow=true;if(K.onstate)K.onstate('slow');}},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);K.script='ok';try{Typekit.load(config)}catch(e){}if(K.onstate)K.onstate('script');};tk.onerror=function(){clearTimeout(t);K.script='error';if(K.state==='loading'){K.state='inactive';if(K.onstate)K.onstate('inactive');}};s.parentNode.insertBefore(tk,s)
   })(document);
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3677,23 +3681,7 @@ function renderKitStatus() {
     el.innerHTML = '<i class="kn-dot"></i>Adobe Fonts を取り寄せています。届いたら「和文」「欧文」タブに並びます。';
     return;
   }
-  if (ADOBE.state === 'loading' && n) {
-    const ok = FONTS.filter(f => f.src === 'adobe' && f.kitOk).length;
-    el.hidden = false; el.className = 'kit-note wait';
-    el.innerHTML = `<i class="kn-dot"></i>${nf(ok)} / ${nf(n)} 書体が届きました。続きを受け取っています…`;
-    return;
-  }
-  if (ADOBE.state === 'inactive' && n && kitCheck === 'checking') {
-    el.hidden = false; el.className = 'kit-note wait';
-    el.innerHTML = '<i class="kn-dot"></i>書体の読み込みに時間がかかっています。届きしだい表示します…';
-    return;
-  }
-  if (ADOBE.state === 'active' && n && state.tab === 'catalog' && !kitReadyAck) {
-    el.hidden = false; el.className = 'kit-note ok';
-    el.innerHTML = `<b>${nf(n)} 書体の準備ができました。</b> <button type="button" class="kn-go" data-kn-go>「${baseList('jp').length ? '和文' : '欧文'}」タブで試す</button>`;
-    return;
-  }
-  if (!n || kitCheck === 'none') {
+  if (ADOBE.state === 'inactive' || kitBroken()) {
     el.hidden = false; el.className = 'kit-note bad';
     const why = ADOBE.script !== 'ok'
       ? 'Adobe Fonts のサーバーにつながりませんでした。通信状況（広告ブロッカーなどの拡張機能を含む）を確認して、もう一度読み込んでください。'
@@ -3703,32 +3691,45 @@ function renderKitStatus() {
       <span class="kn-row"><button type="button" class="kn-go" data-kn-retry>もう一度読み込む</button><span class="kn-detail mono">${esc(kitDetail())}</span></span>`;
     return;
   }
+  if (n && state.tab === 'catalog' && !kitReadyAck) {
+    el.hidden = false; el.className = 'kit-note ok';
+    el.innerHTML = `<b>${nf(n)} 書体の準備ができました。</b> <button type="button" class="kn-go" data-kn-go>「${baseList('jp').length ? '和文' : '欧文'}」タブで試す</button>`;
+    return;
+  }
   el.hidden = true;
 }
 let kitReadyAck = false;
-let kitCheck = '';  // '' | 'checking' | 'some' | 'none'
+let kitFaces = { total: 0, loaded: 0, error: 0, loading: 0 };
+const kitBroken = () => kitFaces.total > 0 && kitFaces.loaded === 0 && kitFaces.error > 0 && kitFaces.loading === 0;
 function kitDetail() {
-  const ev = ADOBE.fonts, cnt = st => new Set(ev.filter(e => e[2] === st).map(e => e[0] + e[1])).size;
-  return `詳細：${ADOBE.id} / スクリプト ${({ ok: '取得', error: 'エラー', loading: '未着' })[ADOBE.script] || '-'} / 要求 ${cnt('loading')}・成功 ${cnt('active')}・時間切れ ${cnt('inactive')} / ${Math.round((Date.now() - (ADOBE.t0 || Date.now())) / 1000)} 秒`;
+  const st = ({ ok: '取得', error: 'エラー', loading: '未着' })[ADOBE.script] || '-';
+  return `詳細：${ADOBE.id} / スクリプト ${st} / 書体 ${FONTS.filter(f => f.src === 'adobe').length}・面 ${kitFaces.total}（表示済み ${kitFaces.loaded}・失敗 ${kitFaces.error}）/ 監視 ${ADOBE.fonts.length ? 'あり' : 'なし'} / ${Math.round((Date.now() - (ADOBE.t0 || Date.now())) / 1000)} 秒`;
 }
-/* キットが「失敗」と言っても、書体の定義は届いていることがある（時間切れなど）。ブラウザで実際に読み込んで確かめる */
-async function verifyKitFonts() {
-  const ad = FONTS.filter(f => f.src === 'adobe');
-  if (!ad.length) { kitCheck = 'none'; return; }
-  kitCheck = 'checking'; renderKitStatus();
-  const text = 'あAa永' + ($('#site') ? $('#site').textContent.slice(0, 40) : '');
-  const res = await Promise.all(ad.map(f => withTimeout(document.fonts.load(`${f.weights[0] || 400} 24px "${f.cssName}"`, text), 15000).then(r => r && r.length > 0, () => false)));
-  ad.forEach((f, i) => { if (res[i]) f.kitOk = true; });
-  kitCheck = res.some(Boolean) ? 'some' : 'none';
-  if (kitCheck === 'some') scheduleAdobeRender(); else { renderKitStatus(); renderList(); }
+/* キットが登録した @font-face を読む。Adobe の CSS 名は「小文字・数字・ハイフン」だけでできている */
+const ADOBE_NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+function kitScan() {
+  let added = false;
+  const c = { total: 0, loaded: 0, error: 0, loading: 0 };
+  for (const ff of document.fonts) {
+    const fam = ff.family.replace(/^["']|["']$/g, '');
+    if (!ADOBE_NAME.test(fam)) continue;
+    c.total++;
+    if (ff.status in c) c[ff.status]++;
+    const before = BY_ID.has('a:' + fam) ? BY_ID.get('a:' + fam).weights.length : -1;
+    const w = Math.max(1, Math.min(9, Math.round((parseInt(ff.weight, 10) || 400) / 100)));
+    const f = addAdobeFont(fam, (ff.style === 'italic' ? 'i' : 'n') + w);
+    if (ff.status === 'loaded') f.kitOk = true;
+    if (f.weights.length !== before || before === -1) added = true;
+  }
+  const changed = c.total !== kitFaces.total || c.loaded !== kitFaces.loaded || c.error !== kitFaces.error || c.loading !== kitFaces.loading;
+  kitFaces = c;
+  if (FONTS.some(f => f.src === 'adobe') && ADOBE.state === 'loading') { ADOBE.state = 'active'; clearTimeout(kitGiveUpT); added = true; }
+  if (added) scheduleAdobeRender();
+  else if (changed) renderKitStatus();
 }
+function kitFail() { ADOBE.state = 'inactive'; renderKitStatus(); renderList(); }
 $('#kitNote').addEventListener('click', e => {
-  if (!e.target.closest('[data-kn-retry]')) return;
-  if (window.Typekit && ADOBE.config) {
-    ADOBE.state = 'loading'; ADOBE.slow = false; kitCheck = '';
-    renderKitStatus(); renderList();
-    try { Typekit.load(ADOBE.config); } catch (err) { location.reload(); }
-  } else location.reload();
+  if (e.target.closest('[data-kn-retry]')) location.reload();
 });
 $('#kitNote').addEventListener('click', e => {
   if (!e.target.closest('[data-kn-go]')) return;
@@ -3753,33 +3754,45 @@ function scheduleAdobeRender() {
   }, 400);
 }
 function onAdobeFont(family, fvd, st) {
+  // 監視が動いた場合（キットが設定を無視したとき）も、届いた書体を一覧に入れる
   const before = BY_ID.has('a:' + family) ? BY_ID.get('a:' + family).weights.length : -1;
   const f = addAdobeFont(family, fvd);
   if (st === 'active') f.kitOk = true;
-  if (f.weights.length !== before) scheduleAdobeRender(); // 新しいフォント・太さが増えたときだけ描き直す
-  else renderKitStatus();
+  if (ADOBE.state === 'loading') { ADOBE.state = 'active'; clearTimeout(kitGiveUpT); }
+  if (f.weights.length !== before) scheduleAdobeRender();
 }
 let kitStarted = false;
 ADOBE.fonts.forEach(([fam, fvd, st]) => { const f = addAdobeFont(fam, fvd); if (st === 'active') f.kitOk = true; });
 ADOBE.onfont = onAdobeFont;
 let kitGiveUpT = null;
+const giveUp = ms => { clearTimeout(kitGiveUpT); kitGiveUpT = setTimeout(() => { kitScan(); if (ADOBE.state === 'loading' && !FONTS.some(f => f.src === 'adobe')) kitFail(); }, ms); };
 ADOBE.onstate = st => {
   if (st === 'slow') {
     if (state.tab !== 'catalog' && !FONTS.some(f => f.src === 'adobe')) { const t = $('#kitWait .kw-title'); if (t) t.textContent = '少し時間がかかっています。もう少しお待ちください…'; }
-    clearTimeout(kitGiveUpT);
-    kitGiveUpT = setTimeout(() => { if (ADOBE.state === 'loading' && !window.Typekit && !FONTS.some(f => f.src === 'adobe')) { ADOBE.state = 'inactive'; ADOBE.onstate('inactive'); } }, 20000);
+    if (!window.Typekit) giveUp(20000);
     return;
   }
-  clearTimeout(kitGiveUpT);
-  if (st === 'active') { kitCheck = ''; renderKitStatus(); kitStarted = true; scheduleAdobeRender(); return; }
-  // inactive：書体の定義が届いていれば、実際に読み込めるか確かめる
-  if (FONTS.some(f => f.src === 'adobe')) { scheduleAdobeRender(); verifyKitFonts(); }
-  else { kitCheck = 'none'; renderKitStatus(); renderList(); }
+  if (st === 'script') { kitScan(); if (ADOBE.state === 'loading') giveUp(15000); return; }
+  if (st === 'active') { kitStarted = true; kitScan(); scheduleAdobeRender(); return; }
+  if (st === 'said-inactive') { kitScan(); if (ADOBE.state === 'loading') giveUp(3000); return; }
+  if (st === 'inactive') kitFail(); // スクリプトを取得できなかった
 };
-if (ADOBE.state === 'inactive') ADOBE.onstate('inactive');
-else if (ADOBE.slow) ADOBE.onstate('slow');
+if (ADOBE.state === 'inactive') kitFail();
+else { if (ADOBE.slow) ADOBE.onstate('slow'); if (ADOBE.script === 'ok') ADOBE.onstate('script'); }
 if (ADOBE.fonts.length) scheduleAdobeRender();
 renderKitStatus();
+// キットが登録した書体を見張る（最初の 1 分ほどはこまめに、その後はゆっくり）
+let kitScanN = 0;
+(function kitTick() { kitScan(); setTimeout(kitTick, ++kitScanN < 90 ? 700 : 3000); })();
+document.fonts.addEventListener('loadingdone', () => kitScan());
+document.fonts.addEventListener('loadingerror', () => kitScan());
+// キットが CSS を足したら、すぐに見に行く
+new MutationObserver(ms => {
+  for (const m of ms) for (const n of m.addedNodes) {
+    if (n.tagName === 'LINK') n.addEventListener('load', () => kitScan());
+    if (n.tagName === 'STYLE' || n.tagName === 'LINK') setTimeout(kitScan, 30);
+  }
+}).observe(document.head, { childList: true });
 /* 日本語フォントは「ページにある文字だけ」を読み込む仕組み（動的サブセット）なので、
    見本の書き換えなどで新しい文字が増えたら、キットを読み込み直す */
 const kitChars = new Set();
