@@ -86,6 +86,9 @@ pre#pv{white-space:pre-wrap;word-break:break-word;background:var(--card);border:
 .vt .badge{width:24px;height:24px;font-size:12px;border-radius:7px}
 .presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .presets .chip{font-size:12px}
+.vgh{grid-column:1/-1;font-size:12px;font-weight:800;color:var(--sub);margin:8px 2px 0}
+.chip.grpchip{border:1px solid var(--line)}
+.gtag{display:inline-block;font-size:10px;font-weight:800;padding:0 5px;margin-right:5px;border-radius:5px;background:var(--chip);color:var(--sub);vertical-align:1px}
 .note{font-size:12px;color:var(--sub);margin:6px 0 0}
 #toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:99;max-width:90vw;text-align:center}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -162,6 +165,10 @@ pre#pv{white-space:pre-wrap;word-break:break-word;background:var(--card);border:
 /* ===================== DATA ===================== */
 const VENUES={A:'城東商店街 特設ステージ',B:'gamoyon Art labo',C:'Office with U',D:'cafe bar 鐘の音',E:'13Diner',F:'AMPERSAND GUITARS CAFE',G:'salon de the Tea shot',H:'Theater cafe 土間シネマ',I:'鶏爛漫',J:'Machi Cafe',K:'バール ISOLA',L:'GAMO4 BREWERY',M:'蒲生おでん 笑月',N:'蒲生中華 信',O:'39bar BANBAN',P:'EVENT DINING BAR MORUDELIC',Q:'和dining DANDAN'};
 const CODES=Object.keys(VENUES);
+// 運営上のグループ分け（X投稿には出さない・分類用）
+const GROUPS={A:['A','D','E','F','B'],B:['I','G','L','H','K','M'],C:['C','J','O','N','P','Q']};
+const GROUP_OF=Object.fromEntries(Object.entries(GROUPS).flatMap(([g,cs])=>cs.map(c=>[c,g])));
+const ORDERED=Object.values(GROUPS).flat();
 // No|会場|時間|出演者|X|Instagram
 const RAW=`
 1|A|11:40-12:00|★オープニング||
@@ -386,23 +393,26 @@ function status(l,n){if(S.done[l.id])return 'done';const end=l.end??l.start+30;i
 
 function renderChips(){
   if(S.filter==='mine'&&!S.assigned.length)S.filter='all';
-  const o=[['all','すべて']];if(S.assigned.length)o.push(['mine','担当のみ']);CODES.forEach(c=>o.push([c,c]));
-  $('#chips').innerHTML=o.map(([v,l])=>`<button class="chip${S.filter===v?' on':''}" data-f="${v}" title="${v.length===1?esc(VENUES[v]):''}">${l}</button>`).join('');
+  const o=[['all','すべて']];if(S.assigned.length)o.push(['mine','担当のみ']);
+  Object.keys(GROUPS).forEach(g=>o.push(['g'+g,'グループ'+g]));
+  ORDERED.forEach(c=>o.push([c,c]));
+  $('#chips').innerHTML=o.map(([v,l])=>`<button class="chip${S.filter===v?' on':''}${v[0]==='g'?' grpchip':''}" data-f="${v}" title="${v.length===1?esc(VENUES[v]):''}">${l}</button>`).join('');
 }
 function visible(){
   const q=$('#q').value.trim().toLowerCase();
   return LIVES.filter(l=>{
     if(S.filter==='mine'&&!S.assigned.includes(l.code))return false;
+    if(S.filter[0]==='g'&&S.filter.length===2&&GROUP_OF[l.code]!==S.filter[1])return false;
     if(S.filter.length===1&&l.code!==S.filter)return false;
     if(S.onlyTodo&&S.done[l.id])return false;
-    if(q&&!(l.name+' '+l.venue+' '+l.accounts.join(' ')+' 会場'+l.code).toLowerCase().includes(q))return false;
+    if(q&&!(l.name+' '+l.venue+' '+l.accounts.join(' ')+' 会場'+l.code+' グループ'+GROUP_OF[l.code]).toLowerCase().includes(q))return false;
     return true});
 }
 function card(l,n){
   const st=status(l,n),d=S.done[l.id];
   const stl=d?`✓ ${esc(d.by||'')}${d.at?' '+d.at:''}`:st==='live'?'開演中':st==='late'?'未投稿':st==='soon'?'まもなく':'';
   const acc=l.kind==='x'?l.accounts.join(' '):l.kind==='ig'?'IG: '+l.accounts.map(u=>u.replace(IG,'').replace(/\/$/,'')).join(' '):l.event?'':'アカウントなし';
-  return `<button class="card ${st}" data-id="${l.id}"><span class="badge" style="--h:${hue(l.code)}">${l.code}</span><span class="cb"><span class="nm">${esc(l.name)}${l.warns.length?' <i class="w">!</i>':''}</span><span class="meta">${esc(l.time)}・${esc(l.venue)}</span>${acc?`<span class="acc">${esc(acc)}</span>`:''}</span>${stl?`<span class="st">${stl}</span>`:''}</button>`;
+  return `<button class="card ${st}" data-id="${l.id}"><span class="badge" style="--h:${hue(l.code)}">${l.code}</span><span class="cb"><span class="nm">${esc(l.name)}${l.warns.length?' <i class="w">!</i>':''}</span><span class="meta"><span class="gtag">G${GROUP_OF[l.code]}</span>${esc(l.time)}・${esc(l.venue)}</span>${acc?`<span class="acc">${esc(acc)}</span>`:''}</span>${stl?`<span class="st">${stl}</span>`:''}</button>`;
 }
 function renderList(){
   const n=nowMin(),arr=visible();let h='',cur=null;
@@ -426,7 +436,7 @@ let curId=null,curList=[],photo=null,photoURL=null;
 function openLive(id){curId=id;curList=visible().map(l=>l.id);if(!curList.includes(id))curList=[id];setPhoto(null);renderLive();show('live');$('.panel[data-p=live]').scrollTop=0}
 function renderLive(){
   const l=byId[curId];
-  $('#lvHead').innerHTML=`<span class="badge big" style="--h:${hue(l.code)}">${l.code}</span><div style="min-width:0"><div class="sub">会場${l.code}｜${esc(l.venue)}</div><div class="big">${esc(l.name)}</div><div class="sub">${esc(l.time)}</div></div>`;
+  $('#lvHead').innerHTML=`<span class="badge big" style="--h:${hue(l.code)}">${l.code}</span><div style="min-width:0"><div class="sub">グループ${GROUP_OF[l.code]}・会場${l.code}｜${esc(l.venue)}</div><div class="big">${esc(l.name)}</div><div class="sub">${esc(l.time)}</div></div>`;
   $('#lvWarn').innerHTML=l.warns.map(w=>`<div class="warn">⚠ ${esc(w)}</div>`).join('');
   $('#cmt').value=S.drafts[l.id]||'';
   document.querySelectorAll('#fmtSeg button').forEach(b=>b.classList.toggle('on',b.dataset.fmt===S.fmt));
@@ -453,15 +463,11 @@ $('#btnPrev').addEventListener('click',()=>{const i=curList.indexOf(curId);if(i>
 $('#btnNext').addEventListener('click',()=>{const i=curList.indexOf(curId);if(i<curList.length-1){curId=curList[i+1];setPhoto(null);renderLive()}});
 
 /* settings */
-function splits(){
-  const cnt=CODES.map(c=>LIVES.filter(l=>l.code===c).length),total=cnt.reduce((a,b)=>a+b,0),g=[[],[],[]];let k=0,acc=0;
-  CODES.forEach((c,i)=>{if(k<2&&acc+cnt[i]/2>total*(k+1)/3)k++;g[k].push(c);acc+=cnt[i]});
-  return g.map(codes=>({codes,n:codes.reduce((a,c)=>a+cnt[CODES.indexOf(c)],0)}));
-}
+function groupLabel(codes){const k=[...codes].sort().join('');const g=Object.keys(GROUPS).find(g=>[...GROUPS[g]].sort().join('')===k);return g?'グループ'+g:null}
 function renderSettings(){
   $('#me').value=S.me;$('#tags').value=S.tags;$('#imp').value='';
-  $('#presets').innerHTML=splits().map((s,i)=>`<button class="chip" data-pre="${s.codes.join('')}">${i+1}班 ${s.codes[0]}–${s.codes[s.codes.length-1]}（${s.n}件）</button>`).join('')+`<button class="chip" data-pre="">全会場</button>`;
-  $('#vgrid').innerHTML=CODES.map(c=>`<button class="vt${S.assigned.includes(c)?' on':''}" data-v="${c}"><span class="badge" style="--h:${hue(c)}">${c}</span>${esc(VENUES[c])}</button>`).join('');
+  $('#presets').innerHTML=Object.entries(GROUPS).map(([g,cs])=>`<button class="chip" data-pre="${cs.join('')}">グループ${g}（${LIVES.filter(l=>cs.includes(l.code)).length}件）</button>`).join('')+`<button class="chip" data-pre="">全会場</button>`;
+  $('#vgrid').innerHTML=Object.entries(GROUPS).map(([g,cs])=>`<div class="vgh">グループ${g}</div>`+cs.map(c=>`<button class="vt${S.assigned.includes(c)?' on':''}" data-v="${c}"><span class="badge" style="--h:${hue(c)}">${c}</span>${esc(VENUES[c])}</button>`).join('')).join('');
 }
 $('#me').addEventListener('input',e=>{S.me=e.target.value;save()});
 $('#tags').addEventListener('input',e=>{S.tags=e.target.value;save()});
@@ -481,7 +487,7 @@ function report(){
   const doneScope=scope.filter(l=>S.done[l.id]);
   const mine=LIVES.filter(l=>S.done[l.id]&&S.done[l.id].mine).sort((a,b)=>(S.done[b.id].at||'').localeCompare(S.done[a.id].at||''));
   const late=scope.filter(l=>!S.done[l.id]&&n>=l.start);
-  const L=[`【X投稿 進捗】${me()}（${hhmm()}時点）`,`担当：${S.assigned.length?S.assigned.join(' '):'全会場'}`,`投稿済：${doneScope.length}/${scope.length}件`];
+  const L=[`【X投稿 進捗】${me()}（${hhmm()}時点）`,`担当：${S.assigned.length?(groupLabel(S.assigned)||S.assigned.join(' ')):'全会場'}`,`投稿済：${doneScope.length}/${scope.length}件`];
   if(mine[0])L.push(`直近：${mine[0].time.slice(0,5)} 会場${mine[0].code} ${mine[0].name}`);
   if(late.length){L.push('','⚠ 開始時刻を過ぎて未投稿：');late.forEach(l=>L.push(`・${l.time.slice(0,5)} 会場${l.code} ${l.name}`))}
   const groups={};Object.entries(S.done).forEach(([id,d])=>{const by=(d.mine?me():(d.by||'他')).replace(/\s+/g,'_');(groups[by]=groups[by]||[]).push(+id)});
