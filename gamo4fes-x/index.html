@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#e8541e">
+<title>がもよんフェス X投稿ボード</title>
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--tx:#1b1b1f;--sub:#6b6b75;--line:#e4e2dd;--acc:#e8541e;--ok:#1f9d55;--warn:#b7791f;--late:#d64545;--chip:#ebe9e4;--hh:140px}
+@media (prefers-color-scheme:dark){:root{--bg:#121214;--card:#1c1c20;--tx:#ececf1;--sub:#9a9aa6;--line:#2c2c33;--chip:#26262c}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;-webkit-text-size-adjust:100%;line-height:1.45}
+body.lock{overflow:hidden}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+header{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line);padding:calc(8px + env(safe-area-inset-top)) 12px 8px}
+.top{display:flex;align-items:center;gap:8px}
+.title{font-weight:700;font-size:16px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.title b{color:var(--acc)}
+.prog{font-size:12px;color:var(--sub);text-align:right;line-height:1.2;white-space:nowrap}
+.prog b{font-size:15px;color:var(--tx)}
+.hbtn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:7px 10px;font-size:13px;font-weight:600;min-height:38px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 0 6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:0;background:var(--chip);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;min-height:34px}
+.chip.on{background:var(--tx);color:var(--bg)}
+.row2{display:flex;gap:6px;align-items:center}
+.row2 input[type=search]{flex:1;min-width:0;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;font-size:16px}
+.tog{font-size:12px;display:flex;align-items:center;gap:4px;white-space:nowrap;color:var(--sub)}
+.tog input{width:18px;height:18px;accent-color:var(--acc)}
+main{padding:4px 12px calc(40px + env(safe-area-inset-bottom));max-width:760px;margin:0 auto}
+.grp{scroll-margin-top:calc(var(--hh) + 6px)}
+.grp h2{font-size:13px;color:var(--sub);margin:16px 2px 6px;font-weight:700;letter-spacing:.04em}
+.card{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:6px;position:relative}
+.card.live{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+.card.late{border-color:var(--late)}
+.card.done{opacity:.55}
+.badge{flex:0 0 auto;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;color:#fff;background:hsl(var(--h) 62% 46%)}
+.badge.big{width:46px;height:46px;font-size:20px;border-radius:12px}
+.cb{flex:1;min-width:0;display:flex;flex-direction:column}
+.nm{font-weight:700;font-size:15px}
+.meta,.acc{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acc{color:var(--acc)}
+.st{flex:0 0 auto;font-size:11px;font-weight:700;padding:3px 7px;border-radius:999px;background:var(--chip);color:var(--sub);white-space:nowrap}
+.live .st{background:var(--acc);color:#fff}
+.late .st{background:var(--late);color:#fff}
+.done .st{background:var(--ok);color:#fff}
+.w{font-style:normal;display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--warn);color:#fff;font-size:11px;vertical-align:1px}
+.empty{text-align:center;color:var(--sub);padding:40px 0}
+/* overlay */
+#ov{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
+#ov[hidden]{display:none}
+.panel{background:var(--bg);width:100%;max-width:640px;max-height:92vh;max-height:92dvh;overflow:auto;border-radius:18px 18px 0 0;padding:14px 14px calc(18px + env(safe-area-inset-bottom))}
+.panel[hidden]{display:none}
+@media (min-width:700px){#ov{align-items:center}.panel{border-radius:18px}}
+.ph{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ph .x{margin-left:auto;border:0;background:var(--chip);border-radius:50%;width:36px;height:36px;font-size:18px;flex:0 0 auto}
+.sub{font-size:12px;color:var(--sub)}
+.big{font-size:18px;font-weight:800}
+.warn{background:color-mix(in srgb,var(--warn) 16%,var(--card));border:1px solid var(--warn);border-radius:10px;padding:8px 10px;font-size:13px;margin-bottom:8px}
+label.f{display:block;font-size:12px;font-weight:700;color:var(--sub);margin:10px 0 4px}
+textarea,input.t{width:100%;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 10px;font-size:16px}
+textarea{resize:vertical;min-height:64px}
+.seg{display:flex;background:var(--chip);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;border-radius:8px;padding:7px;font-size:13px;font-weight:700}
+.seg button.on{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.pvwrap{position:relative;margin-top:8px}
+pre#pv{white-space:pre-wrap;word-break:break-word;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin:0;font-family:inherit;font-size:15px}
+#cnt{position:absolute;right:8px;bottom:6px;font-size:11px;color:var(--sub)}
+#cnt.over{color:var(--late);font-weight:800}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.b{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 8px;font-weight:700;font-size:14px;min-height:48px;display:flex;align-items:center;justify-content:center;gap:6px;text-align:center}
+.b.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.b.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.b.full{grid-column:1/-1}
+.b:disabled{opacity:.4}
+.thumb{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);margin-top:8px}
+.thumb img{width:48px;height:48px;object-fit:cover;border-radius:8px}
+.nav{display:flex;gap:8px;margin-top:12px}
+.nav .b{flex:1;min-height:42px;font-size:13px}
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.vt{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px;font-size:12px;text-align:left;display:flex;gap:6px;align-items:center;min-height:40px}
+.vt.on{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+.vt .badge{width:24px;height:24px;font-size:12px;border-radius:7px}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.presets .chip{font-size:12px}
+.note{font-size:12px;color:var(--sub);margin:6px 0 0}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:99;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<header id="hd">
+  <div class="top">
+    <div class="title">がもよんフェス <b>X投稿</b></div>
+    <div class="prog" id="prog"></div>
+    <button class="hbtn" id="btnReport">報告</button>
+    <button class="hbtn" id="btnSettings">設定</button>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="row2">
+    <input id="q" type="search" placeholder="出演者・会場・アカウントで検索" autocomplete="off">
+    <label class="tog"><input type="checkbox" id="onlyTodo">未投稿のみ</label>
+    <button class="hbtn" id="btnNow">今</button>
+  </div>
+</header>
+
+<main id="list"></main>
+
+<div id="ov" hidden>
+  <!-- live -->
+  <section class="panel" data-p="live" hidden>
+    <div class="ph"><div id="lvHead" style="display:flex;gap:10px;align-items:center;min-width:0"></div><button class="x" data-close>×</button></div>
+    <div id="lvWarn"></div>
+    <label class="f" for="cmt">会場からのコメント（任意・そのまま本文に入ります）</label>
+    <textarea id="cmt" placeholder="例：満員です！ぜひお立ち寄りください"></textarea>
+    <label class="f">フォーマット</label>
+    <div class="seg" id="fmtSeg"><button data-fmt="modern">見やすい版</button><button data-fmt="classic">従来版</button></div>
+    <div class="pvwrap"><pre id="pv"></pre><span id="cnt"></span></div>
+    <div class="btns">
+      <button class="b pri" id="btnCopy">本文をコピー</button>
+      <button class="b" id="btnX">Xで開く</button>
+      <label class="b" for="photo">写真を選ぶ</label>
+      <button class="b" id="btnShare">写真＋本文で共有</button>
+      <input type="file" id="photo" accept="image/*" hidden>
+    </div>
+    <div class="thumb" id="thumb"></div>
+    <div class="btns"><button class="b full ok" id="btnDone">投稿済にする</button></div>
+    <div class="nav"><button class="b" id="btnPrev">← 前</button><button class="b" id="btnNext">次 →</button></div>
+  </section>
+
+  <!-- settings -->
+  <section class="panel" data-p="settings" hidden>
+    <div class="ph"><div class="big">設定</div><button class="x" data-close>×</button></div>
+    <label class="f" for="me">あなたの名前（投稿済の記録・報告に使います）</label>
+    <input class="t" id="me" placeholder="例：Kento">
+    <label class="f">担当会場（未選択＝全会場）</label>
+    <div class="presets" id="presets"></div>
+    <div class="vgrid" id="vgrid"></div>
+    <label class="f" for="tags">ハッシュタグ</label>
+    <input class="t" id="tags">
+    <label class="f" for="imp">他メンバーの「報告」を貼り付けて取り込む</label>
+    <textarea id="imp" placeholder="LINEで届いた報告文をそのまま貼り付け"></textarea>
+    <div class="btns"><button class="b full" id="btnImport">取り込む</button></div>
+    <p class="note">記録はこの端末のブラウザに保存されます。他の人の端末とは自動では同期しないので、「報告」で共有→「取り込む」で反映してください。</p>
+    <div class="btns"><button class="b full" id="btnReset" style="color:var(--late)">この端末の記録をリセット</button></div>
+  </section>
+
+  <!-- report -->
+  <section class="panel" data-p="report" hidden>
+    <div class="ph"><div class="big">進捗報告</div><button class="x" data-close>×</button></div>
+    <p class="note" style="margin:0 0 8px">チームのLINE等に貼り付けてください。末尾の「#sync」行を他メンバーが取り込むと、投稿済が反映されます。</p>
+    <pre id="rp" style="white-space:pre-wrap;word-break:break-word;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin:0;font-family:inherit;font-size:14px"></pre>
+    <div class="btns"><button class="b full pri" id="btnCopyRp">報告をコピー</button></div>
+  </section>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ===================== DATA ===================== */
+const VENUES={A:'城東商店街 特設ステージ',B:'gamoyon Art labo',C:'Office with U',D:'cafe bar 鐘の音',E:'13Diner',F:'AMPERSAND GUITARS CAFE',G:'salon de the Tea shot',H:'Theater cafe 土間シネマ',I:'鶏爛漫',J:'Machi Cafe',K:'バール ISOLA',L:'GAMO4 BREWERY',M:'蒲生おでん 笑月',N:'蒲生中華 信',O:'39bar BANBAN',P:'EVENT DINING BAR MORUDELIC',Q:'和dining DANDAN'};
+const CODES=Object.keys(VENUES);
+// No|会場|時間|出演者|X|Instagram
+const RAW=`
+1|A|11:40-12:00|★オープニング||
+2|A|12:00-12:30|西村加奈|hakanakikana|
+3|C|12:00-12:50|Seekeer|@okudrum / @shige_hnm|handpan.oku / Shigeta_Honami
+4|D|12:00-12:30|Urey|urey_shindo|urey.ssw
+5|F|12:00-12:30|快賊guild+|yokkun_kaizoku|yokkun_kaizoku
+6|K|12:00-12:30|チンドンキバコ屋|mbp8penbbytlx6k|
+7|P|12:00-12:40|DJ Kenji Motomatsu||me_no_31.11
+8|B|12:10-12:40|the ABELL|SatoshiSchool|satoshi_hotta
+9|E|12:10-12:40|voca☆|A_voca_do_1014|A_voca_do_1014
+10|G|12:10-12:40|SIG&かみん|Sig_Southpaw|sig_southpaw
+11|L|12:10-12:40|♯9th feat:永田光昭||guitar.bar_9th
+12|I|12:20-12:50|蔦江タイチ|@kamu_kamu|TSUTAETAICHI
+13|H|12:30-13:00|フクイヒロキ|ancoromochi3|ancoromochi32
+14|J|12:30-13:00|ヒカル|2525bangbang1|2525bangbang
+15|P|12:40-13:20|DJとみやん|tomy22a|
+16|A|12:50-13:20|藍あいさ|aisa_sing|_aiaisaaa
+17|D|12:50-13:20|高木芳基（ザ・マスミサイル）|massmissile_uta|mass_yokkun
+18|F|12:50-13:20|ナタリーはぜかわ|mayopun_ssw|mayopun_ssw
+19|K|12:50-13:20|佐々木航太|sasadon714|sasadon714
+20|B|13:00-13:30|RUDE STOMPERS|rudestompers7|rudestompers
+21|E|13:00-13:30|HaseTama||@__.hasetama_ / @__s_ato_
+22|G|13:00-13:30|中村メイ|May_accordion|accordion_may_nakamura
+23|L|13:00-13:30|アトリエバンド|GATCHAN_atelier|gatchan_atelier
+24|C|13:10-13:40|犬丸翔太郎|Wantaro_wan|inumaru.shotaro
+25|I|13:10-13:40|アキラ|akira_utauhito|akirassw
+26|H|13:20-13:50|紬|Nm9K8srAMi6158|tsumugi_uta
+27|J|13:20-13:50|ウエダケイタ|k31ta_0625xx|uedakeita_ssw
+28|P|13:20-14:00|DJ ZAKI||zaki7188
+29|Q|13:30-14:30|ぺーじゅん|jjjaj5|
+30|A|13:40-14:10|おかえりな||okaeri_na7
+31|D|13:40-14:10|841(ナンカノユメ)|nanyume_ba_vo|NANKANOYUME841
+32|F|13:40-14:10|荒井光|arai_hikaru|hikaru.arai.5
+33|K|13:40-14:10|アイトユウキ||aitoyuki_anipla
+34|B|13:50-14:20|funnySkash|funnySkash|
+35|E|13:50-14:20|KaRiNKaN-A|KARINKAN241120|karinkan_a
+36|G|13:50-14:20|shu|shushunomo|shushuday0225
+37|L|13:50-14:20|げーたく||takkun_reds
+38|C|14:00-14:30|Miranda Otsuji|mirandaotsuji|Miranda Otsuji
+39|I|14:00-14:30|白川泉|izumi870|izumishirakawa_687
+40|O|14:00-14:30|The O.D.F.|kishiwadapeople|
+41|P|14:00-14:40|DJ こんちぇる||htm_32
+42|H|14:10-14:40|岩内幸乃|SswYukky|ssw_yukky
+43|J|14:10-14:40|橋本脩平|hashimoto86861|shuhei.hashimoto.75
+44|A|14:30-15:00|作人|sakuto0430|sakuto0430
+45|D|14:30-15:00|MIA.|miamoicho|@miamoicho
+46|F|14:30-15:00|青葉らら||
+47|K|14:30-15:00|群青Ne°|gunjo_neo|gunjo_official
+48|Q|14:30-15:30|takashi.minimal||takashi_m
+49|B|14:40-15:10|UNION☆JACK|0x3x8|unionjack_official
+50|E|14:40-15:10|きらりすず|kirarisuzu_sing|
+51|G|14:40-15:10|884||
+52|L|14:40-15:10|山野玲央|YAMANO_REO|yamabouzu_04
+53|P|14:40-15:20|DJ せんむ。|senmu69|
+54|C|14:50-15:20|げんき☺|kobo_guitar/all|genki_music0228
+55|I|14:50-15:20|川本玲央(ジンベエザメ彗星)|wscomet|reonald_duck
+56|O|14:50-15:20|松本耕平|Koheyheyho|koheyfolk
+57|H|15:00-15:30|comarco||comarco_okakuso
+58|J|15:00-15:30|ヤマサキマナミ|mnmdosu__|mnmdosu__
+59|A|15:20-15:50|半熟BLOOD|hanzyukublood|hanzyukublood
+60|D|15:20-15:50|一山楓|kaaaaakuuuun|kaaaaakuuuun
+61|F|15:20-15:50|Mr. 瀧|Mr_taki|mr_craft612
+62|K|15:20-15:50|たかまる|takamaruman|takamaru_0402
+63|P|15:20-16:00|小谷由樹||YUKI_KOTANI_
+64|B|15:30-16:00|Runny Noize|RunnyNoize|runny_noize_official
+65|E|15:30-16:00|Tnaka|Tnaka_genshoku|tnaka_genshoku
+66|G|15:30-16:00|武下直樹|yeltkchlow|yeltkchlow
+67|L|15:30-16:00|つなしまたかし(ほんまっSKA!?)|tunapuchi|tunapuchi
+68|Q|15:30-16:00|BlueTale|BlueTale_Coffee|bluetale_insta
+69|C|15:40-16:10|BOTTA|botta_1731|botta_1731
+70|I|15:40-16:10|モリヤサン(DABIDE'Sfire)|moriyasanfire2|MORIYASANFIRE
+71|O|15:40-16:10|discotule|discotule|discotule
+72|H|15:50-16:20|立石歩|@desuayumi|desuayumi
+73|J|15:50-16:20|絲花|@20220101itoha|itohanoongaku
+74|M|15:50-16:20|THE CABE$|THE_CABES_JAPAN|thecabes6
+75|N|16:00-16:30|きょーへー||kyohei8disco
+76|Q|16:00-17:00|DJ Senmupon|Senmupon|studio_yoshian
+77|A|16:10-16:40|ぷすっぽ|pusuppo|pusuppo
+78|D|16:10-16:40|Seven☆Star||ITSUMI.AIKO
+79|F|16:10-16:40|名切翔輝(さんかくとバツ)|syoki1018sp|sankakutobatsu
+80|K|16:10-16:40|有近朋恵|Tomoeee_0526|tomo_stgrm_
+81|B|16:20-16:50|JunkUnit|Junk_Unit|junk.unit
+82|E|16:20-16:50|moni||
+83|G|16:20-16:50|僕とクジラと赤い猫|kenken1984|bokuto.kujirato.akaineko
+84|L|16:20-16:50|L:crow|lcrow_ruria|lcrow_insta
+85|P|16:20-17:00|松前公高|kimitakamatsuma|kimitakamatsumae
+86|C|16:30-17:00|井ノ上陽水|MskreraWww|akimi.i.noway
+87|I|16:30-17:00|岸田冬志樹|kishi_toshi|kishidatoshiki
+88|O|16:30-17:00|酔韻||yo_ing_band
+89|H|16:40-17:10|タカダモモ(Campanilla)|takadamomo0116|takadamomo
+90|J|16:40-17:10|YUIYUI|yuiyui__0403|yuiyui_0403
+91|M|16:40-17:10|さよならオットマン|sayonaraottoman|sayonaraottoman1122
+92|N|16:50-17:20|サガを|@c2saga|c2saga
+93|A|17:00-17:30|nola|yukina_nola|yukina_nola
+94|D|17:00-17:30|アバンdeモーダン|@maaaatin_12|miyuuu_37
+95|F|17:00-17:30|yuyuca|yuyuca_12|yuyuca_01
+96|K|17:00-17:30|ケシカルカッコ|checical_cacco|checical_cacco
+97|P|17:00-17:40|DJ abu|mcueabu|abu.tacklebox
+98|Q|17:00-18:00|DJ Plumy|djplumy37|djplumy
+99|B|17:10-17:40|ホシミッツ|hoshi_3ttsu|hoshi_hoshi_hoshi_official
+100|E|17:10-17:40|あかたろ|akataroll|dotgirl.akataro
+101|G|17:10-17:40|坂本 しちみ|sakamoto73|
+102|L|17:10-17:40|山下優一|nijisame23|shitayuu/
+103|C|17:20-17:50|栗原拓也(Live the life)|Freemusic_LTL|freemusic0128
+104|I|17:20-17:50|吉田文人|yoshidasenpaii|yoshidasenpai
+105|O|17:20-17:50|AOHARU||yutakaizm
+106|H|17:30-18:00|屋並 真介(SMASH YOUTH)|shin873|shinsuke_yanami
+107|J|17:30-18:00|菊田 雪心|kikusteph|knasyu
+108|M|17:30-18:00|武下直樹|yeltkchlow|yeltkchlow
+109|N|17:40-18:10|キシモトジュンイチ|murasakijun|jinichan
+110|A|17:50-18:20|ヒカリトカゲ(0x3x8＆nada)||hikaritokage_osaka
+111|D|17:50-18:20|JunkJAM|JunkJAM_|junkjam.wav
+112|F|17:50-18:20|一畳さえこ|sae_pagne|ichijo_saeko
+113|K|17:50-18:20|しばたやん子|kuraponz|kuraponz
+114|E|18:00-18:30|森ゆきこ|moriyukinnko|yukikonomori
+115|G|18:00-18:30|加藤謙太|kenkecha|keknktka
+116|L|18:00-18:30|ウエノタカユキ|uenotakayuki_bv|uenovista
+117|P|18:00-18:40|DJ kenken||kenken_pabrick
+118|Q|18:00-18:30|PPHHXX|mizuki_ans_ans|mzk_phx
+119|O|18:10-18:40|884||
+120|M|18:20-18:50|miyabi-gt(s:cod)|miyabigt_scod|miyabigt_scod
+121|N|18:30-19:00|ミヤザキナツキ(砂場)|jubileeshoes|miyazakinatsuki
+122|Q|18:30-19:30|DJ ぎゃ|DJgya|djgya
+123|D|18:40-19:10|梶有紀子|yukko1112|kajiyukiko1112
+124|F|18:40-19:10|山本義則|pf_donkey|pf_donkey
+125|P|18:40-19:20|DJ Atsushi Minami||atsushi373
+126|E|18:50-19:20|pod'z|podz_info|podz_info
+127|G|18:50-19:20|名田憲人|kent19891005|kent19891005
+128|O|19:00-19:30|THE PSYCHO’S|DekoCoro|noriko1o9
+129|M|19:10-19:40|荒井光|arai_hikaru|hikaru.arai.5
+130|N|19:20-19:50|松本耕平|Koheyheyho|koheyfolk
+131|P|19:20-20:00|K-CITY KOOL(lulico.)||k_city_kool
+132|D|19:30-20:00|とまり木ズ|chosan_fs|
+133|F|19:30-20:00|Masaki-chi|Masaki_chi|masakichisan
+134|Q|19:30-20:00|びわ湖バレエ|dasakura|dasakura
+135|E|19:40-20:10|安西彩矢|@anzaiayapisu|anzaiayapisu
+136|O|19:50-20:20|Retro Page|Retro_Page_|retropage_osaka
+137|M|20:00-20:30|加納兄弟 with まいける|@tomi2ban @hatomune_mic|
+138|N|20:10-20:40|山本アラタ|arazoumusic|
+139|D|20:20-20:50|唄井直哉|utainaoya|utainaoya
+140|D|21:00-|★エンディング||
+`;
+// 元リストで表記が怪しいもの（投稿前に要確認）
+const OVERRIDES={
+  54:{x:['kobo_guitar'],warn:'元リストのX表記は「kobo_guitar/all」。@kobo_guitar として出力しています。投稿前にXで実在確認を。'}
+};
+const IG='https://www.instagram.com/';
+
+/* ===================== LOGIC ===================== */
+const toMin=s=>{const [h,m]=s.split(':').map(Number);return h*60+m};
+const LIVES=RAW.trim().split('\n').map(line=>{
+  const [no,code,time,name,x='',ig='']=line.split('|');
+  const id=+no,[s,e]=time.split('-'),ov=OVERRIDES[id]||{};
+  const xs=ov.x||(x?x.split(/\s+\/\s+|\s+/).map(h=>h.trim().replace(/^@/,'')).filter(Boolean):[]);
+  const igs=ig?ig.split(/\s+\/\s+/).map(h=>h.trim().replace(/^@/,'').replace(/\/+$/,'')).filter(Boolean):[];
+  const event=name.startsWith('★');
+  let accounts=[],kind='none';
+  if(xs.length){accounts=xs.map(h=>'@'+h);kind='x'}
+  else if(igs.length){accounts=igs.map(h=>IG+h+'/');kind='ig'}
+  const warns=[];
+  if(ov.warn)warns.push(ov.warn);
+  if(kind==='x')xs.forEach(h=>{if(!/^[A-Za-z0-9_]{1,15}$/.test(h))warns.push(`Xアカウント「${h}」の表記が不正な可能性があります。`)});
+  if(kind==='ig')igs.forEach(h=>{if(!/^[A-Za-z0-9._]{1,30}$/.test(h))warns.push(`Instagram「${h}」の表記が不正な可能性があります。`)});
+  if(!event&&kind==='none')warns.push('X・Instagramとも情報なし。メンションなしで投稿します。');
+  return {id,code,venue:VENUES[code],time:e?time:s+'〜',start:toMin(s),end:e?toMin(e):null,name,accounts,kind,event,warns};
+});
+const byId=Object.fromEntries(LIVES.map(l=>[l.id,l]));
+const fw=c=>String.fromCharCode(c.charCodeAt(0)+0xFEE0);
+
+function build(l,{fmt='modern',tags='#がもよんフェス',comment=''}={}){
+  const tag=(tags||'').trim()||'#がもよんフェス';
+  const c=(comment||'').trim();
+  const label=l.name.replace(/^★/,'');
+  const startMsg=l.event?`${label}はじまりました！`:'ライブはじまりました！';
+  const L=[];
+  if(fmt==='classic'){
+    L.push(`ライブ会場 ${fw(l.code)}`,l.venue,l.time,'');
+    if(!l.event){L.push(l.name);L.push(...l.accounts)}
+    L.push(startMsg);
+    if(c)L.push('',c);
+  }else{
+    L.push(`${l.event?'🎉':'🎵'} ${startMsg}`,'',`📍 会場${l.code}｜${l.venue}`,`🕐 ${l.time}`);
+    if(!l.event){L.push(`🎤 ${l.name}`);L.push(...l.accounts)}
+    if(c)L.push('',c);
+  }
+  L.push('',tag);
+  return L.join('\n');
+}
+// Xの文字数（全角=2、URL=23）の概算
+function xLen(t){
+  let n=0;
+  t=t.replace(/https?:\/\/\S+/g,()=>{n+=23;return ''});
+  for(const ch of t){const c=ch.codePointAt(0);
+    n+=(c<=0x10FF||(c>=0x2000&&c<=0x200D)||(c>=0x2010&&c<=0x201F)||(c>=0x2032&&c<=0x2037))?1:2}
+  return n;
+}
+function compress(ids){ids=[...new Set(ids)].sort((a,b)=>a-b);const out=[];for(let i=0;i<ids.length;i++){let j=i;while(j+1<ids.length&&ids[j+1]===ids[j]+1)j++;out.push(j>i?`${ids[i]}-${ids[j]}`:`${ids[i]}`);i=j}return out.join(',')}
+function expand(s){const r=[];s.split(',').forEach(p=>{const [a,b]=p.split('-').map(Number);if(!a)return;for(let i=a;i<=(b||a);i++)if(byId[i])r.push(i)});return r}
+
+/* ===================== UI ===================== */
+if(typeof document!=='undefined'){
+const $=s=>document.querySelector(s);
+const KEY='gamo4fes-x-2026';
+const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}};
+let S=Object.assign({me:'',assigned:[],tags:'#がもよんフェス',fmt:'modern',done:{},drafts:{},filter:'all',onlyTodo:false},load());
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hue=c=>Math.round(CODES.indexOf(c)*360/CODES.length);
+const T=new URLSearchParams(location.search).get('t'); // 例 ?t=13:05 でリハーサル
+const nowMin=()=>{if(T&&/^\d{1,2}:\d{2}$/.test(T))return toMin(T);const d=new Date();return d.getHours()*60+d.getMinutes()};
+const hhmm=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+const me=()=>(S.me||'').trim()||'自分';
+const opts=id=>({fmt:S.fmt,tags:S.tags,comment:S.drafts[id]||''});
+let toastT;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2200)}
+async function copy(t){
+  try{await navigator.clipboard.writeText(t);return true}catch(e){
+    const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;opacity:0';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,99999);let ok=false;try{ok=document.execCommand('copy')}catch(_){}ta.remove();return ok}
+}
+function status(l,n){if(S.done[l.id])return 'done';const end=l.end??l.start+30;if(n>=l.start&&n<end)return 'live';if(n>=end)return 'late';if(l.start-n<=10)return 'soon';return ''}
+
+function renderChips(){
+  if(S.filter==='mine'&&!S.assigned.length)S.filter='all';
+  const o=[['all','すべて']];if(S.assigned.length)o.push(['mine','担当のみ']);CODES.forEach(c=>o.push([c,c]));
+  $('#chips').innerHTML=o.map(([v,l])=>`<button class="chip${S.filter===v?' on':''}" data-f="${v}" title="${v.length===1?esc(VENUES[v]):''}">${l}</button>`).join('');
+}
+function visible(){
+  const q=$('#q').value.trim().toLowerCase();
+  return LIVES.filter(l=>{
+    if(S.filter==='mine'&&!S.assigned.includes(l.code))return false;
+    if(S.filter.length===1&&l.code!==S.filter)return false;
+    if(S.onlyTodo&&S.done[l.id])return false;
+    if(q&&!(l.name+' '+l.venue+' '+l.accounts.join(' ')+' 会場'+l.code).toLowerCase().includes(q))return false;
+    return true});
+}
+function card(l,n){
+  const st=status(l,n),d=S.done[l.id];
+  const stl=d?`✓ ${esc(d.by||'')}${d.at?' '+d.at:''}`:st==='live'?'開演中':st==='late'?'未投稿':st==='soon'?'まもなく':'';
+  const acc=l.kind==='x'?l.accounts.join(' '):l.kind==='ig'?'IG: '+l.accounts.map(u=>u.replace(IG,'').replace(/\/$/,'')).join(' '):l.event?'':'アカウントなし';
+  return `<button class="card ${st}" data-id="${l.id}"><span class="badge" style="--h:${hue(l.code)}">${l.code}</span><span class="cb"><span class="nm">${esc(l.name)}${l.warns.length?' <i class="w">!</i>':''}</span><span class="meta">${esc(l.time)}・${esc(l.venue)}</span>${acc?`<span class="acc">${esc(acc)}</span>`:''}</span>${stl?`<span class="st">${stl}</span>`:''}</button>`;
+}
+function renderList(){
+  const n=nowMin(),arr=visible();let h='',cur=null;
+  for(const l of arr){const t=l.time.slice(0,5);if(t!==cur){if(cur!==null)h+='</section>';h+=`<section class="grp" data-start="${l.start}"><h2>${t} 開始</h2>`;cur=t}h+=card(l,n)}
+  if(cur!==null)h+='</section>';
+  $('#list').innerHTML=h||'<p class="empty">該当するライブはありません</p>';
+  const all=LIVES.filter(l=>S.done[l.id]).length;
+  let p=`全体 <b>${all}</b>/${LIVES.length}`;
+  if(S.assigned.length){const mine=LIVES.filter(l=>S.assigned.includes(l.code));p=`担当 <b>${mine.filter(l=>S.done[l.id]).length}</b>/${mine.length}<br>全体 ${all}/${LIVES.length}`}
+  $('#prog').innerHTML=p;
+}
+function setHH(){document.documentElement.style.setProperty('--hh',$('#hd').offsetHeight+'px')}
+
+/* sheets */
+function show(name){$('#ov').hidden=false;document.querySelectorAll('.panel').forEach(p=>p.hidden=p.dataset.p!==name);document.body.classList.add('lock')}
+function hide(){$('#ov').hidden=true;document.body.classList.remove('lock');renderList()}
+$('#ov').addEventListener('click',e=>{if(e.target.id==='ov'||e.target.closest('[data-close]'))hide()});
+
+/* live sheet */
+let curId=null,curList=[],photo=null,photoURL=null;
+function openLive(id){curId=id;curList=visible().map(l=>l.id);if(!curList.includes(id))curList=[id];setPhoto(null);renderLive();show('live');$('.panel[data-p=live]').scrollTop=0}
+function renderLive(){
+  const l=byId[curId];
+  $('#lvHead').innerHTML=`<span class="badge big" style="--h:${hue(l.code)}">${l.code}</span><div style="min-width:0"><div class="sub">会場${l.code}｜${esc(l.venue)}</div><div class="big">${esc(l.name)}</div><div class="sub">${esc(l.time)}</div></div>`;
+  $('#lvWarn').innerHTML=l.warns.map(w=>`<div class="warn">⚠ ${esc(w)}</div>`).join('');
+  $('#cmt').value=S.drafts[l.id]||'';
+  document.querySelectorAll('#fmtSeg button').forEach(b=>b.classList.toggle('on',b.dataset.fmt===S.fmt));
+  updPreview();updDone();
+  const i=curList.indexOf(curId);$('#btnPrev').disabled=i<=0;$('#btnNext').disabled=i>=curList.length-1;
+}
+function updPreview(){const t=build(byId[curId],opts(curId));$('#pv').textContent=t;const n=xLen(t);$('#cnt').textContent=`${n}/280`;$('#cnt').classList.toggle('over',n>280)}
+function updDone(){const d=S.done[curId],b=$('#btnDone');if(d){b.textContent=`✓ 投稿済（${d.by||''}${d.at?' '+d.at:''}）— 取り消す`;b.classList.remove('ok')}else{b.textContent='投稿済にする';b.classList.add('ok')}}
+function setPhoto(f){if(photoURL)URL.revokeObjectURL(photoURL);photo=f;photoURL=f?URL.createObjectURL(f):null;$('#thumb').innerHTML=f?`<img src="${photoURL}" alt=""><span>${esc(f.name)}</span>`:''}
+$('#cmt').addEventListener('input',e=>{if(e.target.value)S.drafts[curId]=e.target.value;else delete S.drafts[curId];save();updPreview()});
+$('#fmtSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.fmt=b.dataset.fmt;save();renderLive()});
+$('#btnCopy').addEventListener('click',async()=>{toast(await copy(build(byId[curId],opts(curId)))?'本文をコピーしました':'コピーできませんでした。本文を長押しで選択してください')});
+$('#btnX').addEventListener('click',()=>{const t=build(byId[curId],opts(curId));copy(t);window.open('https://x.com/intent/post?text='+encodeURIComponent(t),'_blank','noopener')});
+$('#photo').addEventListener('change',e=>{setPhoto(e.target.files[0]||null);e.target.value=''});
+$('#btnShare').addEventListener('click',()=>{
+  const t=build(byId[curId],opts(curId));copy(t);
+  if(!navigator.share){toast('この端末は共有に非対応です。本文はコピー済みです');return}
+  const data=photo?{files:[photo],text:t}:{text:t};
+  if(photo&&!(navigator.canShare&&navigator.canShare({files:[photo]}))){toast('写真の共有に非対応の端末です。本文はコピー済みです');return}
+  navigator.share(data).catch(err=>{if(err.name!=='AbortError')toast('共有できませんでした。本文はコピー済みです')});
+});
+$('#btnDone').addEventListener('click',()=>{if(S.done[curId]){if(!confirm('投稿済を取り消しますか？'))return;delete S.done[curId];toast('取り消しました')}else{S.done[curId]={by:me(),at:hhmm(),mine:true};toast('投稿済にしました')}save();updDone()});
+$('#btnPrev').addEventListener('click',()=>{const i=curList.indexOf(curId);if(i>0){curId=curList[i-1];setPhoto(null);renderLive()}});
+$('#btnNext').addEventListener('click',()=>{const i=curList.indexOf(curId);if(i<curList.length-1){curId=curList[i+1];setPhoto(null);renderLive()}});
+
+/* settings */
+function splits(){
+  const cnt=CODES.map(c=>LIVES.filter(l=>l.code===c).length),total=cnt.reduce((a,b)=>a+b,0),g=[[],[],[]];let k=0,acc=0;
+  CODES.forEach((c,i)=>{if(k<2&&acc+cnt[i]/2>total*(k+1)/3)k++;g[k].push(c);acc+=cnt[i]});
+  return g.map(codes=>({codes,n:codes.reduce((a,c)=>a+cnt[CODES.indexOf(c)],0)}));
+}
+function renderSettings(){
+  $('#me').value=S.me;$('#tags').value=S.tags;$('#imp').value='';
+  $('#presets').innerHTML=splits().map((s,i)=>`<button class="chip" data-pre="${s.codes.join('')}">${i+1}班 ${s.codes[0]}–${s.codes[s.codes.length-1]}（${s.n}件）</button>`).join('')+`<button class="chip" data-pre="">全会場</button>`;
+  $('#vgrid').innerHTML=CODES.map(c=>`<button class="vt${S.assigned.includes(c)?' on':''}" data-v="${c}"><span class="badge" style="--h:${hue(c)}">${c}</span>${esc(VENUES[c])}</button>`).join('');
+}
+$('#me').addEventListener('input',e=>{S.me=e.target.value;save()});
+$('#tags').addEventListener('input',e=>{S.tags=e.target.value;save()});
+$('#presets').addEventListener('click',e=>{const b=e.target.closest('[data-pre]');if(!b)return;S.assigned=b.dataset.pre.split('').filter(Boolean);S.filter=S.assigned.length?'mine':'all';save();renderSettings();renderChips();toast(S.assigned.length?'担当会場を設定しました':'全会場にしました')});
+$('#vgrid').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;const c=b.dataset.v;S.assigned=S.assigned.includes(c)?S.assigned.filter(x=>x!==c):[...S.assigned,c].sort();save();renderSettings();renderChips()});
+$('#btnImport').addEventListener('click',()=>{
+  const t=$('#imp').value,re=/#sync by=(\S+) ([\d,\-]+)/g;let m,n=0,hit=0;
+  while((m=re.exec(t))){hit++;const by=m[1];expand(m[2]).forEach(id=>{if(!S.done[id]){S.done[id]={by,at:'',mine:false};n++}})}
+  save();toast(hit?`${n}件を投稿済として取り込みました`:'「#sync」行が見つかりませんでした');if(hit)$('#imp').value='';
+});
+$('#btnReset').addEventListener('click',()=>{if(!confirm('この端末の投稿済の記録とコメント下書きを消します。よろしいですか？'))return;S.done={};S.drafts={};save();toast('リセットしました')});
+$('#btnSettings').addEventListener('click',()=>{renderSettings();show('settings')});
+
+/* report */
+function report(){
+  const n=nowMin(),scope=S.assigned.length?LIVES.filter(l=>S.assigned.includes(l.code)):LIVES;
+  const doneScope=scope.filter(l=>S.done[l.id]);
+  const mine=LIVES.filter(l=>S.done[l.id]&&S.done[l.id].mine).sort((a,b)=>(S.done[b.id].at||'').localeCompare(S.done[a.id].at||''));
+  const late=scope.filter(l=>!S.done[l.id]&&n>=l.start);
+  const L=[`【X投稿 進捗】${me()}（${hhmm()}時点）`,`担当：${S.assigned.length?S.assigned.join(' '):'全会場'}`,`投稿済：${doneScope.length}/${scope.length}件`];
+  if(mine[0])L.push(`直近：${mine[0].time.slice(0,5)} 会場${mine[0].code} ${mine[0].name}`);
+  if(late.length){L.push('','⚠ 開始時刻を過ぎて未投稿：');late.forEach(l=>L.push(`・${l.time.slice(0,5)} 会場${l.code} ${l.name}`))}
+  const groups={};Object.entries(S.done).forEach(([id,d])=>{const by=(d.mine?me():(d.by||'他')).replace(/\s+/g,'_');(groups[by]=groups[by]||[]).push(+id)});
+  const sync=Object.entries(groups).map(([by,ids])=>`#sync by=${by} ${compress(ids)}`);
+  if(sync.length)L.push('—',...sync);
+  return L.join('\n');
+}
+$('#btnReport').addEventListener('click',()=>{$('#rp').textContent=report();show('report')});
+$('#btnCopyRp').addEventListener('click',async()=>toast(await copy($('#rp').textContent)?'報告をコピーしました':'コピーできませんでした'));
+
+/* list events */
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;S.filter=b.dataset.f;save();renderChips();renderList()});
+$('#q').addEventListener('input',renderList);
+$('#onlyTodo').checked=!!S.onlyTodo;
+$('#onlyTodo').addEventListener('change',e=>{S.onlyTodo=e.target.checked;save();renderList()});
+$('#list').addEventListener('click',e=>{const c=e.target.closest('.card');if(c)openLive(+c.dataset.id)});
+$('#btnNow').addEventListener('click',()=>{const n=nowMin(),secs=[...document.querySelectorAll('.grp')];const t=secs.find(s=>+s.dataset.start>=n-30)||secs[secs.length-1];if(t)t.scrollIntoView({behavior:'smooth',block:'start'})});
+
+renderChips();renderList();setHH();
+window.addEventListener('resize',setHH);
+setInterval(()=>{if($('#ov').hidden)renderList()},60000);
+}
+</script>
+</body>
+</html>
