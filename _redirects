@@ -2,3 +2,7 @@
 /font-selector              /font-dresser/          301
 /font-selector/             /font-dresser/          301
 /font-selector/*            /font-dresser/:splat    301
+
+# ページ構成の見直し（事業概要は about に統合、個人のページは profile に改名）
+/company                    /about                  301
+/personal                   /profile                301
