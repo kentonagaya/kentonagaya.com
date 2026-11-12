@@ -47,6 +47,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 document.documentElement.classList.add('js');
 addEventListener('load',function(){setTimeout(function(){if(!window.__kn)document.documentElement.classList.remove('js');},1000);});
 </script>
+<script>
+/* FV「人生のタータン」：描画前に判定（WebGLがあり、動きを減らす設定でなければ吊り下ろし演出）。
+   fv-tartan.js が読めなかったときは、ヘッダーと見出しを通常の表示に戻す */
+(function(h){
+  var gl=false;try{gl=!!document.createElement('canvas').getContext('webgl2');}catch(e){}
+  window.__fvtGL=gl;h.classList.add('fvt-page','fvt-hd');
+  if(gl&&!matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('fvt-drop');
+  addEventListener('load',function(){setTimeout(function(){if(!window.__fvt){h.classList.remove('fvt-hd','fvt-drop');h.classList.add('fvt-landed');}},1000);});
+})(document.documentElement);
+</script>
 
 <script type="application/ld+json">
 [
@@ -201,40 +211,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <main>
 
-<!-- HERO -->
-<section class="hero">
-  <span class="blob blob-a"></span>
-  <span class="blob blob-b"></span>
-  <div class="container hero-in">
-   <div class="hero-copy">
-    <p class="hero-label rv" style="--d:.1s">WEB DESIGN &amp; MARKETING</p>
-    <h1 class="hero-title" id="h1"><span class="l1"><span class="ph">言葉に</span><span class="ph">なっていない</span><span class="ph">ものを、</span></span><span class="l2"><span class="ph mk">形にする。</span></span></h1>
-    <p class="hero-lead rv" style="--d:.9s">
-      伝えたいことは、もうお持ちのはずです。<br>まだ言葉になっていないだけ。<br>
-      聞いて、整理して、形にする。<br>公開したあとの改善まで、同じ担当者が続けます。
-    </p>
-    <ul class="hero-tags rv" style="--d:1.05s">
-      <li>デザインから公開まで一人で担当</li>
-      <li>止まったサイトの立て直し</li>
-      <li>公開後のアクセス解析・改善</li>
-      <li>日本語・英語で対応</li>
-    </ul>
-    <div class="hero-cta rv" style="--d:1.2s">
-      <a class="btn btn-grad" href="/contact"><span>無料で相談する</span><svg class="ic ic-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-      <a class="btn btn-ghost" href="#works"><span>実績を見る</span><svg class="ic ic-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+<!-- HERO：人生のタータン（布の描画は /assets/js/fv-tartan.js） -->
+<section class="fv-tartan" id="fv" aria-label="ファーストビュー">
+  <canvas class="fvt-poster" aria-hidden="true"></canvas>
+  <div class="fvt-gl" aria-hidden="true"></div>
+  <div class="fvt-zone" aria-hidden="true"></div>
+  <div class="fvt-tag">
+    <p class="fvt-kicker">Kento Nagaya — Web Designer</p>
+    <h1 class="fvt-h1"><span>言葉になっていないものを、</span><span><span class="fvt-em">形にする。</span></span></h1>
+    <p class="fvt-lead">聞いて、整理して、形にする。<br class="fvt-pc">公開したあとの改善まで、同じ担当者が続けます。</p>
+    <div class="fvt-cta">
+      <a class="btn fvt-btn-p" href="/contact"><span>無料で相談する</span><svg class="ic ic-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="btn fvt-btn-s" href="#works"><span>実績を見る</span><svg class="ic ic-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
     </div>
-   </div>
-
-   <figure class="hero-art rv" style="--d:.4s">
-     <span class="pig pig-1" aria-hidden="true"></span>
-     <span class="pig pig-2" aria-hidden="true"></span>
-     <span class="ring ring-1" aria-hidden="true"></span>
-     <span class="ring ring-2" aria-hidden="true"></span>
-     <span class="hero-photo"><img src="/assets/profile.jpg" alt="長屋 健斗" width="600" height="600"></span>
-     <figcaption class="hero-cap"><b>長屋 健斗</b>Webデザイナー／大阪</figcaption>
-   </figure>
   </div>
-  <p class="scroll-cue">SCROLL</p>
+  <aside class="fvt-sett" aria-label="この柄について：The Nagaya Tartan">
+    <p class="fvt-sett-t">The Nagaya Tartan</p>
+    <button class="fvt-sett-toggle" type="button" aria-expanded="false" aria-controls="fvt-legend"><span>The Nagaya Tartan</span><span class="fvt-dots" aria-hidden="true"><i style="background:#E4689B"></i><i style="background:#A08FC6"></i><i style="background:#2B89B0"></i><i style="background:#F1ECE2"></i><i style="background:#80CBE1"></i><i style="background:#ECB4C8"></i></span><span class="fvt-vh">（柄の意味）</span></button>
+    <div class="fvt-legend" id="fvt-legend">
+      <p class="fvt-sub">Color = what I did · Stripe = where I did it</p>
+      <ul class="fvt-roles">
+        <li title="Osaka, Japan / Tbilisi, Georgia / Saint-Rémy-de-Provence, France / Paris, France"><i style="background:#E4689B"></i>Web designer<span class="n">4</span></li>
+        <li title="Saint-Rémy-de-Provence, France / Paris, France"><i style="background:#A08FC6"></i>Restaurant staff<span class="n">2</span></li>
+        <li title="Tokyo, Japan / Manila, Philippines"><i style="background:#2B89B0"></i>Server engineer<span class="n">2</span></li>
+        <li title="Tokyo, Japan / Cebu, Philippines / Lyon, France"><i style="background:#F1ECE2"></i>Student<span class="n">3</span></li>
+        <li title="Tokyo, Japan"><i style="background:#80CBE1"></i>IT consultant<span class="n">1</span></li>
+        <li title="Osaka, Japan / Okinawa, Japan"><i style="background:#ECB4C8"></i>Guesthouse staff<span class="n">2</span></li>
+      </ul>
+      <p class="fvt-places">Number = places · Ground (plum) = Kento Nagaya</p>
+      <p class="fvt-cap" id="fvt-cap">Ground · Kento Nagaya</p>
+      <p class="fvt-tc" title="Thread count（経糸・緯糸とも同じ。/ はピボット＝折り返し）">P/16 R14 K2 R14 K2 R14 K2 R14 P8 LV6 K2 LV6 P8 DB10 K2 DB10 P8 W3 K2 W3 K2 W3 P8 LB10 P8 PK4 K2 PK4 P/16</p>
+    </div>
+  </aside>
 </section>
 
 <!-- PROBLEM -->
@@ -683,5 +691,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js" defer></script>
 <script src="/main.js" defer></script>
+<script type="module" src="/assets/js/fv-tartan.js"></script>
 </body>
 </html>
