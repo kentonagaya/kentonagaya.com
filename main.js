@@ -138,11 +138,12 @@
     });
   }
 
-  /* ---------- noteの最新記事（/api/note 経由。トップページのみ） ---------- */
+  /* ---------- noteの最新記事（/api/note 経由。プロフィールページのみ） ---------- */
   var list = d.getElementById('note-list');
   if (list) {
     var hideNote = function () {
       var sec = d.getElementById('note');
+      if (sec && sec.hasAttribute('data-keep')) { list.style.display = 'none'; return; }
       if (sec) sec.style.display = 'none';
     };
     var esc = function (v) {
