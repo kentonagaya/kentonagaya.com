@@ -1411,33 +1411,34 @@ figure.hero-art{margin:0 auto;}
 
 /* ===== お問い合わせフォーム ===== */
 .container.narrow{max-width:46rem;}
-.cform{display:grid;gap:1.7rem;}
-.field{display:grid;gap:.55rem;margin:0;padding:0;border:0;min-width:0;}
-.field > label,.field > legend{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem;padding:0;font-size:.98rem;font-weight:700;}
+.cform{display:grid;gap:1.05rem;}
+.field{display:grid;gap:.4rem;margin:0;padding:0;border:0;min-width:0;}
+.field > label,.field > legend{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem;padding:0;font-size:.9rem;font-weight:700;}
 .field legend small{font-size:.82rem;font-weight:400;color:var(--ink-3);}
 .req,.opt{font-size:.72rem;font-weight:700;line-height:1;padding:.32rem .55rem;border-radius:100px;letter-spacing:.04em;}
 .req{background:var(--rose-ink);color:#fff;}
 .opt{background:var(--canvas-2);color:var(--ink-3);border:1px solid var(--line);}
 .cform input[type="text"],.cform input[type="email"],.cform select,.cform textarea{
-  width:100%;box-sizing:border-box;padding:.85rem 1rem;font:inherit;font-size:1rem;color:var(--ink);
+  width:100%;box-sizing:border-box;padding:.6rem .85rem;font:inherit;font-size:1rem;color:var(--ink);
   background:var(--paper);border:1px solid #8C909B;border-radius:8px;
 }
-.cform textarea{min-height:11rem;line-height:1.8;resize:vertical;}
+.cform input[type="text"],.cform input[type="email"]{line-height:1.5;}
+.cform textarea{min-height:6rem;line-height:1.7;resize:vertical;}
 .cform input:focus-visible,.cform select:focus-visible,.cform textarea:focus-visible{outline:2px solid var(--aqua-ink);outline-offset:2px;border-color:var(--aqua-ink);}
 .cform ::placeholder{color:var(--ink-4);}
-.hint{margin:0;font-size:.84rem;color:var(--ink-3);}
-.chks{display:flex;flex-wrap:wrap;gap:.6rem;}
-.chk{display:inline-flex;align-items:center;gap:.55rem;padding:.6rem .95rem;font-size:.92rem;background:var(--paper);border:1px solid var(--line);border-radius:100px;cursor:pointer;}
+.hint{margin:0;font-size:.78rem;color:var(--ink-3);}
+.chks{display:flex;flex-wrap:wrap;gap:.45rem;}
+.chk{display:inline-flex;align-items:center;gap:.45rem;padding:.4rem .8rem;font-size:.86rem;background:var(--paper);border:1px solid var(--line);border-radius:100px;cursor:pointer;}
 .chk input{width:1.1rem;height:1.1rem;margin:0;accent-color:var(--rose-ink);flex:none;}
 .chk:has(input:checked){border-color:var(--rose-ink);}
 .chk.agree{padding:0;border:0;background:none;font-size:.95rem;}
 .chk.agree span{display:inline-flex;align-items:center;flex-wrap:wrap;gap:.6rem;}
-.field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2rem;}
+.field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.05rem;}
 @media (max-width:40rem){.field-row{grid-template-columns:1fr;}}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
 .form-error{margin:0;padding:1rem 1.2rem;font-size:.92rem;color:#8E2152;background:#FBEFF4;border:1px solid var(--rose-ink);border-radius:8px;}
 .form-error[hidden]{display:none;}
-.form-submit{margin:.4rem 0 0;}
+.form-submit{margin:.2rem 0 0;}
 .form-submit .btn{border:0;cursor:pointer;font-family:inherit;font-size:.95rem;font-weight:700;}
 .thanks-note{font-size:.98rem;color:var(--ink-2);}
 .page-head .page-en{font-size:clamp(2.2rem,5.5vw,3.8rem);color:var(--ink-3);}
@@ -1887,3 +1888,17 @@ figure.hero-art{margin:0 auto;}
 .profile .skills-group{margin:1.8rem 0 .3rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;color:var(--ink-4);}
 .profile .profile-sub{margin:0 0 .6rem;}
 .profile .fine-note{margin:1.6rem 0 0;font-size:.86rem;line-height:1.9;}
+
+
+/* ===== トップページ下部のお問い合わせフォーム ===== */
+.cta .cta-lead{margin-bottom:1.8rem;}
+.cta-card{max-width:40rem;margin:0 auto;padding:clamp(1.2rem,3.5vw,2rem);text-align:left;color:var(--ink);background:var(--paper);border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.28);}
+.cta .cta-card p{max-width:none;margin:0;font-size:.9rem;color:var(--ink-2);}
+.cta .cta-card .hint{font-size:.78rem;color:var(--ink-3);}
+.cta .cta-card .form-error{color:#8E2152;}
+.cta .cta-card .form-submit{margin:.2rem 0 0;}
+.cta .cta-card a{color:var(--rose-ink);text-decoration:underline;text-underline-offset:.2em;}
+.cta .cta-card .btn{width:100%;justify-content:center;color:#fff;text-decoration:none;}
+.cta .cta-card .chk{background:var(--canvas);}
+.cta .cta-card .chk.agree{background:none;}
+@media (max-width:40rem){.cta .cta-card{padding:1.1rem;border-radius:12px;}}

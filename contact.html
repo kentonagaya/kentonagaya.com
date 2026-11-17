@@ -108,13 +108,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <label>このフィールドは空のままにしてください<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
       </div>
 
-      <div class="field">
-        <label for="f-name">お名前<span class="req">必須</span></label>
-        <input id="f-name" type="text" name="name" required maxlength="100" autocomplete="name">
-      </div>
-      <div class="field">
-        <label for="f-company">会社名・屋号<span class="opt">任意</span></label>
-        <input id="f-company" type="text" name="company" maxlength="120" autocomplete="organization">
+      <div class="field-row">
+        <div class="field">
+          <label for="f-name">お名前<span class="req">必須</span></label>
+          <input id="f-name" type="text" name="name" required maxlength="100" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="f-company">会社名・屋号<span class="opt">任意</span></label>
+          <input id="f-company" type="text" name="company" maxlength="120" autocomplete="organization">
+        </div>
       </div>
       <div class="field">
         <label for="f-email">メールアドレス<span class="req">必須</span></label>
@@ -126,23 +128,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="chks"><label class="chk"><input type="checkbox" name="topics" value="web"><span>Webサイト制作</span></label><label class="chk"><input type="checkbox" name="topics" value="rebuild"><span>止まったサイトの立て直し・修正</span></label><label class="chk"><input type="checkbox" name="topics" value="marketing"><span>アクセス解析・改善</span></label><label class="chk"><input type="checkbox" name="topics" value="design"><span>ロゴ・印刷物</span></label><label class="chk"><input type="checkbox" name="topics" value="bilingual"><span>日本語・英語をまたぐ制作</span></label><label class="chk"><input type="checkbox" name="topics" value="undecided"><span>まだ決まっていない</span></label></div>
       </fieldset>
       <div class="field">
-        <label for="f-message">ご相談の内容<span class="req">必須</span></label>
-        <textarea id="f-message" name="message" required maxlength="4000" rows="7" placeholder="例：今のサイトが更新できなくなっている／お店のサイトを新しく作りたい など。決まっていないことは、書かなくて大丈夫です。"></textarea>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="f-budget">ご予算の目安<span class="opt">任意</span></label>
-          <select id="f-budget" name="budget"><option value="">選択してください</option><option value="u10">〜10万円</option><option value="10-30">10〜30万円</option><option value="30-50">30〜50万円</option><option value="50+">50万円以上</option><option value="undecided">まだ決まっていない</option></select>
-        </div>
-        <div class="field">
-          <label for="f-timing">ご希望の時期<span class="opt">任意</span></label>
-          <select id="f-timing" name="timing"><option value="">選択してください</option><option value="1m">1ヶ月以内</option><option value="3m">2〜3ヶ月以内</option><option value="6m">半年以内</option><option value="undecided">時期は未定</option></select>
-        </div>
+        <label for="f-message">ご相談の内容<span class="opt">任意</span></label>
+        <textarea id="f-message" name="message" maxlength="4000" rows="4" placeholder="例：今のサイトが更新できなくなっている／お店のサイトを新しく作りたい など。書かなくても大丈夫です。"></textarea>
       </div>
       <div class="field">
         <label class="chk agree"><input type="checkbox" name="privacy" value="agree" required><span><a href="/privacy" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します<span class="req">必須</span></span></label>
       </div>
-      <div class="cf-turnstile" data-sitekey="" data-theme="light" data-language="ja"></div>
+      <div class="cf-turnstile" data-sitekey="" data-theme="light" data-appearance="interaction-only" data-language="ja"></div>
       <p class="form-submit"><button class="btn btn-grad" type="submit"><span>送信する</span><svg class="ic ic-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button></p>
       <p class="hint">2営業日以内にご返信します。届かない場合は、迷惑メールのフォルダもご確認ください。</p>
     </form>

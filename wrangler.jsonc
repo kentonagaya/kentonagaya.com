@@ -10,7 +10,7 @@
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*", "/contact", "/contact/", "/en-contact", "/en-contact/"]
+    "run_worker_first": ["/", "/api/*", "/contact", "/contact/", "/en-contact", "/en-contact/"]
   },
   // お問い合わせメールの送信。届け先などは Cloudflare の管理画面で設定する（ここには書かない）
   "send_email": [{ "name": "EMAIL" }]

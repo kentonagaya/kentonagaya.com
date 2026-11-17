@@ -11,6 +11,8 @@
  *   TURNSTILE_SECRET      Turnstile のシークレットキー（シークレット）
  */
 
+import { EmailMessage } from "cloudflare:email";
+
 const TOPICS = {
   web: { ja: "Webサイト制作", en: "Website" },
   rebuild: { ja: "止まったサイトの立て直し・修正", en: "Fixing or rebuilding a site" },
@@ -19,30 +21,16 @@ const TOPICS = {
   bilingual: { ja: "日本語・英語をまたぐ制作", en: "Japanese / English project" },
   undecided: { ja: "まだ決まっていない", en: "Not sure yet" },
 };
-const BUDGETS = {
-  "u10": { ja: "〜10万円", en: "Under ¥100,000" },
-  "10-30": { ja: "10〜30万円", en: "¥100,000–300,000" },
-  "30-50": { ja: "30〜50万円", en: "¥300,000–500,000" },
-  "50+": { ja: "50万円以上", en: "Over ¥500,000" },
-  "undecided": { ja: "まだ決まっていない", en: "Not decided" },
-};
-const TIMINGS = {
-  "1m": { ja: "1ヶ月以内", en: "Within a month" },
-  "3m": { ja: "2〜3ヶ月以内", en: "Within 2–3 months" },
-  "6m": { ja: "半年以内", en: "Within 6 months" },
-  "undecided": { ja: "時期は未定", en: "Not decided" },
-};
-
 const MSG = {
   ja: {
-    invalid: "入力内容をご確認ください。お名前・メールアドレス・ご相談内容・プライバシーポリシーへの同意が必要です。",
+    invalid: "入力内容をご確認ください。お名前・メールアドレス・プライバシーポリシーへの同意が必要です。",
     email: "メールアドレスの形式をご確認ください。",
     expired: "送信を確認できませんでした。お手数ですが、もう一度「送信する」を押してください。",
     robot: "スパム対策の確認ができませんでした。もう一度お試しください。",
     send: "送信に失敗しました。時間をおいてもう一度お試しいただくか、Instagramのメッセージからご連絡ください。",
   },
   en: {
-    invalid: "Please check the form. Your name, email, message and agreement to the privacy policy are required.",
+    invalid: "Please check the form. Your name, email and agreement to the privacy policy are required.",
     email: "Please check your email address.",
     expired: "We couldn’t confirm your submission. Please press “Send” again.",
     robot: "We couldn't complete the spam check. Please try again.",
@@ -51,6 +39,49 @@ const MSG = {
 };
 
 const enc = new TextEncoder();
+
+/* ---------- メールの組み立て（Email Routing で送れる形式） ---------- */
+function b64(str) {
+  let bin = "";
+  for (const b of enc.encode(str)) bin += String.fromCharCode(b);
+  return btoa(bin);
+}
+const mimeWord = (s) => "=?UTF-8?B?" + b64(s) + "?=";
+
+function rawMime({ from, to, replyTo, subject, text }) {
+  const domain = from.split("@")[1] || "kentonagaya.com";
+  return [
+    "From: " + mimeWord("kentonagaya.com お問い合わせ") + " <" + from + ">",
+    "To: <" + to + ">",
+    "Reply-To: <" + replyTo + ">",
+    "Subject: " + mimeWord(subject),
+    "Date: " + new Date().toUTCString(),
+    "Message-ID: <" + crypto.randomUUID() + "@" + domain + ">",
+    "MIME-Version: 1.0",
+    "Content-Type: text/plain; charset=UTF-8",
+    "Content-Transfer-Encoding: base64",
+    "",
+    b64(text.replace(/\n/g, "\r\n")).replace(/.{1,76}/g, "$&\r\n"),
+  ].join("\r\n");
+}
+
+/** まず Email Routing の方式で送り、だめなら Email Service の方式で送る */
+async function sendMail(env, mail) {
+  const errors = [];
+  try {
+    await env.EMAIL.send(new EmailMessage(mail.from, mail.to, rawMime(mail)));
+    return;
+  } catch (err) {
+    errors.push("routing: " + (err && (err.code || err.message)));
+  }
+  try {
+    await env.EMAIL.send(mail);
+    return;
+  } catch (err) {
+    errors.push("service: " + (err && (err.code || err.message)));
+  }
+  throw new Error(errors.join(" / "));
+}
 
 async function hmac(secret, text) {
   const key = await crypto.subtle.importKey("raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
@@ -88,7 +119,9 @@ export async function renderContactPage(request, env, opts = {}) {
   const url = new URL(request.url);
   const lang = opts.lang || langOf(url.pathname);
   const pagePath = lang === "en" ? "/en-contact" : "/contact";
-  const asset = await env.ASSETS.fetch(new Request(url.origin + pagePath, { headers: request.headers }));
+  // 入力をやり直すときは、ここに書いたページ（/contact）に戻す。トップページに置いたフォームも同じ処理で動く
+  const target = opts.page || pagePath;
+  const asset = await env.ASSETS.fetch(new Request(url.origin + target, { headers: request.headers }));
   if (!asset.ok) return asset;
 
   const siteKey = env.TURNSTILE_SITE_KEY || "";
@@ -121,12 +154,6 @@ export async function renderContactPage(request, env, opts = {}) {
         },
       })
       .on("#form textarea", { element(e) { const n = e.getAttribute("name"); if (v[n]) e.setInnerContent(v[n]); } })
-      .on("#form select option", {
-        element(e) {
-          const val = e.getAttribute("value");
-          if (val && (v.budget === val || v.timing === val)) e.setAttribute("selected", "");
-        },
-      });
   }
 
   const res = rw.transform(asset);
@@ -166,14 +193,12 @@ export async function handleContactPost(request, env) {
     email: oneLine(form.get("email"), 254),
     message: clean(form.get("message"), 4000),
     topics: form.getAll("topics").map(String).filter((t) => TOPICS[t]),
-    budget: BUDGETS[form.get("budget")] ? String(form.get("budget")) : "",
-    timing: TIMINGS[form.get("timing")] ? String(form.get("timing")) : "",
   };
   const fail = (error, status = 400) => renderContactPage(request, env, { lang, error, values, status });
 
   if (env.FORM_SECRET && !(await checkToken(env, form.get("token")))) return fail("expired");
-  if (!values.name || !values.email || !values.message || form.get("privacy") !== "agree") return fail("invalid");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) return fail("email");
+  if (!values.name || !values.email || form.get("privacy") !== "agree") return fail("invalid");
+  if (!/^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/.test(values.email)) return fail("email");
 
   if (env.TURNSTILE_SECRET) {
     const body = new FormData();
@@ -189,9 +214,11 @@ export async function handleContactPost(request, env) {
     if (!ok) return fail("robot");
   }
 
-  if (!env.EMAIL || !env.CONTACT_TO) return fail("send", 500);
+  if (!env.EMAIL || !env.CONTACT_TO) {
+    console.error("contact not configured", { EMAIL: !!env.EMAIL, CONTACT_TO: !!env.CONTACT_TO });
+    return fail("send", 500);
+  }
 
-  const pick = (table, key) => (key ? table[key].ja : "（未選択）");
   const now = new Date(Date.now() + 9 * 3600 * 1000).toISOString().replace("T", " ").slice(0, 16);
   const text = [
     "kentonagaya.com のフォームからお問い合わせがありました。",
@@ -200,12 +227,10 @@ export async function handleContactPost(request, env) {
     "■ 会社名・屋号：" + (values.company || "（未記入）"),
     "■ メールアドレス：" + values.email,
     "■ 相談したいこと：" + (values.topics.length ? values.topics.map((t) => TOPICS[t].ja).join("、") : "（未選択）"),
-    "■ ご予算の目安：" + pick(BUDGETS, values.budget),
-    "■ ご希望の時期：" + pick(TIMINGS, values.timing),
     "■ 言語：" + (lang === "en" ? "英語ページから" : "日本語ページから"),
     "",
     "■ ご相談内容",
-    values.message,
+    values.message || "（未記入）",
     "",
     "---",
     "受信日時：" + now + "（日本時間）",
@@ -213,15 +238,15 @@ export async function handleContactPost(request, env) {
   ].join("\n");
 
   try {
-    await env.EMAIL.send({
-      to: env.CONTACT_TO,
-      from: env.CONTACT_FROM || "form@kentonagaya.com",
+    await sendMail(env, {
+      to: String(env.CONTACT_TO).trim(),
+      from: String(env.CONTACT_FROM || "form@kentonagaya.com").trim(),
       replyTo: values.email,
       subject: "【お問い合わせ】" + values.name + " 様（kentonagaya.com）",
       text,
     });
   } catch (err) {
-    console.error("contact send failed", err && (err.code || err.message));
+    console.error("contact send failed:", err && err.message);
     return fail("send", 502);
   }
 
