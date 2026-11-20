@@ -1582,7 +1582,7 @@ figure.hero-art{margin:0 auto;}
 .fvt-btn-s:hover{color:#fff;transform:translateY(-2px);border-color:rgba(255,255,255,.85);}
 .fv-tartan :focus-visible{outline:2px solid #fff;outline-offset:3px;}
 
-/* 右下：柄の凡例（The Nagaya Tartan） */
+/* 右下：柄の凡例 */
 .fvt-sett{
   position:absolute;z-index:10;
   right:max(var(--pad),calc((100% - var(--max)) / 2 + var(--pad)));
